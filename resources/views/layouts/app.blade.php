@@ -60,38 +60,14 @@
                         </span>
                     </button>
                 </span>
-            </div>    <div class="app-header__content">
-                <div class="app-header-left">
-                    <div class="search-wrapper">
-                        <div class="input-holder">
-                            <input type="text" class="search-input" placeholder="Type to search">
-                            <button class="search-icon"><span></span></button>
-                        </div>
-                        <button class="close"></button>
-                    </div>
-                    <ul class="header-menu nav">
-                        <li class="nav-item">
-                            <a href="javascript:void(0);" class="nav-link">
-                                <i> </i>
-                                
-                            </a>
-                        </li>
-                        <li class="btn-group nav-item">
-                            <a href="javascript:void(0);" class="nav-link">
-                                <i></i>
-                                
-                            </a>
-                        </li>
-                        <li class="dropdown nav-item">
-                            <a href="javascript:void(0);" class="nav-link">
-                                <i></i>
-                                
-                            </a>
-                        </li>
-                    </ul>        </div>
-                
+            </div>    
+            <div class="app-header__content">
+                <div>
+                    <h1 style="text-align: center; font-weight: bold;">Fleet Management Module</h1>
+                </div>
             </div>
-        </div>        <div class="ui-theme-settings">
+        </div>        
+        <div class="ui-theme-settings">
             <button type="button" id="TooltipDemo" class="btn-open-options btn btn-warning">
                 <i class="fa fa-cog fa-w-16 fa-spin fa-2x"></i>
             </button>
