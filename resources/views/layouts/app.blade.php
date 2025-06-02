@@ -438,10 +438,10 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('vehicle-engine-capacity') }}">
-                                                <i class="metismenu-icon">
-                                                </i>Vehicle Engine Capacity
+                                            <a href="{{ route('vehicle-engine-capacity.index') }}">
+                                                <i class="metismenu-icon"></i>Vehicle Engine Capacity
                                             </a>
+
                                         </li>
                                         <li>
                                             <a href="{{ route('fuel-type') }}">
