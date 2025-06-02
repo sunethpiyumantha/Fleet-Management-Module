@@ -408,25 +408,25 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="elements-icons.html">
+                                            <a href="{{ route('vehicle-sub-catogory') }}">
                                                 <i class="metismenu-icon">
                                                 </i>Vehicle Sub Category
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="elements-badges-labels.html">
+                                            <a href={{ route('vehicle-tire-sizes') }}>
                                                 <i class="metismenu-icon">
                                                 </i>Vehicle Tire sizes
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="elements-cards.html">
+                                            <a href="{{ route('vehicle-make') }}">
                                                 <i class="metismenu-icon">
                                                 </i>Vehicle Make
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="elements-list-group.html">
+                                            <a href="{{ route('vehicle-models') }}">
                                                 <i class="metismenu-icon">
                                                 </i>Vehicle Model
                                             </a>

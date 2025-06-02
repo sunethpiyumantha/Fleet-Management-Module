@@ -49,5 +49,22 @@ Route::get('/vehicle-allocation', function () {
     return view('vehicle-allocation');
 })->name('vehicle-allocation');
 
+Route::get('/vehicle-sub-catogory', function () {
+    return view('vehicle-sub-catogory');
+})->name('vehicle-sub-catogory');
+
+Route::get('/vehicle-tire-sizes', function () {
+    return view('vehicle-tire-sizes');
+})->name('vehicle-tire-sizes');
+
+Route::get('/vehicle-make', function () {
+    return view('vehicle-make');
+})->name('vehicle-make');
+
+Route::get('/vehicle-models', function () {
+    return view('vehicle-models');
+})->name('vehicle-models');
+
+
 
 
