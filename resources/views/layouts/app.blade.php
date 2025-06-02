@@ -420,7 +420,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href={{ route('vehicle-tire-sizes') }}>
+                                            <a href="{{ route('vehicle-tire-sizes') }}">
                                                 <i class="metismenu-icon">
                                                 </i>Vehicle Tire sizes
                                             </a>
