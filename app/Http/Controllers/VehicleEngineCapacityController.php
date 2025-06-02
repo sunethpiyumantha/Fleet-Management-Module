@@ -37,9 +37,12 @@ class VehicleEngineCapacityController extends Controller
 
     public function destroy($id)
     {
-        $capacity = VehicleEngineCapacity::findOrFail($id);
-        $capacity->delete();
+        $capacity = VehicleEngineCapacity::find($id);
+        if ($capacity) {
+            $capacity->delete();  // This actually deletes it from the DB
+        }
 
         return redirect()->back()->with('success', 'Deleted successfully!');
     }
+
 }
