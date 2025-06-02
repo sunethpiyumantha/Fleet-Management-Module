@@ -13,9 +13,6 @@ Route::get('/test', function () {
     return 'Test route works!';
 });
 
-Route::get('/vehicle', function () {
-    return view('vehicle');
-})->name('vehicle');
 
 Route::get('/vehicle-engine-capacity', function () {
     return view('vehicle-engine-capacity');
@@ -44,6 +41,14 @@ Route::get('/establishment', function () {
 Route::get('/index.html', function () {
     return view('welcome');
 });
+
+Route::get('/vehicle', function () {
+    return view('vehicle');
+})->name('vehicle');
+
+Route::get('/vehicle-allocation', function () {
+    return view('vehicle-allocation');
+})->name('vehicle-allocation');
 
 
 

@@ -402,7 +402,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="elements-dropdowns.html">
+                                            <a href="{{ route('vehicle-allocation') }}">
                                                 <i class="metismenu-icon">
                                                 </i>Vehicle Allocation Type
                                             </a>
