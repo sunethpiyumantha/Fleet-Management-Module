@@ -45,7 +45,9 @@ Route::get('/index.html', function () {
     return view('welcome');
 });
 
-
+Route::get('/vehicle-allocation', function () {
+    return view('vehicle-allocation');
+})->name('vehicle-allocation');
 
 
 
