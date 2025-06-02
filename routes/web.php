@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
-
+use App\Http\Controllers\VehicleEngineCapacityController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,9 +17,13 @@ Route::get('/vehicle', function () {
     return view('vehicle');
 })->name('vehicle');
 
-Route::get('/vehicle-engine-capacity', function () {
-    return view('vehicle-engine-capacity');
-})->name('vehicle-engine-capacity');
+
+
+Route::get('/vehicle-engine-capacity', [VehicleEngineCapacityController::class, 'index'])->name('vehicle-engine-capacity.index');
+Route::post('/vehicle-engine-capacity/store', [VehicleEngineCapacityController::class, 'store'])->name('vehicle-engine-capacity.store');
+Route::post('/vehicle-engine-capacity/update/{id}', [VehicleEngineCapacityController::class, 'update']);
+Route::delete('/vehicle-engine-capacity/delete/{id}', [VehicleEngineCapacityController::class, 'destroy'])->name('vehicle-engine-capacity.destroy');
+
 
 Route::get('/fuel-type', function () {
     return view('fuel-type');

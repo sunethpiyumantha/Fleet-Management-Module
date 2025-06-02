@@ -8,11 +8,12 @@
     <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">Vehicle Engine Capacity Management</h2>
 
     <!-- Form -->
-    <form class="mb-8" style="margin-bottom: 2rem;">
+    <form class="mb-8" style="margin-bottom: 2rem;" action="{{ route('vehicle-engine-capacity.store') }}" method="POST">
+      @csrf
       <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;" class="md:flex-row">
         <div style="width: 100%; max-width: 75%;">
           <label for="vehicleType" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Enter Vehicle Engine Capacity</label>
-          <input type="text" id="vehicleType" name="vehicle_type" required
+          <input type="text" id="vehicleType" name="engine_capacity" required
             style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
         </div>
         <div style="width: 100%; max-width: 25%; margin-top: 1rem;" class="md:mt-0">
@@ -26,14 +27,14 @@
     </form>
 
     <!-- Search Bar -->
-    <div style="margin-bottom: 1rem; display: flex; justify-content: flex-start; align-items: center; gap: 0.5rem;">
-      <input type="text" id="searchInput" placeholder="Search Vehicle Engine Capacity..."
+    <form method="GET" action="{{ route('vehicle-engine-capacity.index') }}" style="margin-bottom: 1rem; display: flex; justify-content: flex-start; align-items: center; gap: 0.5rem;">
+      <input type="text" name="search" id="searchInput" placeholder="Search Vehicle Engine Capacity..." value="{{ request('search') }}"
         style="border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.5rem 0.75rem; width: 100%; max-width: 300px; outline: none;">
-      <button type="button"
+      <button type="submit"
         style="background-color: #f97316; color: white; border: none; border-radius: 0.375rem; padding: 0.4rem 0.8rem; cursor: pointer; font-size: 0.875rem;">
         🔍 
       </button>
-    </div>
+    </form>
 
     <!-- Table -->
     <div style="overflow-x: auto;">
@@ -41,21 +42,30 @@
         style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden;">
         <thead style="background-color: #f97316; color: white; cursor: pointer;">
           <tr>
-            <th  style="padding: 0.75rem;" onclick="sortTable(0)">Vehicle Engine Capacity &#x25B2;&#x25BC;</th>
+            <th style="padding: 0.75rem;" onclick="sortTable(0)">Vehicle Engine Capacity &#x25B2;&#x25BC;</th>
             <th style="padding: 0.75rem; text-align: center;">Actions</th>
           </tr>
         </thead>
         <tbody id="tableBody">
-          @foreach (['6540', '5070'] as $vehicle)
+          @foreach ($capacities as $capacity)
             <tr>
-              <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $vehicle }}</td>
+              <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $capacity->engine_capacity }}</td>
               <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
-                <button style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">
-                  Update
-                </button>
-                <button style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">
-                  Delete
-                </button>
+                <!-- Update -->
+                <form action="{{ url('vehicle-engine-capacity/update/' . $capacity->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('POST') {{-- or remove @method if you’ve defined the route as POST --}}
+                    <input type="text" name="engine_capacity" value="{{ $capacity->engine_capacity }}" style="padding: 0.25rem; border-radius: 0.25rem; border: 1px solid #ccc;">
+                    <button type="submit" style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">Update</button>
+                </form>
+
+
+                <!-- Delete -->
+                <form action="{{ route('vehicle-engine-capacity.destroy', $capacity->id) }}" method="POST" style="display:inline;">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Delete</button>
+                </form>
               </td>
             </tr>
           @endforeach
