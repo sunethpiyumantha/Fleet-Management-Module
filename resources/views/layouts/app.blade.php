@@ -432,37 +432,37 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="elements-navigation.html">
+                                            <a href="{{ route('vehicle-engine-capacity') }}">
                                                 <i class="metismenu-icon">
                                                 </i>Vehicle Engine Capacity
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="elements-utilities.html">
+                                            <a href="{{ route('fuel-type') }}">
                                                 <i class="metismenu-icon">
                                                 </i>Fuel Type
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="elements-utilities.html">
+                                            <a href="{{ route('vehicle-color') }}">
                                                 <i class="metismenu-icon">
                                                 </i>Vehicle Color
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="elements-utilities.html">
+                                            <a href="{{ route('vehicle-status') }}">
                                                 <i class="metismenu-icon">
                                                 </i>Vehicle Status
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="elements-utilities.html">
+                                            <a href="{{ route('workshop') }}">
                                                 <i class="metismenu-icon">
                                                 </i>Workshop
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="elements-utilities.html">
+                                            <a href="{{ route('establishment') }}">
                                                 <i class="metismenu-icon">
                                                 </i>Establishment
                                             </a>
