@@ -2,7 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+<<<<<<< HEAD
 use App\Http\Controllers\VehicleEngineCapacityController;
+=======
+use App\Http\Controllers\VehicleTypeController;
+
+>>>>>>> 1c73af9 (vehicle type migration added)
 
 Route::get('/', function () {
     return view('welcome');
@@ -13,9 +18,12 @@ Route::get('/test', function () {
     return 'Test route works!';
 });
 
-Route::get('/vehicle', function () {
-    return view('vehicle');
-})->name('vehicle');
+
+
+Route::resource('vehicle-type', VehicleTypeController::class);
+
+
+
 
 
 
