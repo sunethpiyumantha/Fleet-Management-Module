@@ -2,12 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
-<<<<<<< HEAD
 use App\Http\Controllers\VehicleEngineCapacityController;
-=======
 use App\Http\Controllers\VehicleTypeController;
-
->>>>>>> 1c73af9 (vehicle type migration added)
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,20 +14,12 @@ Route::get('/test', function () {
     return 'Test route works!';
 });
 
-
-
 Route::resource('vehicle-type', VehicleTypeController::class);
-
-
-
-
-
 
 Route::get('/vehicle-engine-capacity', [VehicleEngineCapacityController::class, 'index'])->name('vehicle-engine-capacity.index');
 Route::post('/vehicle-engine-capacity/store', [VehicleEngineCapacityController::class, 'store'])->name('vehicle-engine-capacity.store');
 Route::post('/vehicle-engine-capacity/update/{id}', [VehicleEngineCapacityController::class, 'update']);
 Route::delete('/vehicle-engine-capacity/delete/{id}', [VehicleEngineCapacityController::class, 'destroy'])->name('vehicle-engine-capacity.destroy');
-
 
 Route::get('/fuel-type', function () {
     return view('fuel-type');
@@ -80,7 +68,3 @@ Route::get('/vehicle-models', function () {
 Route::get('/vehicle-catogory', function () {
     return view('vehicle-catogory');
 })->name('vehicle-catogory');
-
-
-
-
