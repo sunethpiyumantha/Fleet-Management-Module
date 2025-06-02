@@ -65,6 +65,10 @@ Route::get('/vehicle-models', function () {
     return view('vehicle-models');
 })->name('vehicle-models');
 
+Route::get('/vehicle-catogory', function () {
+    return view('vehicle-catogory');
+})->name('vehicle-catogory');
+
 
 
 

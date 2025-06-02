@@ -63,7 +63,7 @@
             </div>    
             <div class="app-header__content">
                 <div>
-                    <h1 style="text-align: center; font-weight: bold;">Fleet Management Module</h1>
+                    <h2 style="text-align: center; font-weight: bold;">Fleet Management Module</h2>
                 </div>
             </div>
         </div>        
@@ -405,6 +405,12 @@
                                             <a href="{{ route('vehicle-allocation') }}">
                                                 <i class="metismenu-icon">
                                                 </i>Vehicle Allocation Type
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('vehicle-catogory') }}">
+                                                <i class="metismenu-icon">
+                                                </i>Vehicle Category
                                             </a>
                                         </li>
                                         <li>
