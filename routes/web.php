@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\VehicleTypeController;
 
 
 Route::get('/', function () {
@@ -13,9 +14,12 @@ Route::get('/test', function () {
     return 'Test route works!';
 });
 
-Route::get('/vehicle', function () {
-    return view('vehicle');
-})->name('vehicle');
+
+
+
+Route::resource('vehicle-type', VehicleTypeController::class);
+
+
 
 Route::get('/vehicle-engine-capacity', function () {
     return view('vehicle-engine-capacity');
