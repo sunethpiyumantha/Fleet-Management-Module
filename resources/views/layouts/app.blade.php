@@ -387,7 +387,7 @@
                                         
                                     </a>
                                 </li>
-                                <li class="app-sidebar__heading">Fleet Management Module</li>
+                                <li class="app-sidebar__heading">Master Data</li>
                                 <li>
                                     <a href="#">
                                         <i class="metismenu-icon pe-7s-diamond"></i>
