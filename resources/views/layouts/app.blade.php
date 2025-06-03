@@ -444,7 +444,7 @@
 
                                         </li>
                                         <li>
-                                            <a href="{{ route('fuel-type') }}">
+                                            <a href="{{ route('fuel-types.index') }}">
                                                 <i class="metismenu-icon">
                                                 </i>Fuel Type
                                             </a>
