@@ -10,6 +10,7 @@ use App\Http\Controllers\VehicleStatusController;
 use App\Http\Controllers\WorkshopController;
 use App\Http\Controllers\EstablishmentController;
 use App\Http\Controllers\VehicleModelController;
+use App\Http\Controllers\VehicleMakeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -70,9 +71,10 @@ Route::get('/vehicle-tire-sizes', function () {
     return view('vehicle-tire-sizes');
 })->name('vehicle-tire-sizes');
 
-Route::get('/vehicle-make', function () {
-    return view('vehicle-make');
-})->name('vehicle-make');
+Route::get('/vehicle-make', [VehicleMakeController::class, 'index'])->name('vehicle-make.index');
+Route::post('/vehicle-make', [VehicleMakeController::class, 'store'])->name('vehicle-make.store');
+Route::post('/vehicle-make/{id}', [VehicleMakeController::class, 'update'])->name('vehicle-make.update');
+Route::delete('/vehicle-make/{id}', [VehicleMakeController::class, 'destroy'])->name('vehicle-make.destroy');
 
 Route::get('/vehicle-models', [VehicleModelController::class, 'index'])->name('vehicle-models.index');
 Route::post('/vehicle-models', [VehicleModelController::class, 'store'])->name('vehicle-models.store');
