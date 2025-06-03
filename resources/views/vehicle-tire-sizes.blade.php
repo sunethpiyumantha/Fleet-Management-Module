@@ -1,23 +1,41 @@
 @extends('layouts.app')
 
-@section('title', 'Vehicle Tyre Size Management')
+@section('title', 'Vehicle Tire Size Management')
 
 @section('content')
 <div style="max-width: 64rem; margin: 0 auto; padding: 2.5rem 1.5rem;">
   <div style="background-color: white; border: 1px solid #f97316; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 1.5rem;">
-    <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">Vehicle Tyre Size Management</h2>
+    <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">Vehicle Tire Size Management</h2>
+
+    <!-- Display Success or Error Messages -->
+    @if (session('success'))
+      <div style="background-color: #d1fae5; color: #065f46; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+        {{ session('success') }}
+      </div>
+    @endif
+
+    @if ($errors->any())
+      <div style="background-color: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+        <ul style="margin: 0; padding-left: 1rem;">
+          @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
 
     <!-- Add Tyre Size Form -->
-    <form class="mb-8" style="margin-bottom: 2rem;">
+    <form class="mb-8" style="margin-bottom: 2rem;" action="{{ route('vehicle-tire-sizes.store') }}" method="POST">
+      @csrf
       <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
         <div style="flex: 1 1 250px;">
-          <label for="frontTyre" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Front Tyre Size</label>
-          <input type="text" id="frontTyre" name="front_tyre" placeholder="Eg: 205/60R16"
+          <label for="frontTyre" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Front Tire Size</label>
+          <input type="text" id="frontTyre" name="front_tire_size" placeholder="Eg: 205/60R16" required value="{{ old('front_tire_size') }}"
             style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none;">
         </div>
         <div style="flex: 1 1 250px;">
-          <label for="rearTyre" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Rear Tyre Size</label>
-          <input type="text" id="rearTyre" name="rear_tyre" placeholder="Eg: 31x10.50R15"
+          <label for="rearTyre" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Rear Tire Size</label>
+          <input type="text" id="rearTyre" name="rear_tire_size" placeholder="Eg: 31x10.50R15" required value="{{ old('rear_tire_size') }}"
             style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none;">
         </div>
         <div style="align-self: flex-end;">
@@ -31,14 +49,14 @@
     </form>
 
     <!-- Search -->
-    <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-      <input type="text" id="searchInput" placeholder="Search Tyre Size..."
+    <form method="GET" action="{{ route('vehicle-tire-sizes.index') }}" style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+      <input type="text" id="searchInput" name="search" placeholder="Search Tire Size..." value="{{ request('search') }}"
         style="border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.5rem 0.75rem; width: 100%; max-width: 300px; outline: none;">
-      <button type="button"
+      <button type="submit"
         style="background-color: #f97316; color: white; border: none; border-radius: 0.375rem; padding: 0.4rem 0.8rem; cursor: pointer; font-size: 0.875rem;">
         🔍
       </button>
-    </div>
+    </form>
 
     <!-- Table -->
     <div style="overflow-x: auto;">
@@ -46,27 +64,32 @@
         style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 0.5rem;">
         <thead style="background-color: #f97316; color: white;">
           <tr>
-            <th style="padding: 0.75rem;" onclick="sortTable(0)">Front Tyre &#x25B2;&#x25BC;</th>
-            <th style="padding: 0.75rem;" onclick="sortTable(1)">Rear Tyre &#x25B2;&#x25BC;</th>
+            <th style="padding: 0.75rem;" onclick="sortTable(0)">Front Tyre ▲▼</th>
+            <th style="padding: 0.75rem;" onclick="sortTable(1)">Rear Tyre ▲▼</th>
             <th style="padding: 0.75rem; text-align: center;">Actions</th>
           </tr>
         </thead>
         <tbody id="tableBody">
-          @foreach ([
-            ['front' => '205/60R16', 'rear' => '205/60R16'],
-            ['front' => '31x10.50R15', 'rear' => '31x10.50R15'],
-            ['front' => '195/65R15', 'rear' => '215/55R17']
-          ] as $tyre)
+          @foreach ($tireSizes as $tireSize)
             <tr>
-              <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $tyre['front'] }}</td>
-              <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $tyre['rear'] }}</td>
+              <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $tireSize->front_tire_size }}</td>
+              <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $tireSize->rear_tire_size }}</td>
               <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
-                <button style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">
-                  Update
-                </button>
-                <button style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">
-                  Delete
-                </button>
+                <!-- Update -->
+                <form action="{{ route('vehicle-tire-sizes.update', $tireSize->id) }}" method="POST" style="display:inline;">
+                  @csrf
+                  @method('POST')
+                  <input type="text" name="front_tire_size" value="{{ $tireSize->front_tire_size }}" style="padding: 0.25rem; border-radius: 0.25rem; border: 1px solid #ccc; width: 100px;">
+                  <input type="text" name="rear_tire_size" value="{{ $tireSize->rear_tire_size }}" style="padding: 0.25rem; border-radius: 0.25rem; border: 1px solid #ccc; width: 100px; margin-left: 0.5rem;">
+                  <button type="submit" style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Update</button>
+                </form>
+
+                <!-- Delete -->
+                <form action="{{ route('vehicle-tire-sizes.destroy', $tireSize->id) }}" method="POST" style="display:inline;">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" onclick="return confirm('Delete this Vehicle Tire Size?')" style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Delete</button>
+                </form>
               </td>
             </tr>
           @endforeach
@@ -75,7 +98,9 @@
     </div>
 
     <!-- Pagination -->
-    <div id="pagination" style="margin-top: 1rem; text-align: center;"></div>
+    <div id="pagination" style="margin-top: 1rem; text-align: center;">
+      {{ $tireSizes->appends(['search' => request('search')])->links() }}
+    </div>
   </div>
 </div>
 
