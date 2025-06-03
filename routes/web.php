@@ -11,6 +11,7 @@ use App\Http\Controllers\WorkshopController;
 use App\Http\Controllers\EstablishmentController;
 use App\Http\Controllers\VehicleModelController;
 use App\Http\Controllers\VehicleTireSizeController;
+use App\Http\Controllers\VehicleMakeController;
 
 Route::get('/', function () {
     return view('welcome');
