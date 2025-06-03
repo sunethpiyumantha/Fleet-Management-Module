@@ -10,6 +10,7 @@ use App\Http\Controllers\VehicleStatusController;
 use App\Http\Controllers\WorkshopController;
 use App\Http\Controllers\EstablishmentController;
 use App\Http\Controllers\VehicleModelController;
+use App\Http\Controllers\VehicleTireSizeController;
 use App\Http\Controllers\VehicleMakeController;
 
 Route::get('/', function () {
@@ -67,9 +68,10 @@ Route::get('/vehicle-sub-catogory', function () {
     return view('vehicle-sub-catogory');
 })->name('vehicle-sub-catogory');
 
-Route::get('/vehicle-tire-sizes', function () {
-    return view('vehicle-tire-sizes');
-})->name('vehicle-tire-sizes');
+Route::get('/vehicle-tire-sizes', [VehicleTireSizeController::class, 'index'])->name('vehicle-tire-sizes.index');
+Route::post('/vehicle-tire-sizes', [VehicleTireSizeController::class, 'store'])->name('vehicle-tire-sizes.store');
+Route::post('/vehicle-tire-sizes/{id}', [VehicleTireSizeController::class, 'update'])->name('vehicle-tire-sizes.update');
+Route::delete('/vehicle-tire-sizes/{id}', [VehicleTireSizeController::class, 'destroy'])->name('vehicle-tire-sizes.destroy');
 
 Route::get('/vehicle-make', [VehicleMakeController::class, 'index'])->name('vehicle-make.index');
 Route::post('/vehicle-make', [VehicleMakeController::class, 'store'])->name('vehicle-make.store');
