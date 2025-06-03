@@ -79,6 +79,28 @@ Route::post('/vehicle-models', [VehicleModelController::class, 'store'])->name('
 Route::post('/vehicle-models/{vehicleModel}', [VehicleModelController::class, 'update'])->name('vehicle-models.update');
 Route::delete('/vehicle-models/{vehicleModel}', [VehicleModelController::class, 'destroy'])->name('vehicle-models.destroy');
 
-Route::get('/vehicle-catogory', function () {
-    return view('vehicle-catogory');
-})->name('vehicle-catogory');
+use App\Http\Controllers\VehicleCategoryController;
+
+Route::get('/vehicle-category', [VehicleCategoryController::class, 'index'])->name('vehicle-category.index');
+Route::post('/vehicle-category', [VehicleCategoryController::class, 'store'])->name('vehicle-category.store');
+Route::post('/vehicle-category/{id}', [VehicleCategoryController::class, 'update'])->name('vehicle-category.update');
+Route::delete('/vehicle-category/{id}', [VehicleCategoryController::class, 'destroy'])->name('vehicle-category.destroy');
+
+use App\Http\Controllers\VehicleAllocationTypeController;
+
+Route::get('/vehicle-allocation-type', [VehicleAllocationTypeController::class, 'index'])->name('vehicle-allocation-type.index');
+Route::post('/vehicle-allocation-type', [VehicleAllocationTypeController::class, 'store'])->name('vehicle-allocation-type.store');
+Route::post('/vehicle-allocation-type/{id}', [VehicleAllocationTypeController::class, 'update'])->name('vehicle-allocation-type.update');
+Route::delete('/vehicle-allocation-type/{id}', [VehicleAllocationTypeController::class, 'destroy'])->name('vehicle-allocation-type.destroy');
+
+use App\Http\Controllers\VehicleSubCategoryController;
+
+// Add these routes with the existing ones
+Route::get('/vehicle-sub-category', [VehicleSubCategoryController::class, 'index'])->name('vehicle-sub-category.index');
+Route::post('/vehicle-sub-category', [VehicleSubCategoryController::class, 'store'])->name('vehicle-sub-category.store');
+Route::post('/vehicle-sub-category/{id}', [VehicleSubCategoryController::class, 'update'])->name('vehicle-sub-category.update');
+Route::delete('/vehicle-sub-category/{id}', [VehicleSubCategoryController::class, 'destroy'])->name('vehicle-sub-category.destroy');
+
+
+
+

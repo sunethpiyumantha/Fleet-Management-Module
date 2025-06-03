@@ -25,7 +25,7 @@
 
 <!-- Inside your layouts.app head -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-
+<script src="https://kit.fontawesome.com/yourkitid.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -402,21 +402,18 @@
                                                 </a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('vehicle-allocation') }}">
-                                                <i class="metismenu-icon">
-                                                </i>Vehicle Allocation Type
+                                            <a href="{{ route('vehicle-allocation-type.index') }}">
+                                                <i class="metismenu-icon"></i>Vehicle Allocation Type
+                                                </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('vehicle-category.index') }}">
+                                                <i class="metismenu-icon"></i>Vehicle Category
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('vehicle-catogory') }}">
-                                                <i class="metismenu-icon">
-                                                </i>Vehicle Category
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="{{ route('vehicle-sub-catogory') }}">
-                                                <i class="metismenu-icon">
-                                                </i>Vehicle Sub Category
+                                            <a href="{{ route('vehicle-sub-category.index') }}">
+                                                <i class="metismenu-icon"></i>Vehicle Sub Category
                                             </a>
                                         </li>
                                         <li>
