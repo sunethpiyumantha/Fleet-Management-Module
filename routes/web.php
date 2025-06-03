@@ -17,7 +17,7 @@ Route::get('/test', function () {
 Route::resource('vehicle-type', VehicleTypeController::class);
 
 Route::get('/vehicle-engine-capacity', [VehicleEngineCapacityController::class, 'index'])->name('vehicle-engine-capacity.index');
-Route::post('/vehicle-engine-capacity/store', [VehicleEngineCapacityController::class, 'store'])->name('vehicle-engine-capacity.store');
+Route::post('/vehicle-engine-capacity', [VehicleEngineCapacityController::class, 'store'])->name('vehicle-engine-capacity.store');
 Route::post('/vehicle-engine-capacity/update/{id}', [VehicleEngineCapacityController::class, 'update']);
 Route::delete('/vehicle-engine-capacity/delete/{id}', [VehicleEngineCapacityController::class, 'destroy'])->name('vehicle-engine-capacity.destroy');
 

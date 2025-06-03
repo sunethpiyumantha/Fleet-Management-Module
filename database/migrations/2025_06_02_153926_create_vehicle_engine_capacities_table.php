@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('vehicle_engine_capacities', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('engine_capacity', 250);
+            $table->string('engine_capacity')->unique();
             $table->timestamps();        // adds created_at and updated_at
             $table->softDeletes();       // adds deleted_at
         });

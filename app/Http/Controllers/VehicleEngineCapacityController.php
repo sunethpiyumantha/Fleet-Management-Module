@@ -17,29 +17,49 @@ class VehicleEngineCapacityController extends Controller
         return view('vehicle-engine-capacity', compact('capacities', 'search'));
     }
 
-    public function store(Request $request)
+   public function store(Request $request)
     {
         $request->validate([
-            'engine_capacity' => 'required|string|max:250'
+            'engine_capacity' => 'required|string|max:250|unique:vehicle_engine_capacities,engine_capacity'
         ]);
 
-        VehicleEngineCapacity::create($request->only('engine_capacity'));
+        VehicleEngineCapacity::create([
+            'engine_capacity' => $request->engine_capacity
+        ]);
+
         return redirect()->back()->with('success', 'Added successfully!');
     }
 
-    public function update(Request $request, $id)
-    {
-        $capacity = VehicleEngineCapacity::findOrFail($id);
-        $capacity->update($request->only('engine_capacity'));
 
-        return redirect()->back()->with('success', 'Updated successfully!');
+
+   public function update(Request $request, $id)
+    {
+        $request->validate([
+            'engine_capacity' => 'required|numeric',
+        ]);
+
+        // Check for duplicate engine_capacity, excluding the current record
+        $exists = VehicleEngineCapacity::where('engine_capacity', $request->engine_capacity)
+            ->where('id', '!=', $id)
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->withErrors(['engine_capacity' => 'Engine capacity already exists.'])->withInput();
+        }
+
+        $capacity = VehicleEngineCapacity::findOrFail($id);
+        $capacity->engine_capacity = $request->engine_capacity;
+        $capacity->save();
+
+        return redirect()->route('vehicle-engine-capacity.index')->with('success', 'Engine capacity updated successfully!');
     }
 
-    public function destroy($id)
+   public function destroy($id)
     {
         $capacity = VehicleEngineCapacity::findOrFail($id);
-        $capacity->delete();
+        $capacity->forceDelete(); // <- use this if you want actual deletion
 
         return redirect()->back()->with('success', 'Deleted successfully!');
     }
+
 }

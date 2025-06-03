@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class VehicleEngineCapacity extends Model
 {
     use SoftDeletes;
-
+    protected $table = 'vehicle_engine_capacities';
     protected $fillable = ['engine_capacity'];
 }
 
