@@ -456,7 +456,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('vehicle-status') }}">
+                                            <a href="{{ route('vehicle-status.index') }}">
                                                 <i class="metismenu-icon">
                                                 </i>Vehicle Status
                                             </a>
