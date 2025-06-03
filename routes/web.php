@@ -9,6 +9,7 @@ use App\Http\Controllers\VehicleColorController;
 use App\Http\Controllers\VehicleStatusController;
 use App\Http\Controllers\WorkshopController;
 use App\Http\Controllers\EstablishmentController;
+use App\Http\Controllers\VehicleModelController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -73,9 +74,10 @@ Route::get('/vehicle-make', function () {
     return view('vehicle-make');
 })->name('vehicle-make');
 
-Route::get('/vehicle-models', function () {
-    return view('vehicle-models');
-})->name('vehicle-models');
+Route::get('/vehicle-models', [VehicleModelController::class, 'index'])->name('vehicle-models.index');
+Route::post('/vehicle-models', [VehicleModelController::class, 'store'])->name('vehicle-models.store');
+Route::post('/vehicle-models/{vehicleModel}', [VehicleModelController::class, 'update'])->name('vehicle-models.update');
+Route::delete('/vehicle-models/{vehicleModel}', [VehicleModelController::class, 'destroy'])->name('vehicle-models.destroy');
 
 Route::get('/vehicle-catogory', function () {
     return view('vehicle-catogory');
