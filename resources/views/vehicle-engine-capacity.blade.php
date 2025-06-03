@@ -5,7 +5,25 @@
 @section('content')
 <div style="max-width: 64rem; margin: 0 auto; padding: 2.5rem 1.5rem;">
   <div style="background-color: white; border: 1px solid #f97316; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 1.5rem;">
-    <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">Vehicle Engine Capacity Management</h2>
+    <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-alignappan: center; margin-bottom: 1.5rem;">Vehicle Engine Capacity Management</h2>
+
+    <!-- Display Success or Error Messages -->
+    @if (session('success'))
+      <div style="background-color: #d1fae5; color: #065f46; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+        {{ session('success') }}
+      </div>
+    @endif
+
+    @if ($errors->any())
+      <div style="background-color: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+        <ul style="margin: 0; padding-left: 1rem;">
+          @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
+
 
     <!-- Form -->
     <form class="mb-8" style="margin-bottom: 2rem;" action="{{ route('vehicle-engine-capacity.store') }}" method="POST">
@@ -42,7 +60,7 @@
         style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden;">
         <thead style="background-color: #f97316; color: white; cursor: pointer;">
           <tr>
-            <th style="padding: 0.75rem;" onclick="sortTable(0)">Vehicle Engine Capacity &#x25B2;&#x25BC;</th>
+            <th style="padding: 0.75rem;" onclick="sortTable(0)">Vehicle Engine Capacity ▲▼</th>
             <th style="padding: 0.75rem; text-align: center;">Actions</th>
           </tr>
         </thead>
@@ -54,17 +72,16 @@
                 <!-- Update -->
                 <form action="{{ url('vehicle-engine-capacity/update/' . $capacity->id) }}" method="POST" style="display:inline;">
                     @csrf
-                    @method('POST') {{-- or remove @method if you’ve defined the route as POST --}}
+                    @method('POST')
                     <input type="text" name="engine_capacity" value="{{ $capacity->engine_capacity }}" style="padding: 0.25rem; border-radius: 0.25rem; border: 1px solid #ccc;">
                     <button type="submit" style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">Update</button>
                 </form>
-
 
                 <!-- Delete -->
                 <form action="{{ route('vehicle-engine-capacity.destroy', $capacity->id) }}" method="POST" style="display:inline;">
                   @csrf
                   @method('DELETE')
-                  <button type="submit" style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Delete</button>
+                  <button type="submit" onclick="return confirm('Delete this Engine Capacity?')" style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Delete</button>
                 </form>
               </td>
             </tr>
