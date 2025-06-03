@@ -7,7 +7,7 @@ use App\Http\Controllers\VehicleTypeController;
 use App\Http\Controllers\FuelTypeController;
 use App\Http\Controllers\VehicleColorController;
 use App\Http\Controllers\VehicleStatusController;
-
+use App\Http\Controllers\WorkshopController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -42,9 +42,10 @@ Route::post('/vehicle-status', [VehicleStatusController::class, 'store'])->name(
 Route::post('/vehicle-status/update/{id}', [VehicleStatusController::class, 'update'])->name('vehicle-status.update');
 Route::delete('/vehicle-status/{id}', [VehicleStatusController::class, 'destroy'])->name('vehicle-status.destroy');
 
-Route::get('/workshop', function () {
-    return view('workshop');
-})->name('workshop');
+Route::get('/workshops', [WorkshopController::class, 'index'])->name('workshops.index');
+Route::post('/workshops', [WorkshopController::class, 'store'])->name('workshops.store');
+Route::post('/workshops/update/{id}', [WorkshopController::class, 'update'])->name('workshops.update');
+Route::delete('/workshops/{id}', [WorkshopController::class, 'destroy'])->name('workshops.destroy');
 
 Route::get('/establishment', function () {
     return view('establishment');

@@ -462,7 +462,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('workshop') }}">
+                                            <a href="{{ route('workshops.index') }}">
                                                 <i class="metismenu-icon">
                                                 </i>Workshop
                                             </a>
