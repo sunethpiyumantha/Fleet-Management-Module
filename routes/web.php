@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\VehicleEngineCapacityController;
 use App\Http\Controllers\VehicleTypeController;
 use App\Http\Controllers\FuelTypeController;
+use App\Http\Controllers\VehicleColorController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,9 +28,12 @@ Route::post('/fuel-types', [FuelTypeController::class, 'store'])->name('fuel-typ
 Route::post('/fuel-types/update/{id}', [FuelTypeController::class, 'update'])->name('fuel-types.update');
 Route::delete('/fuel-types/{id}', [FuelTypeController::class, 'destroy'])->name('fuel-types.destroy');
 
-Route::get('/vehicle-color', function () {
-    return view('vehicle-color');
-})->name('vehicle-color');
+
+
+Route::get('/vehicle-color', [VehicleColorController::class, 'index'])->name('vehicle-color.index');
+Route::post('/vehicle-color', [VehicleColorController::class, 'store'])->name('vehicle-color.store');
+Route::post('/vehicle-color/update/{id}', [VehicleColorController::class, 'update'])->name('vehicle-color.update');
+Route::delete('/vehicle-color/{id}', [VehicleColorController::class, 'destroy'])->name('vehicle-color.destroy');
 
 Route::get('/vehicle-status', function () {
     return view('vehicle-status');
