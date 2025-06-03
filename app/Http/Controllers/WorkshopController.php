@@ -13,7 +13,7 @@ class WorkshopController extends Controller
         $search = $request->query('search');
         $workshops = Workshop::when($search, function ($query, $search) {
             return $query->where('workshop_type', 'like', "%{$search}%");
-        })->paginate(5);
+        })->paginate();
 
         return view('workshop', compact('workshops'));
     }
