@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class VehicleType extends Model
 {
-    //use HasFactory;
+    use HasFactory;
     protected $table = 'vehicle_types';
-    protected $fillable = ['vehicle_type'];
+    protected $fillable = ['type'];
 }

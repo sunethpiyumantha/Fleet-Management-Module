@@ -23,11 +23,10 @@ Route::get('/test', function () {
 });
 
 //Route::resource('vehicle-type', VehicleTypeController::class);
-
 Route::get('/vehicle-types', [VehicleTypeController::class, 'index'])->name('vehicle-types.index');
-Route::post('/vehicle-types', [VehicleTypeController::class, 'store'])->name('vehicle-type.store');
-Route::put('/vehicle-types/update/{id}', [VehicleTypeController::class, 'update'])->name('vehicle-type.update');
-Route::delete('/vehicle-types/delete/{id}', [VehicleTypeController::class, 'destroy'])->name('vehicle-type.destroy');
+Route::post('/vehicle-types', [VehicleTypeController::class, 'store'])->name('vehicle-types.store');
+Route::post('/vehicle-types/{vehicleType}', [VehicleTypeController::class, 'update'])->name('vehicle-types.update');
+Route::delete('/vehicle-types/{vehicleType}', [VehicleTypeController::class, 'destroy'])->name('vehicle-types.destroy');
 
 Route::get('/vehicle-engine-capacity', [VehicleEngineCapacityController::class, 'index'])->name('vehicle-engine-capacity.index');
 Route::post('/vehicle-engine-capacity', [VehicleEngineCapacityController::class, 'store'])->name('vehicle-engine-capacity.store');
