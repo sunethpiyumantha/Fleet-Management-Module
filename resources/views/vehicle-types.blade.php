@@ -5,7 +5,6 @@
 @section('content')
 <div style="max-width: 64rem; margin: 0 auto; padding: 2.5rem 1.5rem;">
   <div style="background-color: white; border: 1px solid #f97316; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 1.5rem;">
-
     <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">Vehicle Type Management</h2>
 
     <!-- Display Success or Error Messages -->
@@ -25,15 +24,15 @@
       </div>
     @endif
 
-    <!-- Add Model Form -->
-    <form class="mb-8" style="margin-bottom: 2rem;" action="{{ route('vehicle-type.store') }}" method="POST">
+    <!-- Form -->
+    <form class="mb-8" style="margin-bottom: 2rem;" action="{{ route('vehicle-types.store') }}" method="POST">
       @csrf
       <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;" class="md:flex-row">
         <div style="width: 100%; max-width: 75%;">
-          <label for="vehicle_type" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Enter Vehicle Type</label>
-          <input type="text" id="vehicle_type" name="vehicle_type" required
+          <label for="vehicleType" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Enter Vehicle Type</label>
+          <input type="text" id="vehicleType" name="type" required
             style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;"
-            value="{{ old('vehicle_type') }}">
+            value="{{ old('type') }}">
         </div>
         <div style="width: 100%; max-width: 25%; margin-top: 1rem;" class="md:mt-0">
           <button type="submit"
@@ -66,21 +65,20 @@
           </tr>
         </thead>
         <tbody id="tableBody">
-          @foreach ($vehicleTypes as $type)
+          @foreach ($types as $type)
             <tr>
-              <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $type->vehicle_type }}</td>
+              <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $type->type }}</td>
               <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
                 <!-- Update -->
-                <form action="{{ route('vehicle-type.update', $type->id) }}" method="POST" style="display:inline;">
+                <form action="{{ route('vehicle-types.update', $type->id) }}" method="POST" style="display:inline;">
                   @csrf
-                  @method('PUT')
-                  <input type="text" name="vehicle_type" value="{{ $type->vehicle_type }}" required 
-                    style="padding: 0.25rem; border-radius: 0.25rem; border: 1px solid #ccc;">
+                  @method('POST')
+                  <input type="text" name="type" value="{{ $type->type }}" style="padding: 0.25rem; border-radius: 0.25rem; border: 1px solid #ccc;">
                   <button type="submit" style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">Update</button>
                 </form>
 
                 <!-- Delete -->
-                <form action="{{ route('vehicle-type.destroy', $type->id) }}" method="POST" style="display:inline;">
+                <form action="{{ route('vehicle-types.destroy', $type->id) }}" method="POST" style="display:inline;">
                   @csrf
                   @method('DELETE')
                   <button type="submit" onclick="return confirm('Delete this Vehicle Type?')" style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Delete</button>
@@ -93,9 +91,7 @@
     </div>
 
     <!-- Pagination -->
-    <div id="pagination" style="margin-top: 1rem; text-align: center;">
-      {{ $vehicleTypes->appends(['search' => request('search')])->links() }}
-    </div>
+    <div id="pagination" style="margin-top: 1rem; text-align: center;"></div>
   </div>
 </div>
 
