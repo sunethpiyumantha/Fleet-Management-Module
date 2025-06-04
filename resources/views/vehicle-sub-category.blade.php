@@ -72,8 +72,8 @@
         style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden;">
         <thead style="background-color: #f97316; color: white; cursor: pointer;">
           <tr>
-            <th style="padding: 0.75rem;">Vehicle Category</th>
-            <th style="padding: 0.75rem;">Sub Category</th>
+            <th style="padding: 0.75rem;" onclick="sortTable(0)">Vehicle Category ▲▼</th>
+            <th style="padding: 0.75rem;" onclick="sortTable(1)">Sub Category ▲▼</th>
             <th style="padding: 0.75rem; text-align: center;">Actions</th>
           </tr>
         </thead>
@@ -120,23 +120,70 @@
 </div>
 
 <script>
-  // Optional: Add client-side sorting if needed
+  const rowsPerPage = 5;
+  let currentPage = 1;
   let sortAsc = true;
+  let tableRows = Array.from(document.querySelectorAll("#subCategoryTable tbody tr"));
+
+  function renderTable() {
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const filtered = tableRows.filter(row =>
+      row.cells[0].innerText.toLowerCase().includes(search) ||
+      row.cells[1].innerText.toLowerCase().includes(search)
+    );
+
+    const start = (currentPage - 1) * rowsPerPage;
+    const paginated = filtered.slice(start, start + rowsPerPage);
+
+    const tbody = document.getElementById("subCategoryTableBody");
+    tbody.innerHTML = "";
+    if (paginated.length === 0) {
+      const row = document.createElement("tr");
+      row.innerHTML = '<td colspan="3" style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">No sub-categories found.</td>';
+      tbody.appendChild(row);
+    } else {
+      paginated.forEach(row => tbody.appendChild(row.cloneNode(true)));
+    }
+
+    renderPagination(filtered.length);
+  }
+
+  function renderPagination(totalRows) {
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+    const container = document.getElementById("pagination");
+    container.innerHTML = "";
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      btn.style = "margin: 0 0.25rem; padding: 0.25rem 0.75rem; background: #f97316; color: white; border: none; border-radius: 0.375rem; cursor: pointer;";
+      if (i === currentPage) {
+        btn.style.backgroundColor = "#ea580c";
+      }
+      btn.addEventListener("click", () => {
+        currentPage = i;
+        renderTable();
+      });
+      container.appendChild(btn);
+    }
+  }
+
+  document.getElementById("searchInput").addEventListener("input", () => {
+    currentPage = 1;
+    renderTable();
+  });
 
   function sortTable(colIndex) {
-    const table = document.getElementById("subCategoryTable");
-    const tableBody = document.getElementById("subCategoryTableBody");
-    const tableRows = Array.from(tableBody.getElementsByTagName("tr"));
     sortAsc = !sortAsc;
-
     tableRows.sort((a, b) => {
       const textA = a.cells[colIndex].innerText.toLowerCase();
       const textB = b.cells[colIndex].innerText.toLowerCase();
       return sortAsc ? textA.localeCompare(textB) : textB.localeCompare(textA);
     });
-
-    tableBody.innerHTML = "";
-    tableRows.forEach(row => tableBody.appendChild(row));
+    renderTable();
   }
+
+  // Initial Render
+  renderTable();
 </script>
 @endsection

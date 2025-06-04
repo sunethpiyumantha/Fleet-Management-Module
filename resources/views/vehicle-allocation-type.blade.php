@@ -93,19 +93,63 @@
 </div>
 
 <script>
+    const rowsPerPage = 5;
+    let currentPage = 1;
     let sortAsc = true;
+    let tableRows = Array.from(document.querySelectorAll("#allocationTable tbody tr"));
+
+    function renderTable() {
+        const search = document.getElementById("searchInput").value.toLowerCase();
+        const filtered = tableRows.filter(row =>
+            row.cells[0].innerText.toLowerCase().includes(search)
+        );
+
+        const start = (currentPage - 1) * rowsPerPage;
+        const paginated = filtered.slice(start, start + rowsPerPage);
+
+        const tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
+        paginated.forEach(row => tbody.appendChild(row.cloneNode(true)));
+
+        renderPagination(filtered.length);
+    }
+
+    function renderPagination(totalRows) {
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+        const container = document.getElementById("pagination");
+        container.innerHTML = "";
+
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            btn.style = "margin: 0 0.25rem; padding: 0.25rem 0.75rem; background: #f97316; color: white; border: none; border-radius: 0.375rem; cursor: pointer;";
+            if (i === currentPage) {
+                btn.style.backgroundColor = "#ea580c";
+            }
+            btn.addEventListener("click", () => {
+                currentPage = i;
+                renderTable();
+            });
+            container.appendChild(btn);
+        }
+    }
+
+    document.getElementById("searchInput").addEventListener("input", () => {
+        currentPage = 1;
+        renderTable();
+    });
+
     function sortTable(colIndex) {
         sortAsc = !sortAsc;
-        const table = document.getElementById("allocationTable");
-        const tbody = document.getElementById("tableBody");
-        const rows = Array.from(tbody.querySelectorAll("tr"));
-        rows.sort((a, b) => {
+        tableRows.sort((a, b) => {
             const textA = a.cells[colIndex].innerText.toLowerCase();
             const textB = b.cells[colIndex].innerText.toLowerCase();
             return sortAsc ? textA.localeCompare(textB) : textB.localeCompare(textA);
         });
-        tbody.innerHTML = "";
-        rows.forEach(row => tbody.appendChild(row));
+        renderTable();
     }
+
+    // Initial Render
+    renderTable();
 </script>
 @endsection

@@ -3,7 +3,7 @@
 @section('content')
 <div style="max-width: 64rem; margin: 0 auto; padding: 2.5rem 1.5rem;">
     <div style="background-color: white; border: 1px solid #f97316; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 1.5rem;">
-        <h2 style="font-size: 1.875rem; font-weight: bold; color: #f97316; text-align: center; margin-bottom: 1.5rem;">Vehicle Category Management</h2>
+        <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">Vehicle Category Management</h2>
 
         <!-- Display Success or Error Messages -->
         @if (session('success'))
@@ -33,7 +33,7 @@
                 <div style="width: 100%; max-width: 25%; margin-top: 1rem;" class="md:mt-0">
                     <button type="submit"
                         style="width: 100%; background-color: #f97316; color: white; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: background-color 0.2s;"
-                        onmouseover="this.style.backgroundColor='#f97316'" onmouseout="this.style.backgroundColor='#f97316'">
+                        onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'">
                         <i class="fa-solid fa-plus-circle" style="margin-right: 0.25rem;"></i> Add
                     </button>
                 </div>
@@ -93,8 +93,51 @@
 </div>
 
 <script>
-    let tableRows = Array.from(document.querySelectorAll("#categoryTable tbody tr"));
+    const rowsPerPage = 5;
+    let currentPage = 1;
     let sortAsc = true;
+    let tableRows = Array.from(document.querySelectorAll("#categoryTable tbody tr"));
+
+    function renderTable() {
+        const search = document.getElementById("searchInput").value.toLowerCase();
+        const filtered = tableRows.filter(row =>
+            row.cells[0].innerText.toLowerCase().includes(search)
+        );
+
+        const start = (currentPage - 1) * rowsPerPage;
+        const paginated = filtered.slice(start, start + rowsPerPage);
+
+        const tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
+        paginated.forEach(row => tbody.appendChild(row.cloneNode(true)));
+
+        renderPagination(filtered.length);
+    }
+
+    function renderPagination(totalRows) {
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+        const container = document.getElementById("pagination");
+        container.innerHTML = "";
+
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            btn.style = "margin: 0 0.25rem; padding: 0.25rem 0.75rem; background: #f97316; color: white; border: none; border-radius: 0.375rem; cursor: pointer;";
+            if (i === currentPage) {
+                btn.style.backgroundColor = "#ea580c";
+            }
+            btn.addEventListener("click", () => {
+                currentPage = i;
+                renderTable();
+            });
+            container.appendChild(btn);
+        }
+    }
+
+    document.getElementById("searchInput").addEventListener("input", () => {
+        currentPage = 1;
+        renderTable();
+    });
 
     function sortTable(colIndex) {
         sortAsc = !sortAsc;
@@ -103,9 +146,10 @@
             const textB = b.cells[colIndex].innerText.toLowerCase();
             return sortAsc ? textA.localeCompare(textB) : textB.localeCompare(textA);
         });
-        const tbody = document.getElementById("tableBody");
-        tbody.innerHTML = "";
-        tableRows.forEach(row => tbody.appendChild(row.cloneNode(true)));
+        renderTable();
     }
+
+    // Initial Render
+    renderTable();
 </script>
 @endsection
