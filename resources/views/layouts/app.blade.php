@@ -387,11 +387,11 @@
                                         
                                     </a>
                                 </li>
-                                <li class="app-sidebar__heading">Master Data</li>
+                                <li class="app-sidebar__heading">Navigation</li>
                                 <li>
                                     <a href="#">
                                         <i class="metismenu-icon pe-7s-diamond"></i>
-                                        Forms
+                                       Master Data
                                         <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                                     </a>
                                     <ul>
