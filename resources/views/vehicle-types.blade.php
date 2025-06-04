@@ -8,15 +8,16 @@
 
     <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">Vehicle Type Management</h2>
 
-    @if(session('success'))
-      <div style="background-color: #d1fae5; color: #065f46; padding: 0.75rem 1rem; margin-bottom: 1rem; border-radius: 0.5rem;">
+    <!-- Display Success or Error Messages -->
+    @if (session('success'))
+      <div style="background-color: #d1fae5; color: #065f46; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
         {{ session('success') }}
       </div>
     @endif
 
     @if ($errors->any())
-      <div style="background-color: #fee2e2; color: #991b1b; padding: 0.75rem 1rem; margin-bottom: 1rem; border-radius: 0.5rem;">
-        <ul style="list-style-type: disc; padding-left: 1.25rem;">
+      <div style="background-color: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+        <ul style="margin: 0; padding-left: 1rem;">
           @foreach ($errors->all() as $error)
             <li>{{ $error }}</li>
           @endforeach
@@ -24,26 +25,20 @@
       </div>
     @endif
 
-    <!-- Form -->
-    <form action="{{ route('vehicle-type.store') }}" method="POST" class="mb-8" style="margin-bottom: 2rem;">
+    <!-- Add Model Form -->
+    <form class="mb-8" style="margin-bottom: 2rem;" action="{{ route('vehicle-type.store') }}" method="POST">
       @csrf
       <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;" class="md:flex-row">
         <div style="width: 100%; max-width: 75%;">
           <label for="vehicle_type" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Enter Vehicle Type</label>
-          <input 
-            type="text" 
-            id="vehicle_type" 
-            name="vehicle_type" 
-            value="{{ old('vehicle_type') }}" 
-            required
-            style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
+          <input type="text" id="vehicle_type" name="vehicle_type" required
+            style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;"
+            value="{{ old('vehicle_type') }}">
         </div>
         <div style="width: 100%; max-width: 25%; margin-top: 1rem;" class="md:mt-0">
-          <button 
-            type="submit"
+          <button type="submit"
             style="width: 100%; background-color: #f97316; color: white; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: background-color 0.2s;"
-            onmouseover="this.style.backgroundColor='#ea580c'" 
-            onmouseout="this.style.backgroundColor='#f97316'">
+            onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'">
             <i class="fa-solid fa-plus-circle" style="margin-right: 0.25rem;"></i> Add
           </button>
         </div>
@@ -51,18 +46,14 @@
     </form>
 
     <!-- Search Bar -->
-    <div style="margin-bottom: 1rem; display: flex; justify-content: flex-start; align-items: center; gap: 0.5rem;">
-      <input 
-        type="text" 
-        id="searchInput" 
-        placeholder="Search Vehicle Type..."
+    <form method="GET" action="{{ route('vehicle-types.index') }}" style="margin-bottom: 1rem; display: flex; justify-content: flex-start; align-items: center; gap: 0.5rem;">
+      <input type="text" name="search" id="searchInput" placeholder="Search Vehicle Type..." value="{{ request('search') }}"
         style="border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.5rem 0.75rem; width: 100%; max-width: 300px; outline: none;">
-      <button 
-        type="button"
+      <button type="submit"
         style="background-color: #f97316; color: white; border: none; border-radius: 0.375rem; padding: 0.4rem 0.8rem; cursor: pointer; font-size: 0.875rem;">
         🔍
       </button>
-    </div>
+    </form>
 
     <!-- Table -->
     <div style="overflow-x: auto;">
@@ -70,7 +61,7 @@
         style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden;">
         <thead style="background-color: #f97316; color: white; cursor: pointer;">
           <tr>
-            <th style="padding: 0.75rem;" onclick="sortTable(0)">Vehicle Type &#x25B2;&#x25BC;</th>
+            <th style="padding: 0.75rem;" onclick="sortTable(0)">Vehicle Type ▲▼</th>
             <th style="padding: 0.75rem; text-align: center;">Actions</th>
           </tr>
         </thead>
@@ -78,33 +69,22 @@
           @foreach ($vehicleTypes as $type)
             <tr>
               <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $type->vehicle_type }}</td>
-              <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6; white-space: nowrap;">
-
-                <!-- Update Form -->
-                <form action="{{ route('vehicle-type.update', $type->id) }}" method="POST" style="display: inline;">
+              <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
+                <!-- Update -->
+                <form action="{{ route('vehicle-type.update', $type->id) }}" method="POST" style="display:inline;">
                   @csrf
                   @method('PUT')
                   <input type="text" name="vehicle_type" value="{{ $type->vehicle_type }}" required 
-                    style="border-radius: 0.375rem; border: 1px solid #d1d5db; padding: 0.25rem 0.5rem; font-size: 0.875rem; width: 8rem;">
-                  <button 
-                    type="submit" 
-                    style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem; cursor: pointer;">
-                    Update
-                  </button>
+                    style="padding: 0.25rem; border-radius: 0.25rem; border: 1px solid #ccc;">
+                  <button type="submit" style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">Update</button>
                 </form>
 
                 <!-- Delete -->
-                <form action="{{ route('vehicle-type.destroy', $type->id) }}" method="POST" style="display: inline; margin-left: 0.5rem;">
+                <form action="{{ route('vehicle-type.destroy', $type->id) }}" method="POST" style="display:inline;">
                   @csrf
                   @method('DELETE')
-                  <button 
-                    type="submit" 
-                    onclick="return confirm('Delete this type?')"
-                    style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; cursor: pointer;">
-                    Delete
-                  </button>
+                  <button type="submit" onclick="return confirm('Delete this Vehicle Type?')" style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Delete</button>
                 </form>
-
               </td>
             </tr>
           @endforeach
@@ -114,15 +94,13 @@
 
     <!-- Pagination -->
     <div id="pagination" style="margin-top: 1rem; text-align: center;">
-      {{ $vehicleTypes->links() }}
+      {{ $vehicleTypes->appends(['search' => request('search')])->links() }}
     </div>
-
   </div>
 </div>
 
 <script>
-  // Client-side sorting and search for enhanced UX, but server-side pagination remains (Laravel pagination)
-  const rowsPerPage = 1000; // effectively show all since Laravel paginates
+  const rowsPerPage = 5;
   let currentPage = 1;
   let sortAsc = true;
   let tableRows = Array.from(document.querySelectorAll("#vehicleTable tbody tr"));
@@ -133,12 +111,38 @@
       row.cells[0].innerText.toLowerCase().includes(search)
     );
 
+    const start = (currentPage - 1) * rowsPerPage;
+    const paginated = filtered.slice(start, start + rowsPerPage);
+
     const tbody = document.getElementById("tableBody");
     tbody.innerHTML = "";
-    filtered.forEach(row => tbody.appendChild(row.cloneNode(true)));
+    paginated.forEach(row => tbody.appendChild(row.cloneNode(true)));
+
+    renderPagination(filtered.length);
+  }
+
+  function renderPagination(totalRows) {
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+    const container = document.getElementById("pagination");
+    container.innerHTML = "";
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      btn.style = "margin: 0 0.25rem; padding: 0.25rem 0.75rem; background: #f97316; color: white; border: none; border-radius: 0.375rem; cursor: pointer;";
+      if (i === currentPage) {
+        btn.style.backgroundColor = "#ea580c";
+      }
+      btn.addEventListener("click", () => {
+        currentPage = i;
+        renderTable();
+      });
+      container.appendChild(btn);
+    }
   }
 
   document.getElementById("searchInput").addEventListener("input", () => {
+    currentPage = 1;
     renderTable();
   });
 
@@ -152,6 +156,7 @@
     renderTable();
   }
 
+  // Initial Render
   renderTable();
 </script>
 @endsection

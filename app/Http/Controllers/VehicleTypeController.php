@@ -9,7 +9,7 @@ class VehicleTypeController extends Controller
 {
     public function index()
     {
-        $vehicleTypes = VehicleType::latest()->paginate(5);
+        $vehicleTypes = VehicleType::latest()->paginate();
         return view('vehicle-types', compact('vehicleTypes'));
     }
 

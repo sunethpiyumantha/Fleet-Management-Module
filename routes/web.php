@@ -22,7 +22,12 @@ Route::get('/test', function () {
     return 'Test route works!';
 });
 
-Route::resource('vehicle-type', VehicleTypeController::class);
+//Route::resource('vehicle-type', VehicleTypeController::class);
+
+Route::get('/vehicle-types', [VehicleTypeController::class, 'index'])->name('vehicle-types.index');
+Route::post('/vehicle-types', [VehicleTypeController::class, 'store'])->name('vehicle-type.store');
+Route::put('/vehicle-types/update/{id}', [VehicleTypeController::class, 'update'])->name('vehicle-type.update');
+Route::delete('/vehicle-types/delete/{id}', [VehicleTypeController::class, 'destroy'])->name('vehicle-type.destroy');
 
 Route::get('/vehicle-engine-capacity', [VehicleEngineCapacityController::class, 'index'])->name('vehicle-engine-capacity.index');
 Route::post('/vehicle-engine-capacity', [VehicleEngineCapacityController::class, 'store'])->name('vehicle-engine-capacity.store');
@@ -60,13 +65,13 @@ Route::get('/index.html', function () {
     return view('welcome');
 });
 
-Route::get('/vehicle-allocation', function () {
+/*Route::get('/vehicle-allocation', function () {
     return view('vehicle-allocation');
 })->name('vehicle-allocation');
 
 Route::get('/vehicle-sub-catogory', function () {
     return view('vehicle-sub-catogory');
-})->name('vehicle-sub-catogory');
+})->name('vehicle-sub-catogory');*/
 
 Route::get('/vehicle-tire-sizes', [VehicleTireSizeController::class, 'index'])->name('vehicle-tire-sizes.index');
 Route::post('/vehicle-tire-sizes', [VehicleTireSizeController::class, 'store'])->name('vehicle-tire-sizes.store');

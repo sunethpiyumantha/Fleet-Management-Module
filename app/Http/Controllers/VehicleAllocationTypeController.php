@@ -12,7 +12,7 @@ class VehicleAllocationTypeController extends Controller
         if ($search) {
             $query->where('type', 'LIKE', "%{$search}%");
         }
-        $types = $query->orderBy('type')->paginate(5);
+        $types = $query->orderBy('type')->paginate();
         return view('vehicle-allocation-type', compact('types'));
     }
     public function store(Request $request)
