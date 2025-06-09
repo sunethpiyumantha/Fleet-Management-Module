@@ -471,6 +471,23 @@
                                             </a>
                                     </ul>
                                 </li>
+                                <li>
+                                    <a href="">
+                                        <i class="metismenu-icon pe-7s-diamond"></i>
+                                       Request by Vehicle
+                                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                                    </a>
+                                    <ul>
+                                        <li>
+                                            <a href="{{ route('request-vehicle') }}">
+                                                <i class="metismenu-icon"></i>
+                                                    Vehicle Request 
+                                                </a>
+                                        </li>
+                                        
+                                </li>
+                                
+                                
                                 
                             </ul>
                         </div>

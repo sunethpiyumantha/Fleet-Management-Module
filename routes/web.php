@@ -110,5 +110,7 @@ Route::post('/vehicle-sub-category/{id}', [VehicleSubCategoryController::class, 
 Route::delete('/vehicle-sub-category/{id}', [VehicleSubCategoryController::class, 'destroy'])->name('vehicle-sub-category.destroy');
 
 
+use App\Http\Controllers\VehicleRequestController;
 
-
+Route::get('/request-vehicle', [VehicleRequestController::class, 'index'])->name('request-vehicle');
+Route::post('/request-vehicle', [VehicleRequestController::class, 'store'])->name('vehicle.request.submit');
