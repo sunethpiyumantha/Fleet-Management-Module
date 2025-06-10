@@ -27,35 +27,65 @@ class VehicleSubCategoryController extends Controller
         return view('vehicle-sub-category', compact('subCategories', 'categories'));
     }
 
-    public function store(Request $request)
+   public function store(Request $request)
     {
-        $request->validate([
-            'cat_id' => 'required|exists:vehicle_categories,id',
-            'sub_category' => 'required|string|max:255',
-        ]);
+        try {
+            $validated = $request->validate([
+                'cat_id' => 'required|integer|exists:vehicle_categories,id',
+                'sub_category' => 'required|string|max:255',
+            ]);
 
-        VehicleSubCategory::create([
-            'cat_id' => $request->cat_id,
-            'sub_category' => $request->sub_category,
-        ]);
+            $validated['sub_category'] = trim($validated['sub_category']);
 
-        return redirect()->route('vehicle-sub-category.index')->with('success', 'Sub-category added successfully.');
+            $exists = VehicleSubCategory::where('cat_id', $validated['cat_id'])
+                ->where('sub_category', $validated['sub_category'])
+                ->exists();
+
+            if ($exists) {
+                return redirect()->route('vehicle-sub-category.index')->withErrors([
+                    'error' => 'The subcategory "' . $validated['sub_category'] . '" already exists for this category.',
+                ])->withInput();
+            }
+
+            VehicleSubCategory::create($validated);
+
+            return redirect()->route('vehicle-sub-category.index')->with('success', 'Vehicle subcategory created successfully!');
+        } catch (UniqueConstraintViolationException $e) {
+            return redirect()->route('vehicle-sub-category.index')->withErrors([
+                'error' => 'The subcategory "' . $validated['sub_category'] . '" already exists for this category.',
+            ])->withInput();
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'cat_id' => 'required|exists:vehicle_categories,id',
-            'sub_category' => 'required|string|max:255',
-        ]);
+        try {
+            $validated = $request->validate([
+                'cat_id' => 'required|integer|exists:vehicle_categories,id',
+                'sub_category' => 'required|string|max:255',
+            ]);
 
-        $subCategory = VehicleSubCategory::findOrFail($id);
-        $subCategory->update([
-            'cat_id' => $request->cat_id,
-            'sub_category' => $request->sub_category,
-        ]);
+            $subCategory = VehicleSubCategory::findOrFail($id);
 
-        return redirect()->route('vehicle-sub-category.index')->with('success', 'Sub-category updated successfully.');
+            $exists = VehicleSubCategory::where('cat_id', $validated['cat_id'])
+                ->where('sub_category', trim($validated['sub_category']))
+                ->where('id', '!=', $id)
+                ->exists();
+
+            if ($exists) {
+                return redirect()->route('vehicle-sub-category.index')->withErrors([
+                    'error' => 'The subcategory "' . $validated['sub_category'] . '" already exists for this category.',
+                ])->withInput();
+            }
+
+            $subCategory->update($validated);
+
+            return redirect()->route('vehicle-sub-category.index')->with('success', 'Vehicle subcategory updated successfully!');
+        } catch (UniqueConstraintViolationException $e) {
+            return redirect()->route('vehicle-sub-category.index')->withErrors([
+                'error' => 'The subcategory "' . $validated['sub_category'] . '" already exists for this category.',
+            ])->withInput();
+        }
     }
 
     public function destroy($id)
@@ -63,6 +93,6 @@ class VehicleSubCategoryController extends Controller
         $subCategory = VehicleSubCategory::findOrFail($id);
         $subCategory->delete();
 
-        return redirect()->route('vehicle-sub-category.index')->with('success', 'Sub-category deleted successfully.');
+        return redirect()->route('vehicle-sub-category.index')->with('success', 'Vehicle subcategory deleted successfully!');
     }
 }

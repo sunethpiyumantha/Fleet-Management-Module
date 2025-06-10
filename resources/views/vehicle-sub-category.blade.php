@@ -30,7 +30,7 @@
             <div style="width: 100%; max-width: 20%;">
                 <label for="vehicleCategory" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Category</label>
                 <select id="vehicleCategory" name="cat_id" required
-                        style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.25rem 0.5rem; color: #374151; font-size: 0.875rem;">
+                        style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.25rem 0.5rem; color: #374151; font-size: 0.875rem; {{ $errors->has('cat_id') ? 'border-color: #b91c1c;' : '' }}">
                     <option value="" disabled {{ old('cat_id') ? '' : 'selected' }}>Select</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category->id }}" {{ old('cat_id') == $category->id ? 'selected' : '' }}>
@@ -38,18 +38,24 @@
                         </option>
                     @endforeach
                 </select>
+                @error('cat_id')
+                    <span style="color: #b91c1c; font-size: 0.75rem; margin-top: 0.25rem; display: block;">{{ $message }}</span>
+                @enderror
             </div>
 
             <!-- Sub Category Input -->
             <div style="width: 100%; max-width: 45%;">
                 <label for="vehicleSubCategory" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Enter Sub Category</label>
                 <input type="text" id="vehicleSubCategory" name="sub_category" required value="{{ old('sub_category') }}"
-                       style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem;">
+                       style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; {{ $errors->has('sub_category') || $errors->has('error') ? 'border-color: #b91c1c;' : '' }}">
+                @error('sub_category')
+                    <span style="color: #b91c1c; font-size: 0.75rem; margin-top: 0.25rem; display: block;">{{ $message }}</span>
+                @enderror
             </div>
 
             <!-- Add Button -->
             <div style="width: 100%; max-width: 25%; margin-top: 1.8rem;" class="md:mt-0">
-                <button type="submit"
+                <button type="submit" aria-label="Add vehicle subcategory"
                         style="width: 100%; background-color: #f97316; color: white; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: background-color 0.2s;"
                         onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'">
                     <i class="fa-solid fa-plus-circle" style="margin-right: 0.25rem;"></i> Add
@@ -97,27 +103,35 @@
                                 <!-- Update Form -->
                                 <form action="{{ route('vehicle-sub-category.update', $subCategory->id) }}" method="POST" style="display: inline;">
                                     @csrf
-                                    @method('POST')
-                                    <input type="text" name="sub_category" value="{{ $subCategory->sub_category }}"
-                                           style="padding: 0.25rem; border-radius: 0.25rem; border: 1px solid #ccc; width: 120px; font-size: 0.875rem;">
+                                    @method('PUT')
+                                    <input type="text" name="sub_category" value="{{ old('sub_category', $subCategory->sub_category) }}"
+                                           style="padding: 0.25rem; border-radius: 0.25rem; border: 1px solid #d1d5db; width: 120px; font-size: 0.875rem; {{ $errors->has('sub_category') ? 'border-color: #b91c1c;' : '' }}">
+                                    @error('sub_category')
+                                        <span style="color: #b91c1c; font-size: 0.75rem; display: block;">{{ $message }}</span>
+                                    @enderror
                                     <select id="vehicleCategory_{{ $subCategory->id }}" name="cat_id" required
-                                            style="border-radius: 0.25rem; border: 1px solid #d1d5db; padding: 0.25rem 0.5rem; color: #374151; width: 100px; font-size: 0.875rem;">
+                                            style="border-radius: 0.25rem; border: 1px solid #d1d5db; padding: 0.25rem 0.5rem; color: #374151; width: 100px; font-size: 0.875rem; {{ $errors->has('cat_id') ? 'border-color: #b91c1c;' : '' }}">
                                         <option value="" disabled>Select</option>
                                         @foreach ($categories as $category)
                                             <option value="{{ $category->id }}"
-                                                    {{ $subCategory->cat_id == $category->id ? 'selected' : '' }}>
+                                                    {{ old('cat_id', $subCategory->cat_id) == $category->id ? 'selected' : '' }}>
                                                 {{ $category->category }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    <button type="submit" style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">Update</button>
+                                    @error('cat_id')
+                                        <span style="color: #b91c1c; font-size: 0.75rem; display: block;">{{ $message }}</span>
+                                    @enderror
+                                    <button type="submit" aria-label="Update vehicle subcategory"
+                                            style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">Update</button>
                                 </form>
                                 <!-- Delete Form -->
                                 <form action="{{ route('vehicle-sub-category.destroy', $subCategory->id) }}" method="POST" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" onclick="return confirm('Delete this Vehicle Sub Category?')"
-                                            style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Delete</button>
+                                            style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;"
+                                            aria-label="Delete vehicle subcategory">Delete</button>
                                 </form>
                             </td>
                         </tr>

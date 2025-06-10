@@ -4,32 +4,22 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateVehicleRequestsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('vehicle_requests', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('cat_id');
-            $table->unsignedBigInteger('sub_cat_id');
-            $table->integer('qty');
+            $table->foreignId('cat_id')->constrained('vehicle_categories')->onDelete('cascade');
+            $table->foreignId('sub_cat_id')->constrained('vehicle_sub_categories')->onDelete('cascade');
+            $table->integer('required_quantity');
             $table->date('date_submit');
-            $table->string('status')->default('1');
             $table->timestamps();
-
-            $table->foreign('cat_id')->references('id')->on('vehicle_categories')->onDelete('cascade');
-            $table->foreign('sub_cat_id')->references('id')->on('vehicle_sub_categories')->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('vehicle_requests');
     }
-};
+}

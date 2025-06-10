@@ -6,7 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class VehicleRequest extends Model
 {
-    protected $fillable = ['cat_id', 'sub_cat_id', 'qty', 'date_submit', 'status'];
+    protected $table = 'vehicle_requests';
+    protected $fillable = ['cat_id', 'sub_cat_id', 'required_quantity', 'date_submit'];
+
+    public function category()
+    {
+        return $this->belongsTo(VehicleCategory::class, 'cat_id');
+    }
 
     public function subCategory()
     {

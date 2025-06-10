@@ -9,11 +9,29 @@ use Illuminate\Http\Request;
 
 class VehicleRequestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->query('search');
+        $sort = $request->query('sort', 'category');
+        $order = $request->query('order', 'asc');
+
+        $query = VehicleRequest::query()
+            ->with(['category', 'subCategory'])
+            ->when($search, fn($q) => $q->whereHas('category', fn($q) => $q->where('category', 'like', "%{$search}%"))
+                                        ->orWhereHas('subCategory', fn($q) => $q->where('sub_category', 'like', "%{$search}%"))
+                                        ->orWhere('required_quantity', 'like', "%{$search}%")
+                                        ->orWhere('date_submit', 'like', "%{$search}%"))
+            ->when($sort == 'category', fn($q) => $q->join('vehicle_categories', 'vehicle_requests.cat_id', '=', 'vehicle_categories.id')
+                                                    ->orderBy('vehicle_categories.category', $order))
+            ->when($sort == 'sub_category', fn($q) => $q->join('vehicle_sub_categories', 'vehicle_requests.sub_cat_id', '=', 'vehicle_sub_categories.id')
+                                                        ->orderBy('vehicle_sub_categories.sub_category', $order))
+            ->when($sort == 'required_quantity', fn($q) => $q->orderBy('required_quantity', $order))
+            ->when($sort == 'date_submit', fn($q) => $q->orderBy('date_submit', $order));
+
+        $vehicles = $query->paginate(10);
         $categories = VehicleCategory::all();
-        $vehicles = VehicleRequest::all(); // Fetch all records from vehicle_requests table
-        return view('request-vehicle', compact('categories', 'vehicles'));
+
+        return view('vehicle-request', compact('vehicles', 'categories'));
     }
 
     public function store(Request $request)
@@ -25,35 +43,46 @@ class VehicleRequestController extends Controller
             'date_submit' => 'required|date',
         ]);
 
-        VehicleRequest::create([
-            'cat_id' => $request->cat_id,
-            'sub_cat_id' => $request->sub_cat_id,
-            'required_quantity' => $request->required_quantity,
-            'date_submit' => $request->date_submit,
-            'status' => '1',
-        ]);
+        VehicleRequest::create($request->only(['cat_id', 'sub_cat_id', 'required_quantity', 'date_submit']));
 
-        return redirect()->back()->with('success', 'Request submitted successfully');
-    }
-
-    public function getSubCategories($catId)
-    {
-        $subCategories = VehicleSubCategory::where('cat_id', $catId)->get();
-        return response()->json($subCategories);
+        return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request submitted successfully.');
     }
 
     public function edit($id)
     {
-        return redirect()->back()->with('message', 'Update functionality to be implemented for ID: ' . $id);
+        $vehicle = VehicleRequest::findOrFail($id);
+        $categories = VehicleCategory::all();
+        $subCategories = VehicleSubCategory::where('cat_id', $vehicle->cat_id)->get();
+
+        return view('vehicle-request-edit', compact('vehicle', 'categories', 'subCategories'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'cat_id' => 'required|exists:vehicle_categories,id',
+            'sub_cat_id' => 'required|exists:vehicle_sub_categories,id',
+            'required_quantity' => 'required|integer|min:1',
+            'date_submit' => 'required|date',
+        ]);
+
+        $vehicle = VehicleRequest::findOrFail($id);
+        $vehicle->update($request->only(['cat_id', 'sub_cat_id', 'required_quantity', 'date_submit']));
+
+        return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request updated successfully.');
     }
 
     public function destroy($id)
     {
-        $vehicle = VehicleRequest::find($id);
-        if ($vehicle) {
-            $vehicle->delete();
-            return redirect()->back()->with('success', 'Vehicle deleted successfully');
-        }
-        return redirect()->back()->with('error', 'Vehicle not found');
+        $vehicle = VehicleRequest::findOrFail($id);
+        $vehicle->delete();
+
+        return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request deleted successfully.');
+    }
+
+    public function getSubCategories($catId)
+    {
+        $subCategories = VehicleSubCategory::where('cat_id', $catId)->get(['id', 'sub_category']);
+        return response()->json($subCategories);
     }
 }

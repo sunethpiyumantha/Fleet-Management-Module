@@ -103,11 +103,9 @@ Route::delete('/vehicle-allocation-type/{id}', [VehicleAllocationTypeController:
 
 use App\Http\Controllers\VehicleSubCategoryController;
 
-// Add these routes with the existing ones
-Route::get('/vehicle-sub-category', [VehicleSubCategoryController::class, 'index'])->name('vehicle-sub-category.index');
-Route::post('/vehicle-sub-category', [VehicleSubCategoryController::class, 'store'])->name('vehicle-sub-category.store');
-Route::post('/vehicle-sub-category/{id}', [VehicleSubCategoryController::class, 'update'])->name('vehicle-sub-category.update');
-Route::delete('/vehicle-sub-category/{id}', [VehicleSubCategoryController::class, 'destroy'])->name('vehicle-sub-category.destroy');
+Route::resource('vehicle-sub-categories', VehicleSubCategoryController::class)->only([
+    'index', 'store', 'update', 'destroy'
+])->names('vehicle-sub-category');
 
 
 use App\Http\Controllers\VehicleRequestController;
@@ -117,3 +115,4 @@ Route::post('/vehicle-request', [VehicleRequestController::class, 'store'])->nam
 Route::get('/get-sub-categories/{catId}', [VehicleRequestController::class, 'getSubCategories']);
 Route::get('/vehicle/{id}/edit', [VehicleRequestController::class, 'edit'])->name('vehicle.edit');
 Route::delete('/vehicle/{id}', [VehicleRequestController::class, 'destroy'])->name('vehicle.destroy');
+Route::get('/get-sub-categories/{catId}', [VehicleRequestController::class, 'getSubCategories'])->name('get.sub.categories');
