@@ -40,10 +40,14 @@ class VehicleRequestController extends Controller
             'cat_id' => 'required|exists:vehicle_categories,id',
             'sub_cat_id' => 'required|exists:vehicle_sub_categories,id',
             'required_quantity' => 'required|integer|min:1',
-            'date_submit' => 'required|date',
         ]);
 
-        VehicleRequest::create($request->only(['cat_id', 'sub_cat_id', 'required_quantity', 'date_submit']));
+        VehicleRequest::create([
+            'cat_id' => $request->cat_id,
+            'sub_cat_id' => $request->sub_cat_id,
+            'required_quantity' => $request->required_quantity,
+            'date_submit' => now(),
+        ]);
 
         return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request submitted successfully.');
     }
@@ -51,10 +55,8 @@ class VehicleRequestController extends Controller
     public function edit($id)
     {
         $vehicle = VehicleRequest::findOrFail($id);
-        $categories = VehicleCategory::all();
-        $subCategories = VehicleSubCategory::where('cat_id', $vehicle->cat_id)->get();
-
-        return view('request-vehicle-edit', compact('vehicle', 'categories', 'subCategories'));
+        $categories = VehicleCategory::all(); // Corrected from Category to VehicleCategory
+        return view('edit-vehicle', compact('vehicle', 'categories'));
     }
 
     public function update(Request $request, $id)
@@ -63,11 +65,15 @@ class VehicleRequestController extends Controller
             'cat_id' => 'required|exists:vehicle_categories,id',
             'sub_cat_id' => 'required|exists:vehicle_sub_categories,id',
             'required_quantity' => 'required|integer|min:1',
-            'date_submit' => 'required|date',
         ]);
 
         $vehicle = VehicleRequest::findOrFail($id);
-        $vehicle->update($request->only(['cat_id', 'sub_cat_id', 'required_quantity', 'date_submit']));
+        $vehicle->update([
+            'cat_id' => $request->cat_id,
+            'sub_cat_id' => $request->sub_cat_id,
+            'required_quantity' => $request->required_quantity,
+            'date_submit' => now(), // Auto-update timestamp
+        ]);
 
         return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request updated successfully.');
     }
@@ -76,8 +82,7 @@ class VehicleRequestController extends Controller
     {
         $vehicle = VehicleRequest::findOrFail($id);
         $vehicle->delete();
-
-        return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request deleted successfully.');
+        return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request deleted successfully!');
     }
 
     public function getSubCategories($catId)

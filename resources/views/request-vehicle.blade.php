@@ -3,6 +3,7 @@
 @section('title', 'Vehicle Request')
 
 @section('content')
+<!-- Main container -->
 <div style="max-width: 64rem; margin: 0 auto; padding: 2.5rem 1.5rem;">
     <div style="background-color: white; border: 1px solid #f97316; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 1.5rem;">
         <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">Vehicle Request</h2>
@@ -23,7 +24,7 @@
             </div>
         @endif
 
-        <!-- Form -->
+        <!-- Form for vehicle request submission -->
         <form style="margin-bottom: 2rem;" method="POST" action="{{ route('vehicle.request.store') }}">
             @csrf
             <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;" class="md:flex-row md:flex-wrap md:justify-center">
@@ -41,7 +42,7 @@
 
                 <!-- Sub-Vehicle Category Dropdown -->
                 <div style="width: 100%; max-width: 25%;">
-                    <label for="sub_cat_id" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Sub-Vehicle Category</label>
+                    <label for="sub_cat_id" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Sub Category</label>
                     <select id="sub_cat_id" name="sub_cat_id" required
                             style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
                         <option value="" disabled selected>Select Sub-Category</option>
@@ -52,13 +53,6 @@
                 <div style="width: 100%; max-width: 25%;">
                     <label for="required_quantity" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Required Quantity</label>
                     <input type="number" id="required_quantity" name="required_quantity" min="1" required
-                           style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
-                </div>
-
-                <!-- Date Submit Input -->
-                <div style="width: 100%; max-width: 25%;">
-                    <label for="date_submit" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Date Submit</label>
-                    <input type="date" id="date_submit" name="date_submit" required
                            style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
                 </div>
 
@@ -80,11 +74,11 @@
             <button type="submit"
                     style="background-color: #f97316; color: white; border: none; border-radius: 0.375rem; padding: 0.4rem 0.8rem; cursor: pointer; font-size: 0.875rem;"
                     aria-label="Search vehicle requests">
-                🔍
+                <span class="sr-only">Search</span> 🔍
             </button>
         </form>
 
-        <!-- Table -->
+        <!-- Vehicle Requests Table -->
         <div style="overflow-x: auto;">
             <table style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden;">
                 <thead style="background-color: #f97316; color: white;">
@@ -107,12 +101,6 @@
                                 Quantity {{ request('sort') == 'required_quantity' ? (request('order') == 'asc' ? '▲' : '▼') : '▲▼' }}
                             </a>
                         </th>
-                        <th style="padding: 0.75rem; cursor: pointer;">
-                            <a href="{{ route('vehicle.request.index', ['sort' => 'date_submit', 'order' => request('order') == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}"
-                               style="text-decoration: none; color: white;">
-                                Date Submit {{ request('sort') == 'date_submit' ? (request('order') == 'asc' ? '▲' : '▼') : '▲▼' }}
-                            </a>
-                        </th>
                         <th style="padding: 0.75rem; text-align: center;">Actions</th>
                     </tr>
                 </thead>
@@ -120,36 +108,35 @@
                     @forelse ($vehicles as $vehicle)
                         <tr>
                             <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">
-                                {{ $vehicle->category ? $vehicle->category->category : 'N/A' }}
+                                {{ optional($vehicle->category)->category ?? 'N/A' }}
                             </td>
                             <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">
-                                {{ $vehicle->subCategory ? $vehicle->subCategory->sub_category : 'N/A' }}
+                                {{ optional($vehicle->subCategory)->sub_category ?? 'N/A' }}
                             </td>
                             <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">
                                 {{ $vehicle->required_quantity }}
                             </td>
-                            <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">
-                                {{ $vehicle->date_submit->format('Y-m-d') }}
-                            </td>
                             <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
-                                <form action="{{ route('vehicle.request.edit', $vehicle->id) }}" method="GET" style="display: inline;">
-                                    <button type="submit" style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">
-                                        Update
-                                    </button>
-                                </form>
-                                <form action="{{ route('vehicle.request.destroy', $vehicle->id) }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" onclick="return confirm('Delete this Vehicle Request?')"
-                                            style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">
-                                        Delete
-                                    </button>
-                                </form>
+                                @if($vehicle->id)
+                                    <form action="{{ route('vehicle.request.edit', $vehicle->id) }}" method="GET" style="display: inline;">
+                                        <button type="submit" style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">
+                                            Update
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('vehicle.request.destroy', $vehicle->id) }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" onclick="return confirm('Delete this Vehicle Request?')"
+                                                style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">
+                                            Delete
+                                        </button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">No vehicle requests found.</td>
+                            <td colspan="4" style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">No vehicle requests found.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -166,44 +153,44 @@
 <script>
     // Update sub-vehicle category dropdown based on vehicle category selection
     document.getElementById('cat_id').addEventListener('change', function() {
-            const catId = this.value;
-            console.log('Selected catId:', catId); // Log the selected category ID
-            if (!catId) {
-                const subVehicleSelect = document.getElementById('sub_cat_id');
-                subVehicleSelect.innerHTML = '<option value="" disabled selected>Select Sub-Category</option>';
-                return;
-            }
+        const catId = this.value;
+        const subVehicleSelect = document.getElementById('sub_cat_id');
+        subVehicleSelect.innerHTML = '<option value="" disabled selected>Select Sub-Category</option>';
 
-            fetch(`/get-sub-categories/${catId}`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(response => {
-                console.log('Response status:', response.status); // Log status
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Fetched data:', data); // Log the data
-                const subVehicleSelect = document.getElementById('sub_cat_id');
-                subVehicleSelect.innerHTML = '<option value="" disabled selected>Select Sub-Category</option>';
-                data.forEach(subCat => {
-                    const option = document.createElement('option');
-                    option.value = subCat.id;
-                    option.textContent = subCat.sub_category;
-                    subVehicleSelect.appendChild(option);
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching sub-categories:', error);
-                alert('Failed to load sub-categories. Please try again.');
-                const subVehicleSelect = document.getElementById('sub_cat_id');
-                subVehicleSelect.innerHTML = '<option value="" disabled selected>Error loading sub-categories</option>';
+        if (!catId) return;
+
+        fetch(`/get-sub-categories/${catId}`, {
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            data.forEach(subCat => {
+                const option = document.createElement('option');
+                option.value = subCat.id;
+                option.textContent = subCat.sub_category;
+                subVehicleSelect.appendChild(option);
             });
+        })
+        .catch(error => {
+            console.error('Error fetching sub-categories:', error);
+            subVehicleSelect.innerHTML = '<option value="" disabled selected>Error loading sub-categories</option>';
+            alert('Failed to load sub-categories. Please refresh the page or contact support.');
         });
+    });
+
+    // Client-side validation for quantity
+    document.querySelector('form[method="POST"]').addEventListener('submit', function(e) {
+        const quantity = document.getElementById('required_quantity').value;
+        if (quantity < 1) {
+            e.preventDefault();
+            alert('Quantity must be at least 1.');
+        }
+    });
 </script>
 @endsection
