@@ -21,7 +21,7 @@ class VehicleSubCategoryController extends Controller
                                         ->orWhere('vehicle_sub_categories.sub_category', 'like', "%{$search}%"))
             ->orderBy($sort == 'category' ? 'vehicle_categories.category' : 'vehicle_sub_categories.sub_category', $order);
 
-        $subCategories = $query->paginate(10);
+        $subCategories = $query->orderBy($sort, $order)->get();
         $categories = VehicleCategory::all();
 
         return view('vehicle-sub-category', compact('subCategories', 'categories'));
