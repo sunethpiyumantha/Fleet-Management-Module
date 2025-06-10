@@ -112,7 +112,10 @@ use App\Http\Controllers\VehicleRequestController;
 
 Route::get('/vehicle-request', [VehicleRequestController::class, 'index'])->name('vehicle.request.index');
 Route::post('/vehicle-request', [VehicleRequestController::class, 'store'])->name('vehicle.request.store');
-Route::get('/get-sub-categories/{catId}', [VehicleRequestController::class, 'getSubCategories']);
-Route::get('/vehicle/{id}/edit', [VehicleRequestController::class, 'edit'])->name('vehicle.edit');
-Route::delete('/vehicle/{id}', [VehicleRequestController::class, 'destroy'])->name('vehicle.destroy');
-Route::get('/get-sub-categories/{catId}', [VehicleRequestController::class, 'getSubCategories'])->name('get.sub.categories');
+// Use a consistent naming convention for the sub-categories route
+Route::get('/get-sub-categories/{catId}', [VehicleRequestController::class, 'getSubCategories'])->name('vehicle.request.subcategories');
+// Use resource-like routes for consistency
+Route::get('/vehicle-request/{id}/edit', [VehicleRequestController::class, 'edit'])->name('vehicle.request.edit');
+Route::put('/vehicle-request/{id}', [VehicleRequestController::class, 'update'])->name('vehicle.request.update');
+Route::delete('/vehicle-request/{id}', [VehicleRequestController::class, 'destroy'])->name('vehicle.request.destroy');
+

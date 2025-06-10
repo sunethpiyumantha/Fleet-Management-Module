@@ -31,7 +31,7 @@ class VehicleRequestController extends Controller
         $vehicles = $query->paginate(10);
         $categories = VehicleCategory::all();
 
-        return view('vehicle-request', compact('vehicles', 'categories'));
+        return view('request-vehicle', compact('vehicles', 'categories'));
     }
 
     public function store(Request $request)
@@ -54,7 +54,7 @@ class VehicleRequestController extends Controller
         $categories = VehicleCategory::all();
         $subCategories = VehicleSubCategory::where('cat_id', $vehicle->cat_id)->get();
 
-        return view('vehicle-request-edit', compact('vehicle', 'categories', 'subCategories'));
+        return view('request-vehicle-edit', compact('vehicle', 'categories', 'subCategories'));
     }
 
     public function update(Request $request, $id)

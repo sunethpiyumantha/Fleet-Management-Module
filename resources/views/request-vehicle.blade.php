@@ -166,26 +166,29 @@
 <script>
     // Update sub-vehicle category dropdown based on vehicle category selection
     document.getElementById('cat_id').addEventListener('change', function() {
-        const catId = this.value;
-        if (!catId) {
-            const subVehicleSelect = document.getElementById('sub_cat_id');
-            subVehicleSelect.innerHTML = '<option value="" disabled selected>Select Sub-Category</option>';
-            return;
-        }
-
-        fetch(`/get-sub-categories/${catId}`, {
-            headers: {
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            const catId = this.value;
+            console.log('Selected catId:', catId); // Log the selected category ID
+            if (!catId) {
+                const subVehicleSelect = document.getElementById('sub_cat_id');
+                subVehicleSelect.innerHTML = '<option value="" disabled selected>Select Sub-Category</option>';
+                return;
             }
-        })
+
+            fetch(`/get-sub-categories/${catId}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
             .then(response => {
+                console.log('Response status:', response.status); // Log status
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 return response.json();
             })
             .then(data => {
+                console.log('Fetched data:', data); // Log the data
                 const subVehicleSelect = document.getElementById('sub_cat_id');
                 subVehicleSelect.innerHTML = '<option value="" disabled selected>Select Sub-Category</option>';
                 data.forEach(subCat => {
@@ -201,6 +204,6 @@
                 const subVehicleSelect = document.getElementById('sub_cat_id');
                 subVehicleSelect.innerHTML = '<option value="" disabled selected>Error loading sub-categories</option>';
             });
-    });
+        });
 </script>
 @endsection
