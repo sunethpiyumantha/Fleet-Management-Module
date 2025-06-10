@@ -8,35 +8,41 @@
     <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">Vehicle Request</h2>
 
     <!-- Form -->
-    <form class="mb-8" style="margin-bottom: 2rem;" method="POST" action="{{ route('vehicle.request.submit') }}">
+    <form class="mb-8" style="margin-bottom: 2rem;" method="POST" action="{{ route('vehicle.request.store') }}">
       @csrf
       <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;" class="md:flex-row md:flex-wrap md:justify-center">
         <!-- Vehicle Category Dropdown -->
         <div style="width: 100%; max-width: 25%;">
-          <label for="vehicleCategory" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Category</label>
-          <select id="vehicleCategory" name="vehicle_category" required
+          <label for="cat_id" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Category</label>
+          <select id="cat_id" name="cat_id" required
             style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
             <option value="" disabled selected>Select Category</option>
-            <option value="Emergency">Emergency</option>
-            <option value="Military">Military</option>
-            <option value="Civilian">Civilian</option>
+            @foreach ($categories as $category)
+              <option value="{{ $category->id }}">{{ $category->category }}</option>
+            @endforeach
           </select>
         </div>
 
         <!-- Sub-Vehicle Category Dropdown -->
         <div style="width: 100%; max-width: 25%;">
-          <label for="subVehicleCategory" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Sub-Vehicle Category</label>
-          <select id="subVehicleCategory" name="sub_vehicle_category" required
+          <label for="sub_cat_id" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Sub-Vehicle Category</label>
+          <select id="sub_cat_id" name="sub_cat_id" required
             style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
-            <option value="" disabled selected>Select Sub-Category</option>
-            <!-- Options will be dynamically populated based on vehicle category -->
+            <option value="" disabled selected>Select Sub_Category</option>
           </select>
         </div>
 
         <!-- Required Quantity Input -->
         <div style="width: 100%; max-width: 25%;">
-          <label for="requiredQuantity" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Required Quantity</label>
-          <input type="number" id="requiredQuantity" name="required_quantity" min="1" required
+          <label for="required_quantity" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Required Quantity</label>
+          <input type="number" id="required_quantity" name="required_quantity" min="1" required
+            style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
+        </div>
+
+        <!-- Date Submit Input -->
+        <div style="width: 100%; max-width: 25%;">
+          <label for="date_submit" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Date Submit</label>
+          <input type="date" id="date_submit" name="date_submit" required
             style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
         </div>
 
@@ -72,16 +78,23 @@
           </tr>
         </thead>
         <tbody id="tableBody">
-          @foreach (['Army Vehicle', 'Hired Vehicle', 'Medical Van', 'Police Jeep', 'Ambulance', 'Fire Truck'] as $vehicle)
+          @foreach ($vehicles as $vehicle)
             <tr>
-              <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $vehicle }}</td>
+              <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $vehicle->sub_cat_id }}</td> <!-- Adjust to the field you want to display, e.g., sub_cat_id or a related name -->
               <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
-                <button style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">
-                  Update
-                </button>
-                <button style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">
-                  Delete
-                </button>
+                <form action="{{ route('vehicle.edit', $vehicle->id) }}" method="GET" style="display: inline;">
+                  @csrf
+                  <button type="submit" style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">
+                    Update
+                  </button>
+                </form>
+                <form action="{{ route('vehicle.destroy', $vehicle->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this vehicle?');">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">
+                    Delete
+                  </button>
+                </form>
               </td>
             </tr>
           @endforeach
@@ -100,27 +113,21 @@
   let sortAsc = true;
   let tableRows = Array.from(document.querySelectorAll("#vehicleTable tbody tr"));
 
-  // Sub-vehicle category options based on vehicle category
-  const subCategories = {
-    Emergency: ['Ambulance', 'Fire Truck', 'Police Jeep'],
-    Military: ['Army Vehicle', 'Armored Car', 'Transport Truck'],
-    Civilian: ['Hired Vehicle', 'Medical Van', 'Delivery Van']
-  };
-
   // Update sub-vehicle category dropdown based on vehicle category selection
-  document.getElementById('vehicleCategory').addEventListener('change', function() {
-    const subVehicleSelect = document.getElementById('subVehicleCategory');
-    const selectedCategory = this.value;
-    subVehicleSelect.innerHTML = '<option value="" disabled selected>Select Sub-Category</option>';
-
-    if (selectedCategory && subCategories[selectedCategory]) {
-      subCategories[selectedCategory].forEach(subCategory => {
-        const option = document.createElement('option');
-        option.value = subCategory;
-        option.textContent = subCategory;
-        subVehicleSelect.appendChild(option);
+  document.getElementById('cat_id').addEventListener('change', function() {
+    const catId = this.value;
+    fetch(`/get-sub-categories/${catId}`)
+      .then(response => response.json())
+      .then(data => {
+        const subVehicleSelect = document.getElementById('sub_cat_id');
+        subVehicleSelect.innerHTML = '<option value="" disabled selected>Select Sub-Category</option>';
+        data.forEach(subCat => {
+          const option = document.createElement('option');
+          option.value = subCat.id;
+          option.textContent = subCat.name;
+          subVehicleSelect.appendChild(option);
+        });
       });
-    }
   });
 
   function renderTable() {

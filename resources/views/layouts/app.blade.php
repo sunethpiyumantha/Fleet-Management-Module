@@ -479,7 +479,7 @@
                                     </a>
                                     <ul>
                                         <li>
-                                            <a href="{{ route('request-vehicle') }}">
+                                            <a href="{{ route('vehicle.request.index') }}">
                                                 <i class="metismenu-icon"></i>
                                                     Vehicle Request 
                                                 </a>
