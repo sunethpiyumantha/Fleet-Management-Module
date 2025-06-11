@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
     <meta name="description" content="This is an example dashboard created using build-in elements and components.">
     <meta name="msapplication-tap-highlight" content="no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!--
     =========================================================
     * ArchitectUI HTML Theme Dashboard - v1.0.0
@@ -479,7 +480,7 @@
                                     </a>
                                     <ul>
                                         <li>
-                                            <a href="{{ route('request-vehicle') }}">
+                                            <a href="{{ route('vehicle.request.index') }}">
                                                 <i class="metismenu-icon"></i>
                                                     Vehicle Request 
                                                 </a>

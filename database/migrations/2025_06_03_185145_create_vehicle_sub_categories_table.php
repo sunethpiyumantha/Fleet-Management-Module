@@ -1,18 +1,19 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateVehicleSubCategoriesTable extends Migration
 {
     public function up()
     {
         Schema::create('vehicle_sub_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('category');
+            $table->foreignId('cat_id')->constrained('vehicle_categories')->onDelete('cascade');
             $table->string('sub_category');
-            $table->unique(['category', 'sub_category']); // Ensure unique category-sub_category pairs
             $table->timestamps();
+            $table->unique(['cat_id', 'sub_category'], 'vehicle_sub_categories_cat_id_sub_category_unique');
         });
     }
 
@@ -20,4 +21,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('vehicle_sub_categories');
     }
-};
+}
