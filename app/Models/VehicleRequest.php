@@ -7,11 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class VehicleRequest extends Model
 {
     protected $table = 'vehicle_requests';
-    protected $fillable = ['cat_id', 'sub_cat_id', 'required_quantity'];
-    protected $casts = [
-        'date_submit' => 'date', // or 'datetime' if the column includes time
-    ];
-    
+    protected $fillable = ['cat_id', 'sub_cat_id', 'qty', 'date_submit', 'status'];
+
     public function category()
     {
         return $this->belongsTo(VehicleCategory::class, 'cat_id');

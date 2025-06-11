@@ -52,8 +52,8 @@
                 <!-- Required Quantity Input -->
                 <div style="width: 100%; max-width: 25%;">
                     <label for="required_quantity" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Required Quantity</label>
-                    <input type="number" id="required_quantity" name="required_quantity" min="1" required
-                           style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
+                    <input type="number" id="required_quantity" name="qty" min="1" required
+       style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
                 </div>
 
                 <!-- Submit Button -->
@@ -114,7 +114,7 @@
                                 {{ optional($vehicle->subCategory)->sub_category ?? 'N/A' }}
                             </td>
                             <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">
-                                {{ $vehicle->required_quantity }}
+                                {{ $vehicle->qty }}
                             </td>
                             <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
                                 @if($vehicle->id)
@@ -152,7 +152,6 @@
 </div>
 
 <script>
-    // Update sub-vehicle category dropdown based on vehicle category selection
     document.getElementById('cat_id').addEventListener('change', function() {
         const catId = this.value;
         const subVehicleSelect = document.getElementById('sub_cat_id');
@@ -185,13 +184,7 @@
         });
     });
 
-    // Client-side validation for quantity
-    document.querySelector('form[method="POST"]').addEventListener('submit', function(e) {
-        const quantity = document.getElementById('required_quantity').value;
-        if (quantity < 1) {
-            e.preventDefault();
-            alert('Quantity must be at least 1.');
-        }
-    });
+    // Trigger change event on page load to populate sub-categories if cat_id has a value
+    document.getElementById('cat_id').dispatchEvent(new Event('change'));
 </script>
 @endsection

@@ -42,8 +42,8 @@
 
                 <div style="width: 100%; max-width: 25%;">
                     <label for="required_quantity" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Required Quantity</label>
-                    <input type="number" id="required_quantity" name="required_quantity" min="1" value="{{ $vehicle->required_quantity }}" required
-                           style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
+                    <input type="number" id="required_quantity" name="qty" min="1" value="{{ $vehicle->qty }}" required
+       style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
                 </div>
 
                 <div style="width: 100%; max-width: 25%; margin-top: 1rem;" class="md:mt-0">

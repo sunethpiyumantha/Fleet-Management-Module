@@ -14,4 +14,9 @@ class VehicleSubCategory extends Model
     {
         return $this->belongsTo(VehicleCategory::class, 'cat_id');
     }
+
+    public function vehicleRequests()
+    {
+        return $this->hasMany(VehicleRequest::class, 'sub_cat_id');
+    }
 }
