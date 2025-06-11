@@ -118,6 +118,7 @@
                             </td>
                             <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
                                 @if($vehicle->id)
+                                    <p>Vehicle ID: {{ $vehicle->id }}</p> <!-- Debug line -->
                                     <form action="{{ route('vehicle.request.edit', $vehicle->id) }}" method="GET" style="display: inline;">
                                         <button type="submit" style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">
                                             Update

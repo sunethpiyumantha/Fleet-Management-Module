@@ -28,7 +28,7 @@ class VehicleRequestController extends Controller
             ->when($sort == 'required_quantity', fn($q) => $q->orderBy('required_quantity', $order))
             ->when($sort == 'date_submit', fn($q) => $q->orderBy('date_submit', $order));
 
-        $vehicles = $query->paginate(10);
+        $vehicles = $query->paginate();
         $categories = VehicleCategory::all();
 
         return view('request-vehicle', compact('vehicles', 'categories'));
