@@ -59,6 +59,7 @@ Route::get('/establishments', [EstablishmentController::class, 'index'])->name('
 Route::post('/establishments', [EstablishmentController::class, 'store'])->name('establishments.store');
 Route::post('/establishments/{establishment}', [EstablishmentController::class, 'update'])->name('establishments.update');
 Route::delete('/establishments/{id}', [EstablishmentController::class, 'destroy'])->name('establishments.destroy');
+
 Route::get('/index.html', function () {
     return view('welcome');
 });

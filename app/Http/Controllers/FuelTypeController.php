@@ -10,6 +10,7 @@ class FuelTypeController extends Controller
 {
     public function index(Request $request)
     {
+        $fuelTypes = FuelType::all();
         $search = $request->query('search');
         $fuelTypes = FuelType::when($search, function ($query, $search) {
             return $query->where('fuel_type', 'LIKE', "%{$search}%");
@@ -58,13 +59,14 @@ class FuelTypeController extends Controller
     }
 
 
-    public function destroy($id)
-    {
-        $fuelType = FuelType::findOrFail($id);
-        $fuelType->delete();
 
-        return redirect()->route('fuel-types.index')
-                        ->with('success', 'Fuel type deleted successfully.');
+     public function destroy($id)
+    {
+        \Log::info("Attempting to soft delete fuel_type ID: {$id}");
+        $fuelType = FuelType::findOrFail($id);
+        $success = $fuelType->delete();
+        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+        return redirect()->back()->with('success', 'Fuel Type deleted successfully!');
     }
 
 }
