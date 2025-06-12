@@ -16,24 +16,23 @@ class VehicleRequestController extends Controller
         $order = $request->input('order', 'asc');
 
         $vehicles = VehicleRequest::query()
-            ->when($search, function ($query, $search) {
-                return $query->whereHas('category', function ($q) use ($search) {
-                    $q->where('category', 'like', "%{$search}%");
-                })->orWhereHas('subCategory', function ($q) use ($search) {
-                    $q->where('sub_category', 'like', "%{$search}%");
-                });
+            ->when($search, function ($query) use ($search) {
+                $query->whereHas('category', fn ($q) => $q->where('category', 'like', "%{$search}%"))
+                      ->orWhereHas('subCategory', fn ($q) => $q->where('sub_category', 'like', "%{$search}%"));
             })
-            ->when($sort, function ($query, $sort) use ($order) {
-                if ($sort == 'category') {
+            ->when($sort, function ($query) use ($sort, $order) {
+                if ($sort === 'category') {
                     return $query->join('vehicle_categories', 'vehicle_requests.cat_id', '=', 'vehicle_categories.id')
-                        ->orderBy('vehicle_categories.category', $order);
-                } elseif ($sort == 'sub_category') {
+                                 ->orderBy('vehicle_categories.category', $order)
+                                 ->select('vehicle_requests.*'); // Avoid selecting joined table columns
+                } elseif ($sort === 'sub_category') {
                     return $query->join('vehicle_sub_categories', 'vehicle_requests.sub_cat_id', '=', 'vehicle_sub_categories.id')
-                        ->orderBy('vehicle_sub_categories.sub_category', $order);
+                                 ->orderBy('vehicle_sub_categories.sub_category', $order)
+                                 ->select('vehicle_requests.*');
                 } else {
                     return $query->orderBy($sort, $order);
                 }
-            })
+            }, fn ($query) => $query->orderBy('created_at', 'desc')) // Default sort if no match
             ->with(['category', 'subCategory'])
             ->paginate(10);
 
@@ -44,17 +43,13 @@ class VehicleRequestController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'cat_id' => 'required|exists:vehicle_categories,id',
             'sub_cat_id' => 'required|exists:vehicle_sub_categories,id',
             'qty' => 'required|integer|min:1',
         ]);
 
-        VehicleRequest::create([
-            'cat_id' => $request->cat_id,
-            'sub_cat_id' => $request->sub_cat_id,
-            'qty' => $request->qty,
-        ]);
+        VehicleRequest::create($validated);
 
         return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request created successfully.');
     }
@@ -68,18 +63,14 @@ class VehicleRequestController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'cat_id' => 'required|exists:vehicle_categories,id',
             'sub_cat_id' => 'required|exists:vehicle_sub_categories,id',
             'qty' => 'required|integer|min:1',
         ]);
 
         $vehicle = VehicleRequest::findOrFail($id);
-        $vehicle->update([
-            'cat_id' => $request->cat_id,
-            'sub_cat_id' => $request->sub_cat_id,
-            'qty' => $request->qty,
-        ]);
+        $vehicle->update($validated);
 
         return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request updated successfully.');
     }
@@ -95,7 +86,6 @@ class VehicleRequestController extends Controller
     public function getSubCategories($catId)
     {
         $subCategories = VehicleSubCategory::where('cat_id', $catId)->get(['id', 'sub_category']);
-
         return response()->json($subCategories);
     }
 }

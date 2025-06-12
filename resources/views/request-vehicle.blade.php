@@ -53,7 +53,7 @@
                 <div style="width: 100%; max-width: 25%;">
                     <label for="required_quantity" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Required Quantity</label>
                     <input type="number" id="required_quantity" name="qty" min="1" required
-       style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
+                           style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
                 </div>
 
                 <!-- Submit Button -->
@@ -118,7 +118,7 @@
                             </td>
                             <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
                                 @if($vehicle->id)
-                                    <p>Vehicle ID: {{ $vehicle->id }}</p> <!-- Debug line -->
+                                    <p>Vehicle ID: {{ $vehicle->id }}</p>
                                     <form action="{{ route('vehicle.request.edit', $vehicle->id) }}" method="GET" style="display: inline;">
                                         <button type="submit" style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">
                                             Update
@@ -186,5 +186,12 @@
 
     // Trigger change event on page load to populate sub-categories if cat_id has a value
     document.getElementById('cat_id').dispatchEvent(new Event('change'));
+
+    // Disable submit button to prevent multiple submissions
+    document.querySelector('form[method="POST"]').addEventListener('submit', function(e) {
+        const submitButton = this.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.style.opacity = '0.6';
+    });
 </script>
 @endsection
