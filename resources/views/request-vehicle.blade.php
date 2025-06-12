@@ -80,31 +80,22 @@
 
         <!-- Vehicle Requests Table -->
         <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden;">
+            <table id="vehicleTable" style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden;">
                 <thead style="background-color: #f97316; color: white;">
                     <tr>
-                        <th style="padding: 0.75rem; cursor: pointer;">
-                            <a href="{{ route('vehicle.request.index', ['sort' => 'category', 'order' => request('order') == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}"
-                               style="text-decoration: none; color: white;">
-                                Vehicle Category {{ request('sort') == 'category' ? (request('order') == 'asc' ? '▲' : '▼') : '▲▼' }}
-                            </a>
+                        <th style="padding: 0.75rem; cursor: pointer;" onclick="sortTable(0)">
+                            Vehicle Category ▲▼
                         </th>
-                        <th style="padding: 0.75rem; cursor: pointer;">
-                            <a href="{{ route('vehicle.request.index', ['sort' => 'sub_category', 'order' => request('order') == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}"
-                               style="text-decoration: none; color: white;">
-                                Sub Category {{ request('sort') == 'sub_category' ? (request('order') == 'asc' ? '▲' : '▼') : '▲▼' }}
-                            </a>
+                        <th style="padding: 0.75rem; cursor: pointer;" onclick="sortTable(1)">
+                            Sub Category ▲▼
                         </th>
-                        <th style="padding: 0.75rem; cursor: pointer;">
-                            <a href="{{ route('vehicle.request.index', ['sort' => 'required_quantity', 'order' => request('order') == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}"
-                               style="text-decoration: none; color: white;">
-                                Quantity {{ request('sort') == 'required_quantity' ? (request('order') == 'asc' ? '▲' : '▼') : '▲▼' }}
-                            </a>
+                        <th style="padding: 0.75rem; cursor: pointer;" onclick="sortTable(2)">
+                            Quantity ▲▼
                         </th>
                         <th style="padding: 0.75rem; text-align: center;">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tableBody">
                     @forelse ($vehicles as $vehicle)
                         <tr>
                             <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">
@@ -145,13 +136,80 @@
         </div>
 
         <!-- Pagination -->
-        <div style="margin-top: 1rem; text-align: center;">
-            {{ $vehicles->appends(['search' => request('search'), 'sort' => request('sort'), 'order' => request('order')])->links() }}
+        <div id="pagination" style="margin-top: 1rem; text-align: center;">
+            <!-- Pagination buttons will be rendered by JavaScript -->
         </div>
     </div>
 </div>
 
 <script>
+    const rowsPerPage = 5;
+    let currentPage = 1;
+    let sortAsc = true;
+    let tableRows = Array.from(document.querySelectorAll("#vehicleTable tbody tr"));
+
+    function renderTable() {
+        const search = document.getElementById("searchInput").value.toLowerCase();
+        const filtered = tableRows.filter(row =>
+            row.innerText.toLowerCase().includes(search)
+        );
+
+        const start = (currentPage - 1) * rowsPerPage;
+        const paginated = filtered.slice(start, start + rowsPerPage);
+
+        const tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
+        paginated.forEach(row => tbody.appendChild(row.cloneNode(true)));
+
+        renderPagination(filtered.length);
+    }
+
+    function renderPagination(totalRows) {
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+        const container = document.getElementById("pagination");
+        container.innerHTML = "";
+
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            btn.style = "margin: 0 0.25rem; padding: 0.25rem 0.75rem; background: #f97316; color: white; border: none; border-radius: 0.375rem; cursor: pointer;";
+            if (i === currentPage) {
+                btn.style.backgroundColor = "#ea580c";
+            }
+            btn.addEventListener("click", () => {
+                currentPage = i;
+                renderTable();
+            });
+            container.appendChild(btn);
+        }
+    }
+
+    function sortTable(colIndex) {
+        sortAsc = !sortAsc;
+        tableRows.sort((a, b) => {
+            let textA = a.cells[colIndex].innerText.toLowerCase();
+            let textB = b.cells[colIndex].innerText.toLowerCase();
+
+            // Handle numeric sorting for Quantity column
+            if (colIndex === 2) {
+                textA = parseInt(textA) || 0;
+                textB = parseInt(textB) || 0;
+                return sortAsc ? textA - textB : textB - textA;
+            }
+
+            // Text-based sorting for Category and Sub-Category
+            return sortAsc ? textA.localeCompare(textB) : textB.localeCompare(textB);
+        });
+        renderTable();
+    }
+
+    // Handle search input
+    document.getElementById("searchInput").addEventListener("input", () => {
+        currentPage = 1;
+        renderTable();
+    });
+
+    // Sub-category fetch logic
     document.getElementById('cat_id').addEventListener('change', function() {
         const catId = this.value;
         const subVehicleSelect = document.getElementById('sub_cat_id');
@@ -193,5 +251,8 @@
         submitButton.disabled = true;
         submitButton.style.opacity = '0.6';
     });
+
+    // Initial render
+    renderTable();
 </script>
 @endsection
