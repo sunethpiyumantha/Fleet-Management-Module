@@ -25,47 +25,56 @@
         @endif
 
         <!-- Form for vehicle request submission -->
-        <form style="margin-bottom: 2rem;" method="POST" action="{{ route('vehicle.request.store') }}">
-            @csrf
-            <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;" class="md:flex-row md:flex-wrap md:justify-center">
-                <!-- Vehicle Category Dropdown -->
-                <div style="width: 100%; max-width: 25%;">
-                    <label for="cat_id" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Category</label>
-                    <select id="cat_id" name="cat_id" required
-                            style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
-                        <option value="" disabled selected>Select Category</option>
-                        @foreach ($categories as $category)
-                            <option value="{{ $category->id }}">{{ $category->category }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Sub-Vehicle Category Dropdown -->
-                <div style="width: 100%; max-width: 25%;">
-                    <label for="sub_cat_id" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Sub Category</label>
-                    <select id="sub_cat_id" name="sub_cat_id" required
-                            style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
-                        <option value="" disabled selected>Select Sub-Category</option>
-                    </select>
-                </div>
-
-                <!-- Required Quantity Input -->
-                <div style="width: 100%; max-width: 25%;">
-                    <label for="required_quantity" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Required Quantity</label>
-                    <input type="number" id="required_quantity" name="qty" min="1" required
-                           style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
-                </div>
-
-                <!-- Submit Button -->
-                <div style="width: 100%; max-width: 25%; margin-top: 1rem;" class="md:mt-0">
-                    <button type="submit"
-                            style="width: 100%; background-color: #f97316; color: white; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: background-color 0.2s;"
-                            onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'">
-                        <i class="fa-solid fa-plus-circle" style="margin-right: 0.25rem;"></i> Submit
-                    </button>
-                </div>
+        <form class="mb-8" style="margin-bottom: 2rem;" method="POST" action="{{ route('vehicle.request.store') }}">
+    @csrf
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; flex-direction: column;">
+        <!-- First Line: Vehicle Category and Vehicle Sub Category -->
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+            <div style="flex: 1 1 250px;">
+                <label for="cat_id" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Category</label>
+                <select id="cat_id" name="cat_id" required
+                        style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none;">
+                    <option value="" disabled selected>Select Category</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->category }}</option>
+                    @endforeach
+                </select>
             </div>
-        </form>
+
+            <div style="flex: 1 1 250px;">
+                <label for="sub_cat_id" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Sub Category</label>
+                <select id="sub_cat_id" name="sub_cat_id" required
+                        style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none;">
+                    <option value="" disabled selected>Select Sub-Category</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Second Line: Request Type and Required Quantity -->
+        <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center;">
+            <div style="flex: 1 1 250px;">
+                <label for="request_type" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Request Type</label>
+                <input type="text" id="request_type" name="request_type" required
+                       style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none;">
+            </div>
+
+            <div style="flex: 1 1 250px;">
+                <label for="required_quantity" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Required Quantity</label>
+                <input type="number" id="required_quantity" name="qty" min="1" required
+                       style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none;">
+            </div>
+        </div>
+
+        <!-- Third Line: Centered Submit Button -->
+        <div style="flex: 1 1 100%; display: flex; justify-content: center;">
+            <button type="submit"
+                    style="background-color: #f97316; color: white; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer;"
+                    onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'">
+                <i class="fa-solid fa-plus-circle" style="margin-right: 0.25rem;"></i> Submit
+            </button>
+        </div>
+    </div>
+</form>
 
         <!-- Search Bar -->
         <form method="GET" action="{{ route('vehicle.request.index') }}" style="margin-bottom: 1rem; display: flex; justify-content: flex-start; align-items: center; gap: 0.5rem;">
