@@ -34,7 +34,7 @@ class VehicleRequestController extends Controller
                 }
             }, fn ($query) => $query->orderBy('created_at', 'desc')) // Default sort if no match
             ->with(['category', 'subCategory'])
-            ->paginate(10);
+            ->paginate();
 
         $categories = VehicleCategory::all();
 
