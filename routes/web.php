@@ -58,8 +58,7 @@ Route::delete('/workshops/{id}', [WorkshopController::class, 'destroy'])->name('
 Route::get('/establishments', [EstablishmentController::class, 'index'])->name('establishments.index');
 Route::post('/establishments', [EstablishmentController::class, 'store'])->name('establishments.store');
 Route::post('/establishments/{establishment}', [EstablishmentController::class, 'update'])->name('establishments.update');
-Route::delete('/establishments/{establishment}', [EstablishmentController::class, 'destroy'])->name('establishments.destroy');
-
+Route::delete('/establishments/{id}', [EstablishmentController::class, 'destroy'])->name('establishments.destroy');
 Route::get('/index.html', function () {
     return view('welcome');
 });
