@@ -78,10 +78,11 @@
 
                 <!-- Delete -->
                 <form action="{{ route('establishments.destroy', $establishment->id) }}" method="POST" style="display:inline;">
-                  @csrf
-                  @method('DELETE')
-                  <button type="submit" onclick="return confirm('Delete this Establishment?')" style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Delete</button>
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" onclick="return confirm('Delete this Establishment?')" style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Delete</button>
                 </form>
+
               </td>
             </tr>
           @endforeach

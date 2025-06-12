@@ -9,6 +9,9 @@ class EstablishmentController extends Controller
 {
     public function index(Request $request)
     {
+        $establishments = Establishment::all();
+        \Log::info('Fetched establishments: ', $establishments->toArray());
+
         $search = $request->query('search');
         $query = Establishment::query();
 
@@ -52,9 +55,12 @@ class EstablishmentController extends Controller
         return redirect()->route('establishments.index')->with('success', 'Establishment updated successfully.');
     }
 
-    public function destroy(Establishment $establishment)
+   public function destroy($id)
     {
-        $establishment->delete();
-        return redirect()->route('establishments.index')->with('success', 'Establishment deleted successfully.');
+        \Log::info("Attempting to soft delete establishment ID: {$id}");
+        $establishment = Establishment::findOrFail($id);
+        $success = $establishment->delete();
+        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+        return redirect()->back()->with('success', 'Establishment deleted successfully!');
     }
 }
