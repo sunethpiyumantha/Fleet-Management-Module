@@ -7,6 +7,9 @@ class VehicleAllocationTypeController extends Controller
 {
     public function index(Request $request)
     {
+        $types = VehicleAllocationType::all();
+        \Log::info('Fetched Vehicle Allocation Type: ', $types->toArray());
+
         $search = $request->query('search');
         $query = VehicleAllocationType::query();
         if ($search) {
@@ -44,11 +47,13 @@ class VehicleAllocationTypeController extends Controller
         return redirect()->route('vehicle-allocation-type.index')
                          ->with('success', 'Vehicle Allocation Type updated successfully.');
     }
+
     public function destroy($id)
     {
+        \Log::info("Attempting to soft delete Vehicle Allocation ID: {$id}");
         $type = VehicleAllocationType::findOrFail($id);
-        $type->delete();
-        return redirect()->route('vehicle-allocation-type.index')
-                         ->with('success', 'Vehicle Allocation Type deleted successfully.');
+        $success = $type->delete();
+        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+        return redirect()->back()->with('success', 'Vehicle Allocation Type deleted successfully!');
     }
 }

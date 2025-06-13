@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\VehicleCategory;
 use App\Models\VehicleSubCategory;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
 
 class VehicleSubCategoryController extends Controller
 {
@@ -13,26 +14,37 @@ class VehicleSubCategoryController extends Controller
         $search = $request->query('search');
         $sort = $request->query('sort', 'category');
         $order = $request->query('order', 'asc');
+        $perPage = $request->query('per_page', 10);
 
         $query = VehicleSubCategory::query()
             ->join('vehicle_categories', 'vehicle_sub_categories.cat_id', '=', 'vehicle_categories.id')
             ->select('vehicle_sub_categories.*', 'vehicle_categories.category')
             ->when($search, fn($q) => $q->where('vehicle_categories.category', 'like', "%{$search}%")
                                         ->orWhere('vehicle_sub_categories.sub_category', 'like', "%{$search}%"))
-            ->orderBy($sort == 'category' ? 'vehicle_categories.category' : 'vehicle_sub_categories.sub_category', $order);
+            ->when($sort == 'category', fn($q) => $q->orderBy('vehicle_categories.category', $order))
+            ->when($sort != 'category', fn($q) => $q->orderBy('vehicle_sub_categories.sub_category', $order));
 
-        $subCategories = $query->orderBy($sort, $order)->get();
+        $subCategories = $query->paginate($perPage)->appends($request->query());
         $categories = VehicleCategory::all();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'subCategories' => $subCategories,
+                'categories' => $categories
+            ]);
+        }
 
         return view('vehicle-sub-category', compact('subCategories', 'categories'));
     }
 
-   public function store(Request $request)
+    public function store(Request $request)
     {
         try {
             $validated = $request->validate([
                 'cat_id' => 'required|integer|exists:vehicle_categories,id',
-                'sub_category' => 'required|string|max:255',
+                'sub_category' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\-]+$/',
+            ], [
+                'sub_category.regex' => 'The sub category may only contain letters, numbers, spaces, and hyphens.'
             ]);
 
             $validated['sub_category'] = trim($validated['sub_category']);
@@ -42,18 +54,23 @@ class VehicleSubCategoryController extends Controller
                 ->exists();
 
             if ($exists) {
-                return redirect()->route('vehicle-sub-category.index')->withErrors([
-                    'error' => 'The subcategory "' . $validated['sub_category'] . '" already exists for this category.',
-                ])->withInput();
+                $error = ['error' => "The subcategory '{$validated['sub_category']}' already exists for this category."];
+                return $request->expectsJson() 
+                    ? response()->json($error, 422)
+                    : redirect()->route('vehicle-sub-category.index')->withErrors($error)->withInput();
             }
 
-            VehicleSubCategory::create($validated);
+            $subCategory = VehicleSubCategory::create($validated);
+            $message = ['success' => 'Vehicle subcategory created successfully!'];
 
-            return redirect()->route('vehicle-sub-category.index')->with('success', 'Vehicle subcategory created successfully!');
-        } catch (UniqueConstraintViolationException $e) {
-            return redirect()->route('vehicle-sub-category.index')->withErrors([
-                'error' => 'The subcategory "' . $validated['sub_category'] . '" already exists for this category.',
-            ])->withInput();
+            return $request->expectsJson()
+                ? response()->json(['message' => $message['success'], 'data' => $subCategory], 201)
+                : redirect()->route('vehicle-sub-category.index')->with($message);
+        } catch (QueryException $e) {
+            $error = ['error' => "Failed to create subcategory: {$e->getMessage()}"];
+            return $request->expectsJson()
+                ? response()->json($error, 500)
+                : redirect()->route('vehicle-sub-category.index')->withErrors($error)->withInput();
         }
     }
 
@@ -62,7 +79,9 @@ class VehicleSubCategoryController extends Controller
         try {
             $validated = $request->validate([
                 'cat_id' => 'required|integer|exists:vehicle_categories,id',
-                'sub_category' => 'required|string|max:255',
+                'sub_category' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\-]+$/',
+            ], [
+                'sub_category.regex' => 'The sub category may only contain letters, numbers, spaces, and hyphens.'
             ]);
 
             $subCategory = VehicleSubCategory::findOrFail($id);
@@ -73,26 +92,50 @@ class VehicleSubCategoryController extends Controller
                 ->exists();
 
             if ($exists) {
-                return redirect()->route('vehicle-sub-category.index')->withErrors([
-                    'error' => 'The subcategory "' . $validated['sub_category'] . '" already exists for this category.',
-                ])->withInput();
+                $error = ['error' => "The subcategory '{$validated['sub_category']}' already exists for this category."];
+                return $request->expectsJson()
+                    ? response()->json($error, 422)
+                    : redirect()->route('vehicle-sub-category.index')->withErrors($error)->withInput();
             }
 
             $subCategory->update($validated);
+            $message = ['success' => 'Vehicle subcategory updated successfully!'];
 
-            return redirect()->route('vehicle-sub-category.index')->with('success', 'Vehicle subcategory updated successfully!');
-        } catch (UniqueConstraintViolationException $e) {
-            return redirect()->route('vehicle-sub-category.index')->withErrors([
-                'error' => 'The subcategory "' . $validated['sub_category'] . '" already exists for this category.',
-            ])->withInput();
+            return $request->expectsJson()
+                ? response()->json(['message' => $message['success'], 'data' => $subCategory])
+                : redirect()->route('vehicle-sub-category.index')->with($message);
+        } catch (QueryException $e) {
+            $error = ['error' => "Failed to update subcategory: {$e->getMessage()}"];
+            return $request->expectsJson()
+                ? response()->json($error, 500)
+                : redirect()->route('vehicle-sub-category.index')->withErrors($error)->withInput();
         }
     }
 
     public function destroy($id)
     {
-        $subCategory = VehicleSubCategory::findOrFail($id);
-        $subCategory->delete();
+        try {
+            $subCategory = VehicleSubCategory::findOrFail($id);
 
-        return redirect()->route('vehicle-sub-category.index')->with('success', 'Vehicle subcategory deleted successfully!');
+            // Check if there are related vehicle requests
+            if ($subCategory->vehicleRequests()->exists()) {
+                $error = ['error' => 'Cannot delete subcategory because it has associated vehicle requests.'];
+                return request()->expectsJson()
+                    ? response()->json($error, 422)
+                    : redirect()->route('vehicle-sub-category.index')->withErrors($error);
+            }
+
+            $subCategory->delete(); // Soft delete
+            $message = ['success' => 'Vehicle subcategory deleted successfully!'];
+
+            return request()->expectsJson()
+                ? response()->json($message)
+                : redirect()->route('vehicle-sub-category.index')->with($message);
+        } catch (QueryException $e) {
+            $error = ['error' => "Failed to delete subcategory: {$e->getMessage()}"];
+            return request()->expectsJson()
+                ? response()->json($error, 500)
+                : redirect()->route('vehicle-sub-category.index')->withErrors($error);
+        }
     }
 }

@@ -59,6 +59,7 @@ Route::get('/establishments', [EstablishmentController::class, 'index'])->name('
 Route::post('/establishments', [EstablishmentController::class, 'store'])->name('establishments.store');
 Route::post('/establishments/{establishment}', [EstablishmentController::class, 'update'])->name('establishments.update');
 Route::delete('/establishments/{id}', [EstablishmentController::class, 'destroy'])->name('establishments.destroy');
+
 Route::get('/index.html', function () {
     return view('welcome');
 });
@@ -84,7 +85,7 @@ Route::delete('/vehicle-make/{id}', [VehicleMakeController::class, 'destroy'])->
 Route::get('/vehicle-models', [VehicleModelController::class, 'index'])->name('vehicle-models.index');
 Route::post('/vehicle-models', [VehicleModelController::class, 'store'])->name('vehicle-models.store');
 Route::post('/vehicle-models/{vehicleModel}', [VehicleModelController::class, 'update'])->name('vehicle-models.update');
-Route::delete('/vehicle-models/{vehicleModel}', [VehicleModelController::class, 'destroy'])->name('vehicle-models.destroy');
+Route::delete('/vehicle-models/{id}', [VehicleModelController::class, 'destroy'])->name('vehicle-models.destroy');
 
 use App\Http\Controllers\VehicleCategoryController;
 

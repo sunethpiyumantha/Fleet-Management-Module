@@ -10,6 +10,7 @@ class WorkshopController extends Controller
 {
     public function index(Request $request)
     {
+        $workshops = Workshop::all();
         $search = $request->query('search');
         $workshops = Workshop::when($search, function ($query, $search) {
             return $query->where('workshop_type', 'like', "%{$search}%");
@@ -57,10 +58,10 @@ class WorkshopController extends Controller
 
     public function destroy($id)
     {
+        \Log::info("Attempting to soft delete workshop ID: {$id}");
         $workshop = Workshop::findOrFail($id);
-        $workshop->delete();
-
-        return redirect()->route('workshops.index')
-                         ->with('success', 'Workshop type deleted successfully.');
+        $success = $workshop->delete();
+        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+        return redirect()->back()->with('success', 'Workshop deleted successfully!');
     }
 }

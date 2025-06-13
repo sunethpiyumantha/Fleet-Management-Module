@@ -10,6 +10,9 @@ class VehicleMakeController extends Controller
 {
     public function index(Request $request)
     {
+        $makes = VehicleMake::all();
+        \Log::info('Fetched Vehicle Make: ', $makes->toArray());
+
         $search = $request->query('search');
         $query = VehicleMake::query();
 
@@ -58,9 +61,10 @@ class VehicleMakeController extends Controller
 
     public function destroy($id)
     {
+        \Log::info("Attempting to soft delete vehicle make ID: {$id}");
         $make = VehicleMake::findOrFail($id);
-        $make->delete();
-        return redirect()->route('vehicle-make.index')
-                         ->with('success', 'Vehicle Make deleted successfully.');
+        $success = $make->delete();
+        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+        return redirect()->back()->with('success', 'Vehicle make deleted successfully!');
     }
 }

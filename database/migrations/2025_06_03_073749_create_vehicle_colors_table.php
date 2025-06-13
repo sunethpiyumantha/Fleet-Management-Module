@@ -11,6 +11,7 @@ class CreateVehicleColorsTable extends Migration
             $table->id();
             $table->string('color');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

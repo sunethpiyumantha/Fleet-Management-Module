@@ -9,6 +9,9 @@ class VehicleEngineCapacityController extends Controller
 {
     public function index(Request $request)
     {
+        $capacities = VehicleEngineCapacity::all();
+        \Log::info('Fetched Vehicle Engine Capacity: ', $capacities->toArray());
+
         $search = $request->input('search');
         $capacities = VehicleEngineCapacity::when($search, function ($query, $search) {
             return $query->where('engine_capacity', 'LIKE', "%{$search}%");
@@ -54,12 +57,12 @@ class VehicleEngineCapacityController extends Controller
         return redirect()->route('vehicle-engine-capacity.index')->with('success', 'Engine capacity updated successfully!');
     }
 
-   public function destroy($id)
+    public function destroy($id)
     {
+        \Log::info("Attempting to soft delete Vehicle Engine Capacity ID: {$id}");
         $capacity = VehicleEngineCapacity::findOrFail($id);
-        $capacity->forceDelete(); // <- use this if you want actual deletion
-
-        return redirect()->back()->with('success', 'Deleted successfully!');
+        $success = $capacity->delete();
+        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+        return redirect()->back()->with('success', 'Vehicle engine capacity deleted successfully!');
     }
-
 }
