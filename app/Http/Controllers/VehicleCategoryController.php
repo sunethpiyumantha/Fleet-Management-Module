@@ -8,6 +8,9 @@ class VehicleCategoryController extends Controller
 {
     public function index(Request $request)
     {
+        $categories = VehicleCategory::all();
+        \Log::info('Fetched Vehicle Category: ', $categories->toArray());
+
         $search = $request->query('search');
         $query = VehicleCategory::query();
         if ($search) {
@@ -50,9 +53,10 @@ class VehicleCategoryController extends Controller
 
     public function destroy($id)
     {
+        \Log::info("Attempting to soft delete vehicle category ID: {$id}");
         $category = VehicleCategory::findOrFail($id);
-        $category->delete();
-        return redirect()->route('vehicle-category.index')
-                         ->with('success', 'Vehicle Category deleted successfully.');
+        $success = $category->delete();
+        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+        return redirect()->back()->with('success', 'Vehicle Category deleted successfully!');
     }
 }

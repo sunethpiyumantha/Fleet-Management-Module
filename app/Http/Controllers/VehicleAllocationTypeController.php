@@ -8,7 +8,7 @@ class VehicleAllocationTypeController extends Controller
     public function index(Request $request)
     {
         $types = VehicleAllocationType::all();
-        \Log::info('Fetched establishments: ', $types->toArray());
+        \Log::info('Fetched Vehicle Allocation Type: ', $types->toArray());
 
         $search = $request->query('search');
         $query = VehicleAllocationType::query();
