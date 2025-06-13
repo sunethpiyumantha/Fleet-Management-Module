@@ -85,7 +85,7 @@ Route::delete('/vehicle-make/{id}', [VehicleMakeController::class, 'destroy'])->
 Route::get('/vehicle-models', [VehicleModelController::class, 'index'])->name('vehicle-models.index');
 Route::post('/vehicle-models', [VehicleModelController::class, 'store'])->name('vehicle-models.store');
 Route::post('/vehicle-models/{vehicleModel}', [VehicleModelController::class, 'update'])->name('vehicle-models.update');
-Route::delete('/vehicle-models/{vehicleModel}', [VehicleModelController::class, 'destroy'])->name('vehicle-models.destroy');
+Route::delete('/vehicle-models/{id}', [VehicleModelController::class, 'destroy'])->name('vehicle-models.destroy');
 
 use App\Http\Controllers\VehicleCategoryController;
 
