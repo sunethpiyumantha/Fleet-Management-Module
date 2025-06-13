@@ -44,6 +44,7 @@ class VehicleRequestController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'request_type' => 'required|in:replacement,new_approval',
             'cat_id' => 'required|exists:vehicle_categories,id',
             'sub_cat_id' => 'required|exists:vehicle_sub_categories,id',
             'qty' => 'required|integer|min:1',
