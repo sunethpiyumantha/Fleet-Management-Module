@@ -11,6 +11,7 @@ class CreateVehicleStatusesTable extends Migration
             $table->id();
             $table->string('status')->unique();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

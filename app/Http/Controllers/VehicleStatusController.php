@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+
 use App\Models\VehicleStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -10,10 +11,14 @@ class VehicleStatusController extends Controller
     {
         $search = $request->query('search');
         $query = VehicleStatus::query();
+
         if ($search) {
             $query->where('status', 'LIKE', "%{$search}%");
         }
+
         $statuses = $query->get();
+        \Log::info('Fetched Vehicle Statuses: ', $statuses->toArray());
+
         return view('vehicle-status', compact('statuses'));
     }
 
@@ -24,7 +29,7 @@ class VehicleStatusController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return redirect()->route('vehicle-status.index')->withErrors($validator)->withInput();
         }
 
         VehicleStatus::create($request->only('status'));
@@ -38,7 +43,7 @@ class VehicleStatusController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return redirect()->route('vehicle-status.index')->withErrors($validator)->withInput();
         }
 
         $status = VehicleStatus::findOrFail($id);
@@ -48,8 +53,10 @@ class VehicleStatusController extends Controller
 
     public function destroy($id)
     {
+        \Log::info("Attempting to soft delete vehicle status ID: {$id}");
         $status = VehicleStatus::findOrFail($id);
-        $status->delete();
+        $success = $status->delete();
+        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
         return redirect()->route('vehicle-status.index')->with('success', 'Vehicle status deleted successfully.');
     }
 }
