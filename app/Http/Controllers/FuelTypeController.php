@@ -60,7 +60,7 @@ class FuelTypeController extends Controller
 
 
 
-     public function destroy($id)
+    public function destroy($id)
     {
         \Log::info("Attempting to soft delete fuel_type ID: {$id}");
         $fuelType = FuelType::findOrFail($id);
