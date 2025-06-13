@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('front_tire_size');
             $table->string('rear_tire_size');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -14,6 +14,7 @@ class CreateVehicleSubCategoriesTable extends Migration
             $table->string('sub_category');
             $table->timestamps();
             $table->unique(['cat_id', 'sub_category'], 'vehicle_sub_categories_cat_id_sub_category_unique');
+            $table->softDeletes();
         });
     }
 

@@ -10,6 +10,9 @@ class VehicleModelController extends Controller
 {
     public function index(Request $request)
     {
+        $models =  VehicleModel::all();
+        \Log::info('Fetched Vehicle Make: ', $models->toArray());
+
         $search = $request->query('search');
         $query = VehicleModel::query();
 
@@ -62,11 +65,13 @@ class VehicleModelController extends Controller
             ->with('success', 'Vehicle model updated successfully.');
     }
 
-    public function destroy(VehicleModel $vehicleModel)
+    public function destroy($id)
     {
-        $vehicleModel->delete();
-
-        return redirect()->route('vehicle-models.index')
-            ->with('success', 'Vehicle model deleted successfully.');
+        \Log::info("Attempting to soft delete vehicle model ID: {$id}");
+        $vehicleModel = VehicleModel::findOrFail($id);
+        $success = $vehicleModel->delete();
+        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+        return redirect()->back()->with('success', 'Vehicle model deleted successfully!');
     }
+
 }

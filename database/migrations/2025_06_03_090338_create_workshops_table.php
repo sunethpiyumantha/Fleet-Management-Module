@@ -12,6 +12,7 @@
                $table->id();
                $table->string('workshop_type');
                $table->timestamps();
+               $table->softDeletes();
            });
        }
 

@@ -10,6 +10,7 @@ class VehicleTireSizeController extends Controller
 {
     public function index(Request $request)
     {
+        $tireSizes = VehicleTireSize::all();
         $search = $request->query('search');
         $query = VehicleTireSize::query();
 
@@ -59,11 +60,13 @@ class VehicleTireSizeController extends Controller
                          ->with('success', 'Vehicle Tire Size updated successfully.');
     }
 
+
     public function destroy($id)
     {
+        \Log::info("Attempting to soft delete vehicle tire size ID: {$id}");
         $tireSize = VehicleTireSize::findOrFail($id);
-        $tireSize->delete();
-        return redirect()->route('vehicle-tire-sizes.index')
-                         ->with('success', 'Vehicle Tire Size deleted successfully.');
+        $success = $tireSize->delete();
+        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+        return redirect()->back()->with('success', 'Tire size deleted successfully!');
     }
 }

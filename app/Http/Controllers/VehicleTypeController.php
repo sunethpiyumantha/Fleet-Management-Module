@@ -9,6 +9,7 @@ class VehicleTypeController extends Controller
 {
     public function index(Request $request)
     {
+        $types = VehicleType::all();
         $search = $request->query('search');
         $types = VehicleType::when($search, function ($query, $search) {
             return $query->where('type', 'like', '%' . $search . '%');
@@ -43,9 +44,13 @@ class VehicleTypeController extends Controller
         return redirect()->route('vehicle-types.index')->with('success', 'Vehicle type updated successfully.');
     }
 
-    public function destroy(VehicleType $vehicleType)
+
+    public function destroy($id)
     {
-        $vehicleType->delete();
-        return redirect()->route('vehicle-types.index')->with('success', 'Vehicle type deleted successfully.');
+        \Log::info("Attempting to soft delete vehicle type ID: {$id}");
+        $vehicleType = VehicleType::findOrFail($id);
+        $success = $vehicleType->delete();
+        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+        return redirect()->back()->with('success', 'Vehicle Type deleted successfully!');
     }
 }

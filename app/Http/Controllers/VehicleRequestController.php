@@ -14,6 +14,12 @@ class VehicleRequestController extends Controller
         $search = $request->input('search');
         $sort = $request->input('sort', 'category');
         $order = $request->input('order', 'asc');
+        $perPage = $request->input('per_page', 15);
+
+        // Whitelist sortable columns
+        $sortableColumns = ['category', 'sub_category', 'created_at'];
+        $sort = in_array($sort, $sortableColumns) ? $sort : 'created_at';
+        $order = in_array(strtolower($order), ['asc', 'desc']) ? $order : 'desc';
 
         $vehicles = VehicleRequest::query()
             ->when($search, function ($query) use ($search) {
@@ -24,7 +30,7 @@ class VehicleRequestController extends Controller
                 if ($sort === 'category') {
                     return $query->join('vehicle_categories', 'vehicle_requests.cat_id', '=', 'vehicle_categories.id')
                                  ->orderBy('vehicle_categories.category', $order)
-                                 ->select('vehicle_requests.*'); // Avoid selecting joined table columns
+                                 ->select('vehicle_requests.*');
                 } elseif ($sort === 'sub_category') {
                     return $query->join('vehicle_sub_categories', 'vehicle_requests.sub_cat_id', '=', 'vehicle_sub_categories.id')
                                  ->orderBy('vehicle_sub_categories.sub_category', $order)
@@ -32,9 +38,11 @@ class VehicleRequestController extends Controller
                 } else {
                     return $query->orderBy($sort, $order);
                 }
-            }, fn ($query) => $query->orderBy('created_at', 'desc')) // Default sort if no match
+            }, fn ($query) => $query->orderBy('created_at', 'desc'))
             ->with(['category', 'subCategory'])
-            ->paginate();
+            ->paginate($perPage);
+
+        \Log::info('Fetched Vehicle Requests: ', $vehicles->toArray());
 
         $categories = VehicleCategory::all();
 
@@ -78,9 +86,10 @@ class VehicleRequestController extends Controller
 
     public function destroy($id)
     {
+        \Log::info("Attempting to soft delete vehicle request ID: {$id}");
         $vehicle = VehicleRequest::findOrFail($id);
-        $vehicle->delete();
-
+        $success = $vehicle->delete();
+        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
         return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request deleted successfully.');
     }
 

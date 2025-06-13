@@ -11,8 +11,10 @@ return new class extends Migration
             $table->id();
             $table->string('category')->unique();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
+
 
     public function down()
     {

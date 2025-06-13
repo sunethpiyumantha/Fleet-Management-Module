@@ -8,6 +8,9 @@ class VehicleColorController extends Controller
 {
     public function index(Request $request)
     {
+        $colors = VehicleColor::all();
+        \Log::info('Fetched Vehicle Color: ', $colors->toArray());
+
         $search = $request->query('search');
         $query = VehicleColor::query();
 
@@ -62,10 +65,10 @@ class VehicleColorController extends Controller
 
     public function destroy($id)
     {
+        \Log::info("Attempting to soft delete vehicle color ID: {$id}");
         $color = VehicleColor::findOrFail($id);
-        $color->delete();
-
-        return redirect()->route('vehicle-color.index')
-            ->with('success', 'Vehicle color deleted successfully.');
+        $success = $color->delete();
+        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+        return redirect()->back()->with('success', 'Vehicle color deleted successfully!');
     }
 }

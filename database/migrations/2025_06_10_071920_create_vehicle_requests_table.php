@@ -17,6 +17,7 @@ class CreateVehicleRequestsTable extends Migration
             $table->date('date_submit')->default(now());
             $table->string('status')->default('pending');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('cat_id')->references('id')->on('vehicle_categories')->onDelete('cascade');
             $table->foreign('sub_cat_id')->references('id')->on('vehicle_sub_categories')->onDelete('cascade');
