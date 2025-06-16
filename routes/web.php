@@ -116,3 +116,6 @@ Route::get('/vehicle-request/{id}/edit', [VehicleRequestController::class, 'edit
 Route::put('/vehicle-request/{id}', [VehicleRequestController::class, 'update'])->name('vehicle.request.update');
 Route::delete('/vehicle-request/{id}', [VehicleRequestController::class, 'destroy'])->name('vehicle.request.destroy');
 
+use App\Http\Controllers\VehicleDeclarationFormController;
+
+Route::get('/vehicle-declaration-form', [VehicleDeclarationFormController::class, 'index'])->name('vehicle-declaration-form.index');
