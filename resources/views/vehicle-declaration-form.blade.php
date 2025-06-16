@@ -238,8 +238,6 @@
 
 <!-- JavaScript for dynamic vehicle model dropdown -->
 <script>
-    
-
     const vehicleTypeSelect = document.getElementById('vehicle_type');
     const vehicleModelSelect = document.getElementById('vehicle_model');
 
