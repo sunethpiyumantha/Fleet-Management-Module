@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('establishments', function (Blueprint $table) {
             $table->id();
+            $table->string('serial_number')->nullable()->unique();
             $table->string('name')->unique();
             $table->timestamps();
             $table->softDeletes();

@@ -10,6 +10,7 @@ class CreateVehicleRequestsTable extends Migration
     {
         Schema::create('vehicle_requests', function (Blueprint $table) {
             $table->id();
+            $table->string('serial_number')->nullable()->unique();
             $table->string('request_type');
             $table->unsignedBigInteger('cat_id');
             $table->unsignedBigInteger('sub_cat_id');
