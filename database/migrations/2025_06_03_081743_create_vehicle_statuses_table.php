@@ -9,6 +9,7 @@ class CreateVehicleStatusesTable extends Migration
     {
         Schema::create('vehicle_statuses', function (Blueprint $table) {
             $table->id();
+            $table->string('serial_number')->nullable()->unique();
             $table->string('status')->unique();
             $table->timestamps();
             $table->softDeletes();

@@ -10,6 +10,7 @@
        {
            Schema::create('workshops', function (Blueprint $table) {
                $table->id();
+               $table->string('serial_number')->nullable()->unique();
                $table->string('workshop_type');
                $table->timestamps();
                $table->softDeletes();
