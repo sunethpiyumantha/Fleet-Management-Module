@@ -11,4 +11,17 @@ class VehicleModel extends Model
     use HasFactory, SoftDeletes;
     protected $table = 'vehicle_models';
     protected $fillable = ['model'];
+
+    public function vehicleType()
+    {
+        return $this->belongsTo(VehicleType::class);
+    }
+
+    /**
+     * Get the vehicle declarations for the vehicle model.
+     */
+    public function vehicleDeclarations()
+    {
+        return $this->hasMany(VehicleDeclaration::class);
+    }
 }
