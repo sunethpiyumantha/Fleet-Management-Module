@@ -17,15 +17,17 @@ class VehicleDeclarationFormController extends Controller
      */
     public function index()
     {
-        $vehicleTypes = VehicleType::withTrashed()->get(); // Include soft-deleted records for testing
+        $vehicleTypes = VehicleType::withTrashed()->get();
+        $vehicleModels = VehicleModel::withTrashed()->get();
+        \Log::info('Vehicle Models: ' . $vehicleModels->count());
         $vehicleDeclarations = VehicleDeclaration::with(['vehicleType', 'vehicleModel'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
         
-        // Debug: Check if vehicleTypes has data
-        // dd($vehicleTypes);
-        
-        return view('vehicle-declaration-form', compact('vehicleTypes', 'vehicleDeclarations'));
+        return view('vehicle-declaration-form', compact('vehicleTypes', 'vehicleModels', 'vehicleDeclarations'))
+            ->with('vehicleModelsJson', json_encode($vehicleModels->map(function ($model) {
+                return ['id' => $model->id, 'name' => $model->model];
+            })->all()));
     }
 
     /**
@@ -110,9 +112,12 @@ class VehicleDeclarationFormController extends Controller
     public function edit($id)
     {
         $vehicleDeclaration = VehicleDeclaration::findOrFail($id);
-        $vehicleTypes = VehicleType::active()->get();
-        $vehicleModels = VehicleModel::active()->byVehicleType($vehicleDeclaration->vehicle_type_id)->get();
-        
+        $vehicleTypes = VehicleType::withTrashed()->get(); // Include soft-deleted types
+        $vehicleModels = VehicleModel::withTrashed()->get(); // Include soft-deleted models
+
+        // Debug: Check if vehicleModels has data
+        // dd($vehicleModels); // Uncomment to inspect the data
+
         return view('vehicle-declaration-form', compact('vehicleDeclaration', 'vehicleTypes', 'vehicleModels'));
     }
 
@@ -233,16 +238,6 @@ class VehicleDeclarationFormController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to restore vehicle declaration. Please try again.');
         }
-    }
-
-    /**
-     * Get vehicle models by vehicle type (AJAX)
-     */
-    public function getVehicleModels($vehicleTypeId)
-    {
-        $vehicleModels = VehicleModel::active()->byVehicleType($vehicleTypeId)->get();
-        
-        return response()->json($vehicleModels);
     }
 
     /**

@@ -115,21 +115,20 @@
                                 </select>
                             </div>
                         </div>
+
                         <!-- Row 4.1: Vehicle Model -->
                         <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 600px;">
                             <div style="flex: 1 1 300px;">
                                 <label for="vehicle_model" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Model</label>
                                 <select id="vehicle_model" name="vehicle_model" required
                                         style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
-                                    <option value="" disabled selected>Select Vehicle Model</option>
-                                    @if(isset($vehicleDeclaration) && isset($vehicleModels))
-                                        @foreach($vehicleModels as $model)
-                                            <option value="{{ $model->id }}" 
+                                    <option value="" disabled {{ old('vehicle_model') === null ? 'selected' : '' }}>Select Vehicle Model</option>
+                                    @foreach($vehicleModels as $model)
+                                        <option value="{{ $model->id }}"
                                                 {{ old('vehicle_model', $vehicleDeclaration->vehicle_model_id ?? '') == $model->id ? 'selected' : '' }}>
-                                                {{ $model->name }}
-                                            </option>
-                                        @endforeach
-                                    @endif
+                                            {{ $model->model }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div style="flex: 1 1 300px;"></div> <!-- Empty div to maintain layout -->
@@ -333,45 +332,47 @@
     </div>
 </div>
 
-<!-- JavaScript for dynamic vehicle model dropdown -->
+<!-- JavaScript for vehicle model dropdown -->
 <script>
     const vehicleTypeSelect = document.getElementById('vehicle_type');
     const vehicleModelSelect = document.getElementById('vehicle_model');
 
-    // Define vehicle models object (will be populated from AJAX)
-    let vehicleModels = {};
+    // Parse the vehicleModels data passed from the server
+    const vehicleModels = JSON.parse('{{ $vehicleModelsJson ?? '[]' }}' || '[]');
 
-    vehicleTypeSelect.addEventListener('change', function() {
-        const selectedTypeId = this.value;
-        vehicleModelSelect.innerHTML = '<option value="" disabled selected>Loading...</option>';
-        vehicleModelSelect.disabled = true;
-
-        if (selectedTypeId) {
-            // Make AJAX request to get vehicle models
-            fetch(`/api/vehicle-models/${selectedTypeId}`)
-                .then(response => response.json())
-                .then(data => {
-                    vehicleModelSelect.innerHTML = '<option value="" disabled selected>Select Vehicle Model</option>';
-                    
-                    if (data.length > 0) {
-                        data.forEach(model => {
-                            const option = document.createElement('option');
-                            option.value = model.id;
-                            option.textContent = model.name;
-                            vehicleModelSelect.appendChild(option);
-                        });
-                        vehicleModelSelect.disabled = false;
-                    } else {
-                        vehicleModelSelect.innerHTML = '<option value="" disabled selected>No models available</option>';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching vehicle models:', error);
-                    vehicleModelSelect.innerHTML = '<option value="" disabled selected>Error loading models</option>';
-                });
+    // Populate vehicle model dropdown initially
+    function populateVehicleModels() {
+        if (!vehicleModelSelect) {
+            console.error('vehicleModelSelect element not found');
+            return;
+        }
+        vehicleModelSelect.innerHTML = '<option value="" disabled selected>Select Vehicle Model</option>';
+        if (vehicleModels.length > 0) {
+            vehicleModels.forEach(model => {
+                const option = document.createElement('option');
+                option.value = model.id;
+                option.textContent = model.name; // Use 'name' as per controller mapping
+                vehicleModelSelect.appendChild(option);
+            });
+            vehicleModelSelect.disabled = false;
         } else {
-            vehicleModelSelect.innerHTML = '<option value="" disabled selected>Select Vehicle Model</option>';
-            vehicleModelSelect.disabled = true;
+            vehicleModelSelect.innerHTML = '<option value="" disabled selected>No models available</option>';
+        }
+
+        // Set the selected value if editing
+        const selectedModelId = '{{ old('vehicle_model', $vehicleDeclaration->vehicle_model_id ?? '') }}';
+        if (selectedModelId) {
+            vehicleModelSelect.value = selectedModelId;
+        }
+    }
+
+    // Call populate function on page load
+    document.addEventListener('DOMContentLoaded', populateVehicleModels);
+
+    // Optional: Clear model selection if vehicle type is changed (no filtering)
+    vehicleTypeSelect.addEventListener('change', function() {
+        if (!this.value) {
+            vehicleModelSelect.value = '';
         }
     });
 </script>
