@@ -189,9 +189,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- Vehicle -->
-                <!-- Additional Document -->
-                 
+
                 
 
                 <!-- Navigation Buttons -->
