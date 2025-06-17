@@ -9,6 +9,7 @@ class CreateVehicleColorsTable extends Migration
     {
         Schema::create('vehicle_colors', function (Blueprint $table) {
             $table->id();
+            $table->string('serial_number')->nullable()->unique();
             $table->string('color');
             $table->timestamps();
             $table->softDeletes();

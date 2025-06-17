@@ -10,6 +10,7 @@ class CreateVehicleSubCategoriesTable extends Migration
     {
         Schema::create('vehicle_sub_categories', function (Blueprint $table) {
             $table->id();
+            $table->string('serial_number')->nullable()->unique();
             $table->foreignId('cat_id')->constrained('vehicle_categories')->onDelete('cascade');
             $table->string('sub_category');
             $table->timestamps();

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('fuel_types', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('serial_number')->nullable()->unique();
             $table->string('fuel_type')->unique();
             $table->timestamps();        // Adds created_at and updated_at
             $table->softDeletes();       // Adds deleted_at

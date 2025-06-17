@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('vehicle_makes', function (Blueprint $table) {
             $table->id();
+            $table->string('serial_number')->nullable()->unique();
             $table->string('make')->unique();
             $table->timestamps();
             $table->softDeletes();
