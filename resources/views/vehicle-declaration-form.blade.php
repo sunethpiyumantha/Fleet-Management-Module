@@ -189,10 +189,181 @@
                         </div>
                     </div>
                 </div>
-                <!-- Vehicle Tab -->
-                <!-- document Tab -->
 
-                
+                <div id="vehicle-tab" class="tab-content" style="display: none; width: 100%; max-width: 640px; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.5rem; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); animation: slideIn 0.3s ease-out;">
+                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 1.5rem; border-bottom: 2px solid #f97316; padding-bottom: 0.5rem;">Vehicle Details</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="civil_number" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Civil Number</label>
+                                <input type="text" id="civil_number" name="civil_number" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="product_classification" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Product Classification</label>
+                                <input type="text" id="product_classification" name="product_classification" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="engine_no" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Engine No</label>
+                                <input type="text" id="engine_no" name="engine_no" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="chassis_number" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Chassis Number</label>
+                                <input type="text" id="chassis_number" name="chassis_number" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="year_of_manufacture" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Year of Manufacture</label>
+                                <input type="number" id="year_of_manufacture" name="year_of_manufacture" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="date_of_original_registration" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Date of Original Registration</label>
+                                <input type="date" id="date_of_original_registration" name="date_of_original_registration" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="engine_capacity" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Engine Capacity</label>
+                                <input type="text" id="engine_capacity" name="engine_capacity" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="section_4_w_2w" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Section 4 W/2W</label>
+                                <input type="text" id="section_4_w_2w" name="section_4_w_2w" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="speedometer_hours" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Speedometer Hours at Takeover</label>
+                                <input type="number" id="speedometer_hours" name="speedometer_hours" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="code_no" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Code No</label>
+                                <input type="text" id="code_no" name="code_no" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="color" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Color</label>
+                                <input type="text" id="color" name="color" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="pay_per_day" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Pay per Day</label>
+                                <input type="number" id="pay_per_day" name="pay_per_day" min="0" step="0.01" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="type_of_fuel" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Type of Fuel</label>
+                                <input type="text" id="type_of_fuel" name="type_of_fuel" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="tar_weight_capacity" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Tar Weight Capacity (Capacity if a Water Bowser)</label>
+                                <input type="text" id="tar_weight_capacity" name="tar_weight_capacity" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="amount_of_fuel" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Amount of Fuel in the Tank at Takeover</label>
+                                <input type="number" id="amount_of_fuel" name="amount_of_fuel" min="0" step="0.01" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="reason_for_taking_over" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Reason for Taking Over</label>
+                                <input type="text" id="reason_for_taking_over" name="reason_for_taking_over" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="other_matters" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Other Matters</label>
+                                <input type="text" id="other_matters" name="other_matters"
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                            <div style="flex: 1; min-width: 0; max-width: 48%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="additional-tab" class="tab-content" style="display: none; width: 100%; max-width: 640px; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.5rem; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); animation: slideIn 0.3s ease-out;">
+                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 1.5rem; border-bottom: 2px solid #f97316; padding-bottom: 0.5rem;">Additional Documents</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="registration_certificate" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Reg. Certificate</label>
+                                <input type="file" id="registration_certificate" name="registration_certificate" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="insurance_certificate" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Insurance Certificate</label>
+                                <input type="file" id="insurance_certificate" name="insurance_certificate" required
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="document_1" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Document 1</label>
+                                <input type="file" id="document_1" name="document_1"
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="document_2" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Document 2</label>
+                                <input type="file" id="document_2" name="document_2"
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="document_3" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Document 3</label>
+                                <input type="file" id="document_3" name="document_3"
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="document_4" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Document 4</label>
+                                <input type="file" id="document_4" name="document_4"
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Navigation Buttons -->
                 <div style="display: flex; gap: 1.5rem; justify-content: center; width: 100%; margin-top: 1rem;">
