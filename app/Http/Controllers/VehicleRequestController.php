@@ -12,46 +12,45 @@ class VehicleRequestController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $sort = $request->input('sort', 'category');
-        $order = $request->input('order', 'asc');
+        $sort = $request->input('sort', 'created_at');
+        $order = $request->input('order', 'desc');
         $perPage = $request->input('per_page', 15);
 
-        // Whitelist sortable columns
         $sortableColumns = ['category', 'sub_category', 'created_at'];
         $sort = in_array($sort, $sortableColumns) ? $sort : 'created_at';
         $order = in_array(strtolower($order), ['asc', 'desc']) ? $order : 'desc';
 
         $vehicles = VehicleRequest::query()
             ->when($search, function ($query) use ($search) {
-                $query->whereHas('category', fn ($q) => $q->where('category', 'like', "%{$search}%"))
-                      ->orWhereHas('subCategory', fn ($q) => $q->where('sub_category', 'like', "%{$search}%"));
+                $query->where('serial_number', 'like', "%{$search}%")
+                    ->orWhere('request_type', 'like', "%{$search}%")
+                    ->orWhereHas('category', fn ($q) => $q->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('subCategory', fn ($q) => $q->where('name', 'like', "%{$search}%"));
             })
             ->when($sort, function ($query) use ($sort, $order) {
                 if ($sort === 'category') {
                     return $query->join('vehicle_categories', 'vehicle_requests.cat_id', '=', 'vehicle_categories.id')
-                                 ->orderBy('vehicle_categories.category', $order)
-                                 ->select('vehicle_requests.*');
+                                ->orderBy('vehicle_categories.name', $order)
+                                ->select('vehicle_requests.*');
                 } elseif ($sort === 'sub_category') {
                     return $query->join('vehicle_sub_categories', 'vehicle_requests.sub_cat_id', '=', 'vehicle_sub_categories.id')
-                                 ->orderBy('vehicle_sub_categories.sub_category', $order)
-                                 ->select('vehicle_requests.*');
-                } else {
-                    return $query->orderBy($sort, $order);
+                                ->orderBy('vehicle_sub_categories.name', $order)
+                                ->select('vehicle_requests.*');
                 }
-            }, fn ($query) => $query->orderBy('created_at', 'desc'))
+                return $query->orderBy($sort, $order);
+            })
             ->with(['category', 'subCategory'])
             ->paginate($perPage);
 
-        \Log::info('Fetched Vehicle Requests: ', $vehicles->toArray());
+        $categories = VehicleCategory::orderBy('name')->get();
 
-        $categories = VehicleCategory::all();
-
-        return view('request-vehicle', compact('vehicles', 'categories'));
+        return view('all-request', compact('vehicles', 'categories'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+       $validated = $request->validate([
+            'serial_number' => 'nullable|string|unique:vehicle_requests,serial_number',
             'request_type' => 'required|in:replacement,new_approval',
             'cat_id' => 'required|exists:vehicle_categories,id',
             'sub_cat_id' => 'required|exists:vehicle_sub_categories,id',
@@ -73,11 +72,12 @@ class VehicleRequestController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
+            'serial_number' => 'nullable|string|unique:vehicle_requests,serial_number,' . $id,
+            'request_type' => 'required|in:replacement,new_approval',
             'cat_id' => 'required|exists:vehicle_categories,id',
             'sub_cat_id' => 'required|exists:vehicle_sub_categories,id',
             'qty' => 'required|integer|min:1',
         ]);
-
         $vehicle = VehicleRequest::findOrFail($id);
         $vehicle->update($validated);
 
