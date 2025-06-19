@@ -18,14 +18,15 @@ class VehicleDeclarationFormController extends Controller
      */
     public function create(Request $request)
     {
-        // Fetch dropdown data
         $vehicleTypes = VehicleType::all();
         $vehicleModels = VehicleModel::all();
-        $engineCapacities = VehicleEngineCapacity::all(); // Updated to correct model
-        $colors = VehicleColor::all(); // Updated to match database table
+        $engineCapacities = VehicleEngineCapacity::all();
+        $colors = VehicleColor::all();
         $fuelTypes = FuelType::all();
 
-        // Pass serial_number from query parameter
+        // Debug: Dump engine capacities
+        //dd($engineCapacities->toArray());
+
         $serialNumber = $request->query('serial_number');
 
         return view('vehicle-declaration-form', compact(

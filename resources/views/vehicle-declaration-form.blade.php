@@ -371,7 +371,7 @@
                                         onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                     <option value="" disabled selected>Select Engine Capacity</option>
                                     @foreach($engineCapacities as $capacity)
-                                        <option value="{{ $capacity->id }}">{{ $capacity->capacity }}</option>
+                                        <option value="{{ $capacity->id }}">{{ $capacity->engine_capacity }}</option> <!-- Updated to engine_capacity -->
                                     @endforeach
                                 </select>
                                 @error('engine_capacity_id')
@@ -441,7 +441,7 @@
                                         onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                     <option value="" disabled selected>Select Fuel Type</option>
                                     @foreach($fuelTypes as $fuel)
-                                        <option value="{{ $fuel->id }}">{{ $fuel->type }}</option>
+                                        <option value="{{ $fuel->id }}">{{ $fuel->fuel_type }}</option> <!-- Updated to fuel_type -->
                                     @endforeach
                                 </select>
                                 @error('fuel_type_id')
