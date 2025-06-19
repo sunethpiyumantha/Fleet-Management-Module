@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Vehicle Registration')
+@section('title', 'Vehicle Declaration')
 
 @section('content')
 <div style="max-width: 90rem; margin: 0 auto; padding: 2.5rem 1.5rem; font-family: Arial, sans-serif;">
@@ -10,8 +10,9 @@
         </h2>
 
         <!-- Form -->
-        <form class="mb-8" style="margin-bottom: 2rem;" method="POST" enctype="multipart/form-data">
+        <form class="mb-8" style="margin-bottom: 2rem;" method="POST" action="{{ route('vehicle.declaration.store') }}" enctype="multipart/form-data">
             @csrf
+            <input type="hidden" name="serial_number" value="{{ request('serial_number') }}">
             <div style="display: flex; flex-direction: column; gap: 2rem; align-items: center;">
                 <!-- Tab Navigation -->
                 <div style="display: flex; gap: 0.75rem; justify-content: center; margin-bottom: 1.5rem; background: #f3f4f6; padding: 0.25rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
@@ -33,9 +34,9 @@
                     </button>
                 </div>
 
-                <!-- Tab Content -->
+                <!-- Owner Tab -->
                 <div id="owner-tab" class="tab-content" style="display: block; width: 100%; max-width: 1280px; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.5rem; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); animation: slideIn 0.3s ease-out;">
-                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 1.5rem; border-bottom: 2px solid #f97316; padding-bottom: 0.5rem;">Owner Details</h3>
+                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 1.5rem; border-bottom: 2px solid #f97316; padding-bottom: 0.5rem;">Owner Details (Serial: {{ request('serial_number') }})</h3>
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
@@ -109,7 +110,7 @@
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="vehicle_type" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Vehicle Type</label>
-                                <select id="vehicle_type" name="vehicle_type" required
+                                <select id="vehicle_type" name="vehicle_type_id" required
                                         style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem; appearance: none; background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"%23374151\"><path d=\"M7 10l-5-5 1.41-1.41L7 7.17l4.59-4.58L12 5l-5 5z\"/></svg>') no-repeat right 1rem center;"
                                         onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                     <option value="" disabled selected>Select Vehicle Type</option>
@@ -117,7 +118,7 @@
                                         <option value="{{ $type->id }}">{{ $type->type }}</option>
                                     @endforeach
                                 </select>
-                                @error('vehicle_type')
+                                @error('vehicle_type_id')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -125,7 +126,7 @@
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="vehicle_model" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Vehicle Model</label>
-                                <select id="vehicle_model" name="vehicle_model" required
+                                <select id="vehicle_model" name="vehicle_model_id" required
                                         style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem; appearance: none; background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"%23374151\"><path d=\"M7 10l-5-5 1.41-1.41L7 7.17l4.59-4.58L12 5l-5 5z\"/></svg>') no-repeat right 1rem center;"
                                         onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                     <option value="" disabled selected>Select Vehicle Model</option>
@@ -133,7 +134,7 @@
                                         <option value="{{ $model->id }}">{{ $model->model }}</option>
                                     @endforeach
                                 </select>
-                                @error('vehicle_model')
+                                @error('vehicle_model_id')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -189,8 +190,10 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Driver Tab -->
                 <div id="driver-tab" class="tab-content" style="display: none; width: 100%; max-width: 1280px; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.5rem; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); animation: slideIn 0.3s ease-out;">
-                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 1.5rem; border-bottom: 2px solid #f97316; padding-bottom: 0.5rem;">Driver Details</h3>
+                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 1.5rem; border-bottom: 2px solid #f97316; padding-bottom: 0.5rem;">Driver Details (Serial: {{ request('serial_number') }})</h3>
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
@@ -198,12 +201,18 @@
                                 <input type="text" id="reg_nic" name="reg_nic" required
                                     style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                     onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('reg_nic')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="rank" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Rank</label>
                                 <input type="text" id="rank" name="rank" required
                                     style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                     onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('rank')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
@@ -212,26 +221,38 @@
                                 <input type="text" id="driver_name" name="driver_name" required
                                     style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                     onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('driver_name')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="unit" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Unit</label>
                                 <input type="text" id="unit" name="unit" required
                                     style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                     onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('unit')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="code_no" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">If Staff Officer Vehicle, Code No</label>
-                                <input type="text" id="code_no" name="code_no"
+                                <label for="code_no_driver" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">If Staff Officer Vehicle, Code No</label>
+                                <input type="text" id="code_no_driver" name="code_no_driver"
                                     style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                     onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('code_no_driver')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="army_license_no" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Army / Driving License No</label>
                                 <input type="text" id="army_license_no" name="army_license_no" required
                                     style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                     onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('army_license_no')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
@@ -240,12 +261,18 @@
                                 <input type="date" id="license_issued_date" name="license_issued_date" required
                                     style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                     onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('license_issued_date')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="license_expire_date" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">License Expire Date</label>
                                 <input type="date" id="license_expire_date" name="license_expire_date" required
                                     style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                     onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('license_expire_date')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="margin-top: 2rem; overflow-x: auto;">
@@ -253,39 +280,28 @@
                                 <thead>
                                     <tr style="background-color: #f3f4f6;">
                                         <th style="border: 1px solid #d1d5db; padding: 8px;">SN</th>
-                                        <th style="border: 1px solid #d1d5db; padding: 8px;">Reg no /NIC</th>
+                                        <th style="border: 1px solid #d1d5db; padding: 8px;">Reg No / NIC</th>
                                         <th style="border: 1px solid #d1d5db; padding: 8px;">Rank</th>
                                         <th style="border: 1px solid #d1d5db; padding: 8px;">Name</th>
                                         <th style="border: 1px solid #d1d5db; padding: 8px;">Unit</th>
-                                        <th style="border: 1px solid #d1d5db; padding: 8px;">If staff officer vehicle, Code no</th>
+                                        <th style="border: 1px solid #d1d5db; padding: 8px;">Code No</th>
                                         <th style="border: 1px solid #d1d5db; padding: 8px;">License No</th>
-                                        <th style="border: 1px solid #d1d5db; padding: 8px;">Driving license issued date</th>
-                                        <th style="border: 1px solid #d1d5db; padding: 8px;">Driving license expire date</th>
+                                        <th style="border: 1px solid #d1d5db; padding: 8px;">Issued Date</th>
+                                        <th style="border: 1px solid #d1d5db; padding: 8px;">Expire Date</th>
                                         <th style="border: 1px solid #d1d5db; padding: 8px;">Action</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style="border: 1px solid #d1d5db; padding: 8px;">1</td>
-                                        <td style="border: 1px solid #d1d5db; padding: 8px;"></td>
-                                        <td style="border: 1px solid #d1d5db; padding: 8px;"></td>
-                                        <td style="border: 1px solid #d1d5db; padding: 8px;"></td>
-                                        <td style="border: 1px solid #d1d5db; padding: 8px;"></td>
-                                        <td style="border: 1px solid #d1d5db; padding: 8px;"></td>
-                                        <td style="border: 1px solid #d1d5db; padding: 8px;"></td>
-                                        <td style="border: 1px solid #d1d5db; padding: 8px;"></td>
-                                        <td style="border: 1px solid #d1d5db; padding: 8px;"></td>
-                                        <td style="border: 1px solid #d1d5db; padding: 8px;">
-                                            <a href="#">Update</a> | <a href="#">Delete</a>
-                                        </td>
-                                    </tr>
+                                <tbody id="driver-table-body">
+                                    <!-- Populated by JavaScript -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
+
+                <!-- Vehicle Tab -->
                 <div id="vehicle-tab" class="tab-content" style="display: none; width: 100%; max-width: 1280px; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.5rem; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); animation: slideIn 0.3s ease-out;">
-                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 1.5rem; border-bottom: 2px solid #f97316; padding-bottom: 0.5rem;">Vehicle Details</h3>
+                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 1.5rem; border-bottom: 2px solid #f97316; padding-bottom: 0.5rem;">Vehicle Details (Serial: {{ request('serial_number') }})</h3>
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
@@ -293,12 +309,18 @@
                                 <input type="text" id="civil_number" name="civil_number" required
                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('civil_number')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="product_classification" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Product Classification</label>
                                 <input type="text" id="product_classification" name="product_classification" required
                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('product_classification')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
@@ -307,38 +329,52 @@
                                 <input type="text" id="engine_no" name="engine_no" required
                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('engine_no')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="chassis_number" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Chassis Number</label>
                                 <input type="text" id="chassis_number" name="chassis_number" required
                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('chassis_number')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="year_of_manufacture" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Year of Manufacture</label>
-                                <input type="number" id="year_of_manufacture" name="year_of_manufacture" required
+                                <input type="number" id="year_of_manufacture" name="year_of_manufacture" min="1900" required
                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('year_of_manufacture')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="date_of_original_registration" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Date of Original Registration</label>
                                 <input type="date" id="date_of_original_registration" name="date_of_original_registration" required
                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('date_of_original_registration')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="engine_capacity" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Engine Capacity</label>
-                                <select id="engine_capacity" name="engine_capacity" required
+                                <select id="engine_capacity" name="engine_capacity_id" required
                                         style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem; appearance: none; background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"%23374151\"><path d=\"M7 10l-5-5 1.41-1.41L7 7.17l4.59-4.58L12 5l-5 5z\"/></svg>') no-repeat right 1rem center;"
-                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" 
-                                        onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                     <option value="" disabled selected>Select Engine Capacity</option>
+                                    @foreach($engineCapacities as $capacity)
+                                        <option value="{{ $capacity->id }}">{{ $capacity->engine_capacity }}</option> <!-- Updated to engine_capacity -->
+                                    @endforeach
                                 </select>
-                                @error('engine_capacity')
+                                @error('engine_capacity_id')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -347,289 +383,405 @@
                                 <input type="text" id="section_4_w_2w" name="section_4_w_2w" required
                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('section_4_w_2w')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="speedometer_hours" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Speedometer Hours at Takeover</label>
-                                <input type="number" id="speedometer_hours" name="speedometer_hours" required
+                                <input type="number" id="speedometer_hours" name="speedometer_hours" min="0" required
                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('speedometer_hours')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="code_no" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Code No</label>
-                                <input type="text" id="code_no" name="code_no" required
+                                <label for="code_no_vehicle" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Code No</label>
+                                <input type="text" id="code_no_vehicle" name="code_no_vehicle" required
                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('code_no_vehicle')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="color" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Color</label>
-                                <select id="color" name="color" required
+                                <select id="color" name="color_id" required
                                         style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem; appearance: none; background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"%23374151\"><path d=\"M7 10l-5-5 1.41-1.41L7 7.17l4.59-4.58L12 5l-5 5z\"/></svg>') no-repeat right 1rem center;"
-                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" 
-                                        onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                     <option value="" disabled selected>Select Color</option>
+                                    @foreach($colors as $color)
+                                        <option value="{{ $color->id }}">{{ $color->color }}</option>
+                                    @endforeach
                                 </select>
-                                @error('color')
+                                @error('color_id')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
                             </div>
-
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="pay_per_day" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Pay per Day</label>
                                 <input type="number" id="pay_per_day" name="pay_per_day" min="0" step="0.01" required
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('pay_per_day')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="type_of_fuel" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Type of Fuel</label>
-                                <select id="type_of_fuel" name="type_of_fuel" required
-                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem; appearance: none; background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"%23374151\"><path d=\"M7 10l-5-5 1.41-1.41L7 7.17l4.59-4.58L12 5l-5 5z\"/></svg>') no-repeat right 1rem center;"
-                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" 
-                                        onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                <label for="fuel_type" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Type of Fuel</label>
+                                <select id="fuel_type" name="fuel_type_id" required
+                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem; appearance: none; background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"%23374151\"><path d=\"M7 10l-5-5 1.41-1.41L7 7.17l4.59-4.58L12 5l-5 5z\"/></svg>') no-repeat right 1rem center;"
+                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                     <option value="" disabled selected>Select Fuel Type</option>
+                                    @foreach($fuelTypes as $fuel)
+                                        <option value="{{ $fuel->id }}">{{ $fuel->fuel_type }}</option> <!-- Updated to fuel_type -->
+                                    @endforeach
                                 </select>
-                                @error('type_of_fuel')
+                                @error('fuel_type_id')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="tar_weight_capacity" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Tar Weight Capacity (Capacity if a Water Bowser)</label>
+                                <label for="tar_weight_capacity" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">TAR Weight Capacity</label>
                                 <input type="text" id="tar_weight_capacity" name="tar_weight_capacity" required
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('tar_weight_capacity')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="amount_of_fuel" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Amount of Fuel in the Tank at Takeover</label>
+                                <label for="amount_of_fuel" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Amount of Fuel</label>
                                 <input type="number" id="amount_of_fuel" name="amount_of_fuel" min="0" step="0.01" required
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('amount_of_fuel')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="reason_for_taking_over" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Reason for Taking Over</label>
                                 <input type="text" id="reason_for_taking_over" name="reason_for_taking_over" required
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('reason_for_taking_over')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="other_matters" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Other Matters</label>
                                 <input type="text" id="other_matters" name="other_matters"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('other_matters')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
-                            <div style="flex: 1; min-width: 0; max-width: 49%;"></div>
+                            <div style="flex: 1; min-width: 0; max-width: 49%;">
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Attachments Tab -->
                 <div id="additional-tab" class="tab-content" style="display: none; width: 100%; max-width: 1280px; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.5rem; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); animation: slideIn 0.3s ease-out;">
-                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 1.5rem; border-bottom: 2px solid #f97316; padding-bottom: 0.5rem;">Attachments</h3>
+                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 1.5rem; border-bottom: 2px solid #f97316; padding-bottom: 0.5rem;">Attachments (Serial: {{ request('serial_number') }})</h3>
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="registration_certificate" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Registration Certificate</label>
-                                <input type="file" id="registration_certificate" name="registration_certificate" required
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                <input type="file" id="registration_certificate" name="registration_certificate" accept=".pdf,.jpg,.png"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('registration_certificate')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="insurance_certificate" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Insurance Certificate</label>
-                                <input type="file" id="insurance_certificate" name="insurance_certificate" required
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                <input type="file" id="insurance_certificate" name="insurance_certificate" accept=".pdf,.jpg,.png"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('insurance_certificate')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="Revenue_License_Certificate" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Revenue License Certificate</label>
-                                <input type="file" id="Revenue_License_Certificate" name="Revenue_License_Certificate"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='#ffffff';">
+                                <label for="revenue_license_certificate" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Revenue License Certificate</label>
+                                <input type="file" id="revenue_license_certificate" name="revenue_license_certificate" accept=".pdf,.jpg,.png"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('revenue_license_certificate')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="Owners_certified_NIC" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Owner's Certified NIC</label>
-                                <input type="file" id="Owners_certified_NIC" name="Owners_certified_NIC" style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;" onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
-                            </div>
-                        </div>
-                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
-                            <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="Owners_Certified_Bank_Passbook" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Owner's Certified Bank Passbook</label>
-                                <input type="file" id="Owners_Certified_Bank_Passbook" name="Owners_Certified_Bank_Passbook"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
-                            </div>
-                            <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="Supliers_Scanned_Sign_document" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Suppliers Scanned Sign Document</label>
-                                <input type="file" id="Supliers_Scanned_Sign_document" name="Supliers_Scanned_Sign_document"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                <label for="owners_certified_nic" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Owner's Certified NIC</label>
+                                <input type="file" id="owners_certified_nic" name="owners_certified_nic" accept=".pdf,.jpg,.png"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('owners_certified_nic')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="Affidavit_non-joint_Account" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Affidavit Non-Joint Account</label>
-                                <input type="file" id="Affidavit_non-joint_Account" name="Affidavit_non-joint_Account"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                <label for="owners_certified_bank_passbook" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Owner's Certified Bank Passbook</label>
+                                <input type="file" id="owners_certified_bank_passbook" name="owners_certified_bank_passbook" accept=".pdf,.jpg,.png"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('owners_certified_bank_passbook')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="Affidavit_Army_Driver" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Affidavit Army Driver</label>
-                                <input type="file" id="Affidavit_Army_Driver" name="Affidavit_Army_Driver"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                <label for="suppliers_scanned_sign_document" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Suppliers Scanned Sign Document</label>
+                                <input type="file" id="suppliers_scanned_sign_document" name="suppliers_scanned_sign_document" accept=".pdf,.jpg,.png"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('suppliers_scanned_sign_document')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                            <div style="flex: 1; min-width: 0; max-width: 49%;">
+                                <label for="affidavit_non_joint_account" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Affidavit Non-Joint Account</label>
+                                <input type="file" id="affidavit_non_joint_account" name="affidavit_non_joint_account" accept=".pdf,.jpg,.png"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('affidavit_non_joint_account')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div style="flex: 1; min-width: 0; max-width: 49%;">
+                                <label for="affidavit_army_driver" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Affidavit Army Driver</label>
+                                <input type="file" id="affidavit_army_driver" name="affidavit_army_driver" accept=".pdf,.jpg,.png"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                @error('affidavit_army_driver')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Navigation Buttons -->
-                <div style="display: flex; gap: 1.5rem; justify-content: center; width: 100%; margin-top: 1rem;">
-                    <button type="button" onclick="previousTab()" style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s ease, transform 0.2s ease; font-weight: 600;"
-                            onmouseover="this.style.background='linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'">Previous</button>
-                    <button type="button" onclick="nextTab()" style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s ease, transform 0.2s ease; font-weight: 600;"
-                            onmouseover="this.style.background='linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'">Next</button>
-                </div>
+<div style="display: flex; gap: 1.5rem; justify-content: center; width: 100%; margin-top: 1rem;">
+    <button type="button" id="prevButton" onclick="previousTab()" style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s ease, transform 0.2s ease; font-weight: 600;"
+            onmouseover="if(!this.disabled){this.style.background='linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='scale(1.05)'}" 
+            onmouseout="if(!this.disabled){this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'}"
+            disabled>Previous</button>
+    <button type="button" id="nextButton" onclick="nextTab()" style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s ease, transform 0.2s ease; font-weight: 600;"
+            onmouseover="if(!this.disabled){this.style.background='linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='scale(1.05)'}" 
+            onmouseout="if(!this.disabled){this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'}" >Next</button>
+</div>
 
-                <!-- Submit Button -->
-                <div style="width: 100%; display: flex; justify-content: center; margin-top: 1.5rem;">
-                    <button type="submit"
-                            style="background: linear-gradient(90deg, #f97316 0%, #ea580c 100%); color: white; font-weight: 600; padding: 0.75rem 2rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: all 0.3s ease, transform 0.2s ease; font-size: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"
-                            onmouseover="this.style.background='linear-gradient(90deg, #ea580c 0%, #c2410c 100%)'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='linear-gradient(90deg, #f97316 0%, #ea580c 100%)'; this.style.transform='scale(1)'">
-                        <i class="fa-solid fa-plus-circle" style="margin-right: 0.5rem;"></i> Submit
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
+<!-- Submit Button -->
+<div style="width: 100%; display: flex; justify-content: center; margin-top: 1.5rem;">
+    <button type="submit"
+            style="background: linear-gradient(90deg, #f97316 0%, #ea580c 100%); color: white; font-weight: 600; padding: 0.75rem 2rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: all 0.3s ease, transform 0.2s ease; font-size: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"
+            onmouseover="this.style.background='linear-gradient(90deg, #ea580c 0%, #c2410c 100%)'; this.style.transform='scale(1.05)'" 
+            onmouseout="this.style.background='linear-gradient(90deg, #f97316 0%, #ea580c 100%)'; this.style.transform='scale(1)'">
+        <i class="fa-solid fa-save" style="margin-right: 0.5rem;"></i> Save Declaration
+    </button>
+</div>
+</div>
+</form>
+</div>
 </div>
 
 <!-- JavaScript for tab switching and dynamic vehicle model dropdown -->
 <script>
-    // Tab Navigation
-    function openTab(tabName) {
-        // Hide all tab contents
-        const tabContentElements = document.getElementsByClassName('tab-content');
-        for (let i = 0; i < tabContentElements.length; i++) {
-            tabContentElements[i].style.display = 'none';
-            tabContentElements[i].style.opacity = '0';
-        }
+// Tab Navigation
+function openTab(tabName) {
+    // Hide all tab contents
+    const tabContentElements = document.getElementsByClassName('tab-content');
+    for (let i = 0; i < tabContentElements.length; i++) {
+        tabContentElements[i].style.display = 'none';
+        tabContentElements[i].style.opacity = '0';
+    }
 
-        // Reset all tab buttons
-        const tabButtons = document.getElementsByClassName('tab-button');
-        for (let i = 0; i < tabButtons.length; i++) {
-            tabButtons[i].className = tabButtons[i].className.replace(' active', '');
-            tabButtons[i].style.background = '#e5e7eb';
-            tabButtons[i].style.color = '#374151';
-            const hoverEffect = tabButtons[i].querySelector('.hover-effect');
-            if (hoverEffect) {
-                hoverEffect.style.left = '-100%';
-            }
+    // Reset all tab buttons
+    const tabButtons = document.getElementsByClassName('tab-button');
+    for (let i = 0; i < tabButtons.length; i++) {
+        tabButtons[i].className = tabButtons[i].className.replace(' active', '');
+        tabButtons[i].style.background = '#e5e7eb';
+        tabButtons[i].style.color = '#374151';
+        const hoverEffect = tabButtons[i].querySelector('.hover-effect');
+        if (hoverEffect) {
+            hoverEffect.style.left = '-100%';
         }
+    }
 
-        // Show the selected tab content
-        const tabContent = document.getElementById(tabName + '-tab');
-        if (tabContent) {
-            tabContent.style.display = 'block';
+    // Show the selected tab content
+    const tabContent = document.getElementById(tabName + '-tab');
+    if (tabContent) {
+        tabContent.style.display = 'block';
+        setTimeout(() => {
+            tabContent.style.opacity = '1';
+        }, 10);
+    } else {
+        console.error(`Tab content not found: ${tabName}-tab`);
+        alert(`Tab "${tabName}" not found. Please check the configuration.`);
+        return;
+    }
+
+    // Set the active button style
+    const activeButton = Array.from(tabButtons).find(button => button.getAttribute('onclick').includes(`'${tabName}'`));
+    if (activeButton) {
+        activeButton.className += ' active';
+        activeButton.style.background = 'linear-gradient(90deg, #f97316 0%, #ea580c 100%)';
+        activeButton.style.color = 'white';
+        const hoverEffect = activeButton.querySelector('.hover-effect');
+        if (hoverEffect) {
+            hoverEffect.style.left = '0';
             setTimeout(() => {
-                tabContent.style.opacity = '1';
-            }, 10);
-        } else {
-            console.error(`Tab content not found: ${tabName}-tab`);
-            alert(`Tab "${tabName}" not found. Please check the configuration.`);
-            return;
-        }
-
-        // Set the active button style
-        const activeButton = Array.from(tabButtons).find(button => button.getAttribute('onclick').includes(`'${tabName}'`));
-        if (activeButton) {
-            activeButton.className += ' active';
-            activeButton.style.background = 'linear-gradient(90deg, #f97316 0%, #ea580c 100%)';
-            activeButton.style.color = 'white';
-            const hoverEffect = activeButton.querySelector('.hover-effect');
-            if (hoverEffect) {
-                hoverEffect.style.left = '0';
-                setTimeout(() => {
-                    hoverEffect.style.left = '-100%';
-                }, 400);
-            }
+                hoverEffect.style.left = '-100%';
+            }, 400);
         }
     }
 
-    // Next Tab Navigation
-    function nextTab() {
-        const currentTab = document.getElementsByClassName('tab-button active')[0];
-        if (!currentTab) {
-            console.error('No active tab found');
-            alert('Please select a tab to proceed.');
-            return;
-        }
-        const tabs = document.getElementsByClassName('tab-button');
-        const nextIndex = Array.from(tabs).indexOf(currentTab) + 1;
-        if (nextIndex < tabs.length) {
-            const tabName = tabs[nextIndex].getAttribute('onclick').match(/'([^']+)'/)[1];
-            openTab(tabName);
+    // Update navigation button states
+    updateNavButtons();
+}
+
+// Validate current tab's required fields
+function validateTab(tabContent) {
+    const requiredInputs = tabContent.querySelectorAll('input[required], select[required]');
+    for (let input of requiredInputs) {
+        if (!input.value) {
+            input.focus();
+            alert(`Please fill in the required field: ${input.previousElementSibling.textContent}`);
+            return false;
         }
     }
+    return true;
+}
 
-    // Previous Tab Navigation
-    function previousTab() {
-        const currentTab = document.getElementsByClassName('tab-button active')[0];
-        if (!currentTab) {
-            console.error('No active tab found');
-            alert('Please select a tab to go back.');
-            return;
-        }
-        const tabs = document.getElementsByClassName('tab-button');
-        const prevIndex = Array.from(tabs).indexOf(currentTab) - 1;
-        if (prevIndex >= 0) {
-            const tabName = tabs[prevIndex].getAttribute('onclick').match(/'([^']+)'/)[1];
-            openTab(tabName);
-        }
+// Next Tab Navigation
+function nextTab() {
+    const currentTab = document.getElementsByClassName('tab-button active')[0];
+    if (!currentTab) {
+        console.error('No active tab found');
+        alert('Please select a tab to proceed.');
+        return;
     }
 
-    // Initialize the first tab on page load
-    document.addEventListener('DOMContentLoaded', () => {
-        openTab('owner');
-    });
+    const currentTabContent = document.querySelector('.tab-content[style*="display: block"]');
+    if (!validateTab(currentTabContent)) {
+        return;
+    }
+
+    const tabs = document.getElementsByClassName('tab-button');
+    const nextIndex = Array.from(tabs).indexOf(currentTab) + 1;
+    if (nextIndex < tabs.length) {
+        const tabName = tabs[nextIndex].getAttribute('onclick').match(/'([^']+)'/)[1];
+        openTab(tabName);
+    }
+}
+
+// Previous Tab Navigation
+function previousTab() {
+    const currentTab = document.getElementsByClassName('tab-button active')[0];
+    if (!currentTab) {
+        console.error('No active tab found');
+        alert('Please select a tab to go back.');
+        return;
+    }
+
+    const tabs = document.getElementsByClassName('tab-button');
+    const prevIndex = Array.from(tabs).indexOf(currentTab) - 1;
+    if (prevIndex >= 0) {
+        const tabName = tabs[prevIndex].getAttribute('onclick').match(/'([^']+)'/)[1];
+        openTab(tabName);
+    }
+}
+
+// Update Navigation Button States
+function updateNavButtons() {
+    const currentTab = document.getElementsByClassName('tab-button active')[0];
+    const tabs = document.getElementsByClassName('tab-button');
+    const currentIndex = Array.from(tabs).indexOf(currentTab);
+    
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+
+    prevButton.disabled = currentIndex === 0;
+    nextButton.disabled = currentIndex === tabs.length - 1;
+
+    if (prevButton.disabled) {
+        prevButton.style.background = '#d1d5db';
+        prevButton.style.cursor = 'not-allowed';
+    } else {
+        prevButton.style.background = 'linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)';
+        prevButton.style.cursor = 'pointer';
+    }
+
+    if (nextButton.disabled) {
+        nextButton.style.background = '#d1d5db';
+        nextButton.style.cursor = 'not-allowed';
+    } else {
+        nextButton.style.background = 'linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)';
+        nextButton.style.cursor = 'pointer';
+    }
+}
+
+// Initialize the first tab on page load
+document.addEventListener('DOMContentLoaded', () => {
+    openTab('owner');
+});
 </script>
 
 <!-- CSS Animations -->
 <style>
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+.tab-button:hover .hover-effect {
+    left: 100%;
+}
+button:disabled {
+    background: #d1d5db !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+@media (max-width: 48rem) {
+    .tab-content, .tab-button {
+        width: 100% !important;
+        max-width: 100% !important;
     }
-    @keyframes slideIn {
-        from { transform: translateY(20px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
+    .tab-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
     }
-    .tab-button:hover .hover-effect {
-        left: 100%;
+    div[style*="flex-wrap: nowrap"] {
+        flex-wrap: wrap;
     }
-    @media (max-width: 48rem) {
-        .tab-content, .tab-button {
-            width: 100% !important;
-            max-width: 100% !important;
-        }
-        .tab-button {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-        }
-        div[style*="flex-wrap: nowrap"] {
-            flex-wrap: wrap;
-        }
-        div[style*="max-width: 49%"] {
-            max-width: 100%;
-            margin-bottom: 1rem;
-        }
+    div[style*="max-width: 49%"] {
+        max-width: 100%;
+        margin-bottom: 1rem;
     }
+}
 </style>
 @endsection
