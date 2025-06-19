@@ -124,6 +124,9 @@ Route::get('/', function () {
     return redirect()->route('vehicle-declaration.create');
 })->name('home');
 
+Route::get('/vehicle-declaration', [VehicleDeclarationFormController::class, 'create'])->name('vehicle.declaration.create');
+Route::post('/vehicle-declaration', [VehicleDeclarationFormController::class, 'store'])->name('vehicle.declaration.store');
+
 // Vehicle Declaration Routes
 Route::prefix('vehicle-declaration-form')->name('vehicle-declaration.')->group(function () {
     Route::get('/', [VehicleDeclarationFormController::class, 'create'])->name('create');

@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon; // Add this import
+use Carbon\Carbon;
 
 class VehicleDeclaration extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'serial_number', // Add to allow mass assignment
+        'serial_number',
         'registration_number',
         'owner_full_name',
         'owner_initials_name',
@@ -27,39 +27,44 @@ class VehicleDeclaration extends Model
         'loan_tax_details',
         'daily_rent',
         'induction_date',
-        'owner_next_of_kin',
-        'driver_full_name',
-        'driver_address',
-        'driver_license_number',
-        'driver_nic_number',
-        'driver_next_of_kin',
+        'reg_nic',
+        'rank',
+        'driver_name',
+        'unit',
+        'code_no_driver',
+        'army_license_no',
+        'license_issued_date',
+        'license_expire_date',
         'civil_number',
         'product_classification',
         'engine_no',
         'chassis_number',
         'year_of_manufacture',
         'date_of_original_registration',
-        'engine_capacity',
+        'engine_capacity_id',
         'section_4_w_2w',
         'speedometer_hours',
-        'code_no',
-        'color',
+        'code_no_vehicle',
+        'color_id',
         'pay_per_day',
-        'type_of_fuel',
+        'fuel_type_id',
         'tar_weight_capacity',
         'amount_of_fuel',
         'reason_for_taking_over',
         'other_matters',
-        'registration_certificate_path',
-        'insurance_certificate_path',
-        'revenue_license_certificate_path',
-        'owners_certified_nic_path',
-        'owners_certified_bank_passbook_path',
-        'suppliers_scanned_sign_document_path',
-        'affidavit_non_joint_account_path',
-        'affidavit_army_driver_path',
+        'registration_certificate',
+        'insurance_certificate',
+        'revenue_license_certificate',
+        'owners_certified_nic',
+        'owners_certified_bank_passbook',
+        'suppliers_scanned_sign_document',
+        'affidavit_non_joint_account',
+        'affidavit_army_driver',
     ];
 
+    /**
+     * Relationships
+     */
     public function vehicleType()
     {
         return $this->belongsTo(VehicleType::class);
@@ -70,12 +75,30 @@ class VehicleDeclaration extends Model
         return $this->belongsTo(VehicleModel::class);
     }
 
+    public function engineCapacity()
+    {
+        return $this->belongsTo(VehicleEngineCapacity::class, 'engine_capacity_id');
+    }
+
+    public function color()
+    {
+        return $this->belongsTo(VehicleColor::class, 'color_id');
+    }
+
+    public function fuelType()
+    {
+        return $this->belongsTo(FuelType::class);
+    }
+
+    /**
+     * Boot method for auto-generating serial_number if not provided
+     */
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($model) {
-            if (!$model->serial_number) {
+            if (empty($model->serial_number)) {
                 $date = Carbon::now()->format('Ymd');
                 $lastRecord = static::whereDate('created_at', Carbon::today())
                     ->latest('id')
