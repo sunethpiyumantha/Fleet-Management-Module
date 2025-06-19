@@ -109,13 +109,13 @@ Route::resource('vehicle-sub-categories', VehicleSubCategoryController::class)->
 
 use App\Http\Controllers\VehicleRequestController;
 
-Route::get('/get-sub-categories/{catId}', [VehicleRequestController::class, 'getSubCategories'])->name('get.sub.categories');
 Route::get('/vehicle-request', [VehicleRequestController::class, 'index'])->name('vehicle.request.index');
 Route::post('/vehicle-request', [VehicleRequestController::class, 'store'])->name('vehicle.request.store');
 Route::get('/vehicle-request/{id}/edit', [VehicleRequestController::class, 'edit'])->name('vehicle.request.edit');
-Route::put('/vehicle-request/{id}', [VehicleRequestController::class, 'update'])->name('vehicle.request.update');
 Route::delete('/vehicle-request/{id}', [VehicleRequestController::class, 'destroy'])->name('vehicle.request.destroy');
-Route::get('/all-requests', [VehicleRequestController::class, 'allRequests'])->name('all.request');
+Route::get('/get-sub-categories/{catId}', [VehicleRequestController::class, 'getSubCategories'])->name('vehicle.request.subcategories');
+Route::get('/all-requests', [VehicleRequestController::class, 'allRequests'])->name('vehicle.request.all');
+Route::get('/vehicle-request/create', [VehicleRequestController::class, 'create'])->name('vehicle.request.create');
 
 
 use App\Http\Controllers\VehicleDeclarationFormController;

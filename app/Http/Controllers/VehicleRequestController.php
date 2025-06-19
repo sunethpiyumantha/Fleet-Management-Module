@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 
 class VehicleRequestController extends Controller
 {
+    
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -16,7 +17,7 @@ class VehicleRequestController extends Controller
         $order = $request->input('order', 'desc');
         $perPage = $request->input('per_page', 15);
 
-        $sortableColumns = ['category', 'sub_category', 'created_at'];
+        $sortableColumns = ['created_at', 'category', 'sub_category'];
         $sort = in_array($sort, $sortableColumns) ? $sort : 'created_at';
         $order = in_array(strtolower($order), ['asc', 'desc']) ? $order : 'desc';
 
@@ -24,17 +25,17 @@ class VehicleRequestController extends Controller
             ->when($search, function ($query) use ($search) {
                 $query->where('serial_number', 'like', "%{$search}%")
                     ->orWhere('request_type', 'like', "%{$search}%")
-                    ->orWhereHas('category', fn ($q) => $q->where('name', 'like', "%{$search}%"))
-                    ->orWhereHas('subCategory', fn ($q) => $q->where('name', 'like', "%{$search}%"));
+                    ->orWhereHas('category', fn ($q) => $q->where('category', 'like', "%{$search}%"))
+                    ->orWhereHas('subCategory', fn ($q) => $q->where('sub_category', 'like', "%{$search}%"));
             })
             ->when($sort, function ($query) use ($sort, $order) {
                 if ($sort === 'category') {
                     return $query->join('vehicle_categories', 'vehicle_requests.cat_id', '=', 'vehicle_categories.id')
-                                ->orderBy('vehicle_categories.name', $order)
+                                ->orderBy('vehicle_categories.category', $order)
                                 ->select('vehicle_requests.*');
                 } elseif ($sort === 'sub_category') {
                     return $query->join('vehicle_sub_categories', 'vehicle_requests.sub_cat_id', '=', 'vehicle_sub_categories.id')
-                                ->orderBy('vehicle_sub_categories.name', $order)
+                                ->orderBy('vehicle_sub_categories.sub_category', $order)
                                 ->select('vehicle_requests.*');
                 }
                 return $query->orderBy($sort, $order);
@@ -42,11 +43,11 @@ class VehicleRequestController extends Controller
             ->with(['category', 'subCategory'])
             ->paginate($perPage);
 
-        $categories = VehicleCategory::orderBy('name')->get();
+        $categories = VehicleCategory::orderBy('category')->get();
 
-        return view('all-request', compact('vehicles', 'categories'));
+        return view('request-vehicle', compact('vehicles', 'categories', 'sort', 'order'));
+ // Line 48
     }
-
     public function store(Request $request)
     {
        $validated = $request->validate([
@@ -61,6 +62,13 @@ class VehicleRequestController extends Controller
 
         return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request created successfully.');
     }
+
+    public function create()
+    {
+        $categories = VehicleCategory::orderBy('category')->get();
+        return view('request-vehicle', compact('categories'));
+    }
+
 
     public function edit($id)
     {
@@ -99,11 +107,42 @@ class VehicleRequestController extends Controller
         return response()->json($subCategories);
     }
 
-    public function allRequests()
+    public function allRequests(Request $request)
     {
-        $categories = VehicleCategory::orderBy('category')->get();
-        $vehicles = VehicleRequest::with(['category', 'subCategory'])->get();
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'created_at');
+        $order = $request->input('order', 'desc');
+        $perPage = $request->input('per_page', 15);
 
-        return view('all-request', compact('categories', 'vehicles'));
+        $sortableColumns = ['created_at', 'category', 'sub_category'];
+        $sort = in_array($sort, $sortableColumns) ? $sort : 'created_at';
+        $order = in_array(strtolower($order), ['asc', 'desc']) ? $order : 'desc';
+
+        $vehicles = VehicleRequest::query()
+            ->when($search, function ($query) use ($search) {
+                $query->where('serial_number', 'like', "%{$search}%")
+                    ->orWhere('request_type', 'like', "%{$search}%")
+                    ->orWhereHas('category', fn ($q) => $q->where('category', 'like', "%{$search}%"))
+                    ->orWhereHas('subCategory', fn ($q) => $q->where('sub_category', 'like', "%{$search}%"));
+            })
+            ->when($sort, function ($query) use ($sort, $order) {
+                if ($sort === 'category') {
+                    return $query->join('vehicle_categories', 'vehicle_requests.cat_id', '=', 'vehicle_categories.id')
+                                ->orderBy('vehicle_categories.category', $order)
+                                ->select('vehicle_requests.*');
+                } elseif ($sort === 'sub_category') {
+                    return $query->join('vehicle_sub_categories', 'vehicle_requests.sub_cat_id', '=', 'vehicle_sub_categories.id')
+                                ->orderBy('vehicle_sub_categories.sub_category', $order)
+                                ->select('vehicle_requests.*');
+                }
+                return $query->orderBy($sort, $order);
+            })
+            ->with(['category', 'subCategory'])
+            ->paginate($perPage);
+
+        $categories = VehicleCategory::orderBy('category')->get();
+
+        return view('all-request', compact('vehicles', 'categories', 'sort', 'order'));
     }
+
 }

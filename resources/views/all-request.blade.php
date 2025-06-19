@@ -10,6 +10,12 @@
             All Requests
         </h2>
 
+        <!-- Search Form -->
+        <form method="GET" action="{{ route('vehicle.request.all') }}" style="margin-bottom: 1rem;">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by serial or category..." style="padding: 0.5rem; width: 300px;">
+            <button type="submit" style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none;">Search</button>
+        </form>
+
         <!-- Vehicle Requests Table -->
         <div style="overflow-x: auto;">
             <table id="vehicleTable" style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; background-color: white;">
@@ -24,68 +30,63 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    <!-- Sample Data Row 1 -->
-                    <tr style="transition: background-color 0.3s ease, transform 0.2s ease; animation: slideIn 0.3s ease forwards;">
-                        <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">1</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">Vehicle Replacement</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">Sedan</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">Mid-Size</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">2</td>
-                        <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
-                            <p style="font-size: 0.8rem; color: #4b5563; margin-bottom: 0.5rem;">Vehicle ID: 101</p>
-                            <button style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease;"
-                                    onmouseover="this.style.background='linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='scale(1.05)'"
-                                    onmouseout="this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'">
-                                Add
-                            </button>
-                            <button style="background: linear-gradient(90deg, #16a34a 0%, #15803d 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease; margin-left: 0.5rem;"
-                                    onmouseover="this.style.background='linear-gradient(90deg, #15803d 0%, #166534 100%)'; this.style.transform='scale(1.05)'"
-                                    onmouseout="this.style.background='linear-gradient(90deg, #16a34a 0%, #15803d 100%)'; this.style.transform='scale(1)'">
-                                Update
-                            </button>
-                            <button onclick="return confirm('Delete this Vehicle Request?')"
-                                    style="background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; margin-left: 0.5rem; transition: all 0.3s ease, transform 0.2s ease;"
-                                    onmouseover="this.style.background='linear-gradient(90deg, #b91c1c 0%, #991b1b 100%)'; this.style.transform='scale(1.05)'"
-                                    onmouseout="this.style.background='linear-gradient(90deg, #dc2626 0%, #b91c1c 100%)'; this.style.transform='scale(1)'">
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
-                    <!-- Sample Data Row 2 -->
-                    <tr style="transition: background-color 0.3s ease, transform 0.2s ease; animation: slideIn 0.3s ease forwards;">
-                        <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">2</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">New Approval</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">SUV</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">Full-Size</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">1</td>
-                        <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
-                            <p style="font-size: 0.8rem; color: #4b5563; margin-bottom: 0.5rem;">Vehicle ID: 102</p>
-                            <button style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease;"
-                                    onmouseover="this.style.background='linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='scale(1.05)'"
-                                    onmouseout="this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'">
-                                Add
-                            </button>
-                            <button style="background: linear-gradient(90deg, #16a34a 0%, #15803d 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease; margin-left: 0.5rem;"
-                                    onmouseover="this.style.background='linear-gradient(90deg, #15803d 0%, #166534 100%)'; this.style.transform='scale(1.05)'"
-                                    onmouseout="this.style.background='linear-gradient(90deg, #16a34a 0%, #15803d 100%)'; this.style.transform='scale(1)'">
-                                Update
-                            </button>
-                            <button onclick="return confirm('Delete this Vehicle Request?')"
-                                    style="background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; margin-left: 0.5rem; transition: all 0.3s ease, transform 0.2s ease;"
-                                    onmouseover="this.style.background='linear-gradient(90deg, #b91c1c 0%, #991b1b 100%)'; this.style.transform='scale(1.05)'"
-                                    onmouseout="this.style.background='linear-gradient(90deg, #dc2626 0%, #b91c1c 100%)'; this.style.transform='scale(1)'">
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
-                    <!-- Empty State -->
-                    <tr>
-                        <td colspan="6" style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151; display: none;">
-                            No vehicle requests found.
-                        </td>
-                    </tr>
+                    @forelse ($vehicles as $vehicle)
+                        <tr style="transition: background-color 0.3s ease, transform 0.2s ease; animation: slideIn 0.3s ease forwards;">
+                            <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
+                                {{ $vehicle->serial_number ?? $vehicle->id }}
+                            </td>
+                            <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
+                                {{ $vehicle->request_type }}
+                            </td>
+                            <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
+                                {{ $vehicle->category->category ?? 'N/A' }}
+                            </td>
+                            <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
+                                {{ $vehicle->subCategory->sub_category ?? 'N/A' }} <!-- Changed from 'name' to 'sub_category' -->
+                            </td>
+                            <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
+                                {{ $vehicle->qty }}
+                            </td>
+                            <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
+                                <p style="font-size: 0.8rem; color: #4b5563; margin-bottom: 0.5rem;">Vehicle ID: {{ $vehicle->id }}</p>
+                                <a href="{{ route('vehicle.request.create') }}"
+                                   style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease; text-decoration: none;"
+                                   onmouseover="this.style.background='linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='scale(1.05)'"
+                                   onmouseout="this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'">
+                                    Add
+                                </a>
+                                <a href="{{ route('vehicle.request.edit', $vehicle->id) }}"
+                                   style="background: linear-gradient(90deg, #16a34a 0%, #15803d 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease; margin-left: 0.5rem; text-decoration: none;"
+                                   onmouseover="this.style.background='linear-gradient(90deg, #15803d 0%, #166534 100%)'; this.style.transform='scale(1.05)'"
+                                   onmouseout="this.style.background='linear-gradient(90deg, #16a34a 0%, #15803d 100%)'; this.style.transform='scale(1)'">
+                                    Update
+                                </a>
+                                <form action="{{ route('vehicle.request.destroy', $vehicle->id) }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" onclick="return confirm('Delete this Vehicle Request?')"
+                                            style="background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; margin-left: 0.5rem; transition: all 0.3s ease, transform 0.2s ease;"
+                                            onmouseover="this.style.background='linear-gradient(90deg, #b91c1c 0%, #991b1b 100%)'; this.style.transform='scale(1.05)'"
+                                            onmouseout="this.style.background='linear-gradient(90deg, #dc2626 0%, #b91c1c 100%)'; this.style.transform='scale(1)'">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
+                                No vehicle requests found.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- Pagination Links -->
+        <div style="margin-top: 1rem;">
+            {{ $vehicles->links() }}
         </div>
     </div>
 </div>
