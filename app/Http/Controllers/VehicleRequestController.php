@@ -50,7 +50,7 @@ class VehicleRequestController extends Controller
     }
     public function store(Request $request)
     {
-       $validated = $request->validate([
+        $validated = $request->validate([
             'serial_number' => 'nullable|string|unique:vehicle_requests,serial_number',
             'request_type' => 'required|in:replacement,new_approval',
             'cat_id' => 'required|exists:vehicle_categories,id',
@@ -58,10 +58,25 @@ class VehicleRequestController extends Controller
             'qty' => 'required|integer|min:1',
         ]);
 
+        // If serial_number is empty, generate a new one
+        if (empty($validated['serial_number'])) {
+            $validated['serial_number'] = $this->generateUniqueSerialNumber();
+        }
+
         VehicleRequest::create($validated);
 
         return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request created successfully.');
     }
+
+    private function generateUniqueSerialNumber()
+    {
+        do {
+            $serial = now()->format('Ymd') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        } while (VehicleRequest::where('serial_number', $serial)->exists());
+
+        return $serial;
+    }
+
 
     public function create()
     {
