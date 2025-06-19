@@ -143,12 +143,12 @@ class VehicleRequestController extends Controller
             ->when($sort, function ($query) use ($sort, $order) {
                 if ($sort === 'category') {
                     return $query->join('vehicle_categories', 'vehicle_requests.cat_id', '=', 'vehicle_categories.id')
-                                ->orderBy('vehicle_categories.category', $order)
-                                ->select('vehicle_requests.*');
+                        ->orderBy('vehicle_categories.category', $order)
+                        ->select('vehicle_requests.*');
                 } elseif ($sort === 'sub_category') {
                     return $query->join('vehicle_sub_categories', 'vehicle_requests.sub_cat_id', '=', 'vehicle_sub_categories.id')
-                                ->orderBy('vehicle_sub_categories.sub_category', $order)
-                                ->select('vehicle_requests.*');
+                        ->orderBy('vehicle_sub_categories.sub_category', $order)
+                        ->select('vehicle_requests.*');
                 }
                 return $query->orderBy($sort, $order);
             })
@@ -157,11 +157,7 @@ class VehicleRequestController extends Controller
 
         $categories = VehicleCategory::orderBy('category')->get();
 
-
         return view('all-request', compact('vehicles', 'categories', 'sort', 'order'));
     }
-
-
-        return view('all-request', compact('categories', 'vehicles'));
-    } 
+ 
 }
