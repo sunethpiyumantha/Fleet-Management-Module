@@ -105,5 +105,5 @@ class VehicleRequestController extends Controller
         $vehicles = VehicleRequest::with(['category', 'subCategory'])->get();
 
         return view('all-request', compact('categories', 'vehicles'));
-    }
+    } 
 }
