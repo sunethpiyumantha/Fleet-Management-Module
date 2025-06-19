@@ -485,6 +485,12 @@
                                                     Vehicle Request 
                                                 </a>
                                         </li>
+                                        <li>
+                                            <a href="{{ route('all.request') }}">
+                                                <i class="metismenu-icon"></i>
+                                                    All Request 
+                                                </a>
+                                        </li>
                                         
                                 </li>
                                 
