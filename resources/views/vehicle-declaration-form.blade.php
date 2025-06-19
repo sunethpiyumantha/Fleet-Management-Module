@@ -332,10 +332,17 @@
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="engine_capacity" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Engine Capacity</label>
-                                <input type="text" id="engine_capacity" name="engine_capacity" required
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                <select id="engine_capacity" name="engine_capacity" required
+                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem; appearance: none; background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"%23374151\"><path d=\"M7 10l-5-5 1.41-1.41L7 7.17l4.59-4.58L12 5l-5 5z\"/></svg>') no-repeat right 1rem center;"
+                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" 
+                                        onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    <option value="" disabled selected>Select Engine Capacity</option>
+                                </select>
+                                @error('engine_capacity')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
+
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="section_4_w_2w" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Section 4 W/2W</label>
                                 <input type="text" id="section_4_w_2w" name="section_4_w_2w" required
@@ -360,10 +367,17 @@
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="color" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Color</label>
-                                <input type="text" id="color" name="color" required
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                <select id="color" name="color" required
+                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem; appearance: none; background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"%23374151\"><path d=\"M7 10l-5-5 1.41-1.41L7 7.17l4.59-4.58L12 5l-5 5z\"/></svg>') no-repeat right 1rem center;"
+                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" 
+                                        onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    <option value="" disabled selected>Select Color</option>
+                                </select>
+                                @error('color')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
+
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="pay_per_day" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Pay per Day</label>
                                 <input type="number" id="pay_per_day" name="pay_per_day" min="0" step="0.01" required
@@ -374,10 +388,17 @@
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="type_of_fuel" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Type of Fuel</label>
-                                <input type="text" id="type_of_fuel" name="type_of_fuel" required
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                <select id="type_of_fuel" name="type_of_fuel" required
+                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem; appearance: none; background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"%23374151\"><path d=\"M7 10l-5-5 1.41-1.41L7 7.17l4.59-4.58L12 5l-5 5z\"/></svg>') no-repeat right 1rem center;"
+                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" 
+                                        onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    <option value="" disabled selected>Select Fuel Type</option>
+                                </select>
+                                @error('type_of_fuel')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
+
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="tar_weight_capacity" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Tar Weight Capacity (Capacity if a Water Bowser)</label>
                                 <input type="text" id="tar_weight_capacity" name="tar_weight_capacity" required
