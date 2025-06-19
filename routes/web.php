@@ -119,20 +119,13 @@ Route::delete('/vehicle-request/{id}', [VehicleRequestController::class, 'destro
 
 use App\Http\Controllers\VehicleDeclarationFormController;
 
+Route::get('/', function () {
+    return redirect()->route('vehicle-declaration.create');
+})->name('home');
+
 // Vehicle Declaration Routes
 Route::prefix('vehicle-declaration-form')->name('vehicle-declaration.')->group(function () {
-    Route::get('/', [VehicleDeclarationFormController::class, 'index'])->name('index');
+    Route::get('/', [VehicleDeclarationFormController::class, 'create'])->name('create');
     Route::post('/', [VehicleDeclarationFormController::class, 'store'])->name('store');
-    Route::get('/{id}/edit', [VehicleDeclarationFormController::class, 'edit'])->name('edit');
-    Route::put('/{id}', [VehicleDeclarationFormController::class, 'update'])->name('update');
-    Route::delete('/{id}', [VehicleDeclarationFormController::class, 'destroy'])->name('destroy');
-    Route::post('/{id}/restore', [VehicleDeclarationFormController::class, 'restore'])->name('restore');
-    Route::get('/{id}', [VehicleDeclarationFormController::class, 'show'])->name('show');
 });
 
-// API Routes for AJAX
-Route::prefix('api')->group(function () {
-    Route::get('vehicle-models/{vehicleTypeId}', [VehicleDeclarationFormController::class, 'getVehicleModels']);
-});
-
-// Add these to your existing routes...

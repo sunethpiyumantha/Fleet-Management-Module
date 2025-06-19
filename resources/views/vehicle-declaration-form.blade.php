@@ -41,107 +41,154 @@
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
                                 <label for="registration_number" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Vehicle Reg. Number</label>
                                 <input type="text" id="registration_number" name="registration_number" required
-                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                    style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                @error('registration_number')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
                                 <label for="owner_full_name" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Full Name</label>
                                 <input type="text" id="owner_full_name" name="owner_full_name" required
-                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                    style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                @error('owner_full_name')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
                                 <label for="owner_initials_name" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Name with Initials</label>
                                 <input type="text" id="owner_initials_name" name="owner_initials_name" required
-                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                    style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                @error('owner_initials_name')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
                                 <label for="owner_permanent_address" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Permanent Address</label>
                                 <input type="text" id="owner_permanent_address" name="owner_permanent_address" required
-                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                    style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                @error('owner_permanent_address')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
                                 <label for="owner_temporary_address" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Temporary Address (if any)</label>
                                 <input type="text" id="owner_temporary_address" name="owner_temporary_address"
-                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                    style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                @error('owner_temporary_address')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
                                 <label for="owner_phone_number" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Phone Number</label>
                                 <input type="tel" id="owner_phone_number" name="owner_phone_number" required
-                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                    style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                @error('owner_phone_number')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
                                 <label for="owner_bank_details" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Bank Account Details</label>
                                 <input type="text" id="owner_bank_details" name="owner_bank_details" required
-                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                    style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                @error('owner_bank_details')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
                                 <label for="vehicle_type" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Vehicle Type</label>
                                 <select id="vehicle_type" name="vehicle_type" required
-                                        style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem; appearance: none; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="%23374151"><path d="M7 10l-5-5 1.41-1.41L7 7.17l4.59-4.58L12 5l-5 5z"/></svg>') no-repeat right 0.75rem center;"
+                                        style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem; appearance: none; background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"%23374151\"><path d=\"M7 10l-5-5 1.41-1.41L7 7.17l4.59-4.58L12 5l-5 5z\"/></svg>') no-repeat right 0.75rem center;"
                                         onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
                                     <option value="" disabled selected>Select Vehicle Type</option>
+                                    @foreach($vehicleTypes as $type)
+                                        <option value="{{ $type->id }}">{{ $type->type }}</option> <!-- Changed to type -->
+                                    @endforeach
                                 </select>
+                                @error('vehicle_type')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
                                 <label for="vehicle_model" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Vehicle Model</label>
                                 <select id="vehicle_model" name="vehicle_model" required
-                                        style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem; appearance: none; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="%23374151"><path d="M7 10l-5-5 1.41-1.41L7 7.17l4.59-4.58L12 5l-5 5z"/></svg>') no-repeat right 0.75rem center;"
+                                        style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem; appearance: none; background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"%23374151\"><path d=\"M7 10l-5-5 1.41-1.41L7 7.17l4.59-4.58L12 5l-5 5z\"/></svg>') no-repeat right 0.75rem center;"
                                         onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
                                     <option value="" disabled selected>Select Vehicle Model</option>
+                                    @foreach($vehicleModels as $model)
+                                        <option value="{{ $model->id }}">{{ $model->model }}</option> <!-- Changed to model -->
+                                    @endforeach
                                 </select>
+                                @error('vehicle_model')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
                                 <label for="seats_registered" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Registered Seats</label>
                                 <input type="number" id="seats_registered" name="seats_registered" min="1" required
-                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                    style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                @error('seats_registered')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
                                 <label for="seats_current" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Current Seats</label>
                                 <input type="number" id="seats_current" name="seats_current" min="1" required
-                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                    style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                @error('seats_current')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
                                 <label for="loan_tax_details" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Loan/Tax Details</label>
                                 <input type="text" id="loan_tax_details" name="loan_tax_details"
-                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                    style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                @error('loan_tax_details')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
                                 <label for="daily_rent" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Daily Rent</label>
                                 <input type="number" id="daily_rent" name="daily_rent" min="0" step="0.01" required
-                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                    style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                @error('daily_rent')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
                                 <label for="induction_date" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Induction Date</label>
                                 <input type="date" id="induction_date" name="induction_date" required
-                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                    style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                                @error('induction_date')
+                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div id="driver-tab" class="tab-content" style="display: none; width: 100%; max-width: 640px; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.5rem; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); animation: slideIn 0.3s ease-out;">
                     <h3 style="font-size: 1.25rem; font-weight: 600; color: #1f2933; margin-bottom: 1.5rem; border-bottom: 2px solid #f97316; padding-bottom: 0.5rem;">Driver Details</h3>
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
@@ -336,32 +383,48 @@
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
-                                <label for="document_1" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Document 1</label>
-                                <input type="file" id="document_1" name="document_1"
+                                <label for="Revenue_License_Certificate" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Revenue License Certificate</label>
+                                <input type="file" id="Revenue_License_Certificate" name="Revenue_License_Certificate"
                                        style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
-                                <label for="document_2" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Document 2</label>
-                                <input type="file" id="document_2" name="document_2"
+                                <label for="Owners_certified_NIC" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Owners certified NIC</label>
+                                <input type="file" id="Owners_certified_NIC" name="Owners_certified_NIC"
                                        style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
                             </div>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
-                                <label for="document_3" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Document 3</label>
-                                <input type="file" id="document_3" name="document_3"
+                                <label for="Owners_Certified_Bank_Passbook" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Owners Certified Bank Passbook</label>
+                                <input type="file" id="Owners_Certified_Bank_Passbook" name="Owners_Certified_Bank_Passbook"
                                        style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
                             </div>
                             <div style="flex: 1; min-width: 0; max-width: 48%;">
-                                <label for="document_4" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Document 4</label>
-                                <input type="file" id="document_4" name="document_4"
+                                <label for="Supliers_Scanned_Sign_document" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Supliers Scanned Sign document</label>
+                                <input type="file" id="Supliers_Scanned_Sign_document" name="Supliers_Scanned_Sign_document"
                                        style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
                                        onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
                             </div>
                         </div>
+
+                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="Affidavit_non-joint_Account" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Affidavit non-joint Account</label>
+                                <input type="file" id="Affidavit_non-joint_Account" name="Affidavit_non-joint_Account"
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                            <div style="flex: 1; min-width: 0; max-width: 48%;">
+                                <label for="Affidavit_Army_Driver" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #4b5563;">Affidavit Army Driver</label>
+                                <input type="file" id="Affidavit_Army_Driver" name="Affidavit_Army_Driver"
+                                       style="width: 100%; height: 42px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 0.75rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease; font-size: 0.9rem;"
+                                       onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#d1d5db'">
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -387,62 +450,76 @@
 
 <!-- JavaScript for tab switching and dynamic vehicle model dropdown -->
 <script>
-    // Define vehicleModels to prevent runtime error
-    const vehicleModels = {
-        "car": ["Model A", "Model B", "Model C"],
-        "truck": ["Model X", "Model Y", "Model Z"],
-        // Add more vehicle types and models as needed
-    };
+    // Tab Navigation
+    function openTab(tabName, buttonElement) {
+        const tabContentElements = document.getElementsByClassName('tab-content');
+        for (let i = 0; i < tabContentElements.length; i++) {
+            tabContentElements[i].style.display = 'none';
+            tabContentElements[i].style.opacity = '0';
+        }
 
-    const vehicleTypeSelect = document.getElementById('vehicle_type');
-    const vehicleModelSelect = document.getElementById('vehicle_model');
+        const tabButtons = document.getElementsByClassName('tab-button');
+        for (let i = 0; i < tabButtons.length; i++) {
+            tabButtons[i].className = tabButtons[i].className.replace(' active', '');
+            tabButtons[i].style.background = '#e5e7eb';
+            tabButtons[i].style.color = '#374151';
+            const hoverEffect = tabButtons[i].querySelector('.hover-effect');
+            if (hoverEffect) {
+                hoverEffect.style.left = '-100%';
+            }
+        }
 
-    vehicleTypeSelect.addEventListener('change', function() {
-        const selectedType = this.value;
-        vehicleModelSelect.innerHTML = '<option value="" disabled selected>Select Vehicle Model</option>';
-
-        if (selectedType && vehicleModels[selectedType]) {
-            vehicleModels[selectedType].forEach(model => {
-                const option = document.createElement('option');
-                option.value = model;
-                option.textContent = model;
-                vehicleModelSelect.appendChild(option);
-            });
-            vehicleModelSelect.disabled = false;
+        const tabContent = document.getElementById(tabName + '-tab');
+        if (tabContent) {
+            tabContent.style.display = 'block';
+            setTimeout(() => {
+                tabContent.style.opacity = '1';
+            }, 10);
         } else {
-            vehicleModelSelect.disabled = true;
+            console.error(`Tab content not found: ${tabName}-tab`);
+            alert(`Tab "${tabName}" not found. Please check the configuration.`);
+            return;
         }
-    });
 
-    function openTab(tabName) {
-        var i, tabcontent, tabbuttons;
-        tabcontent = document.getElementsByClassName("tab-content");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-            tabcontent[i].style.opacity = "0";
+        buttonElement.className += ' active';
+        buttonElement.style.background = 'linear-gradient(90deg, #f97316 0%, #ea580c 100%)';
+        buttonElement.style.color = 'white';
+        const hoverEffect = buttonElement.querySelector('.hover-effect');
+        if (hoverEffect) {
+            hoverEffect.style.left = '100%';
+            setTimeout(() => {
+                hoverEffect.style.left = '-100%';
+            }, 400);
         }
-        tabbuttons = document.getElementsByClassName("tab-button");
-        for (i = 0; i < tabbuttons.length; i++) {
-            tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
-            tabbuttons[i].style.background = "#e5e7eb";
-            tabbuttons[i].style.color = "#374151";
-            tabbuttons[i].querySelector('.hover-effect').style.left = '-100%';
-        }
-        document.getElementById(tabName + '-tab').style.display = "block";
-        setTimeout(() => document.getElementById(tabName + '-tab').style.opacity = "1", 10);
-        event.currentTarget.className += " active";
-        event.currentTarget.style.background = "linear-gradient(90deg, #f97316 0%, #ea580c 100%)";
-        event.currentTarget.style.color = "white";
-        event.currentTarget.querySelector('.hover-effect').style.left = '100%';
-        setTimeout(() => event.currentTarget.querySelector('.hover-effect').style.left = '-100%', 400);
     }
 
+    // Next Tab Navigation
     function nextTab() {
-        var currentTab = document.getElementsByClassName("tab-button active")[0];
-        var tabs = document.getElementsByClassName("tab-button");
-        var nextIndex = Array.from(tabs).indexOf(currentTab) + 1;
+        const currentTab = document.getElementsByClassName('tab-button active')[0];
+        if (!currentTab) {
+            console.error('No active tab found');
+            alert('Please select a tab to proceed.');
+            return;
+        }
+        const tabs = document.getElementsByClassName('tab-button');
+        const nextIndex = Array.from(tabs).indexOf(currentTab) + 1;
         if (nextIndex < tabs.length) {
             tabs[nextIndex].click();
+        }
+    }
+
+    // Previous Tab Navigation
+    function previousTab() {
+        const currentTab = document.getElementsByClassName('tab-button active')[0];
+        if (!currentTab) {
+            console.error('No active tab found');
+            alert('Please select a tab to go back.');
+            return;
+        }
+        const tabs = document.getElementsByClassName('tab-button');
+        const prevIndex = Array.from(tabs).indexOf(currentTab) - 1;
+        if (prevIndex >= 0) {
+            tabs[prevIndex].click();
         }
     }
 </script>
