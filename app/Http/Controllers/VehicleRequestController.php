@@ -142,7 +142,11 @@ class VehicleRequestController extends Controller
 
         $categories = VehicleCategory::orderBy('category')->get();
 
+
         return view('all-request', compact('vehicles', 'categories', 'sort', 'order'));
     }
 
+
+        return view('all-request', compact('categories', 'vehicles'));
+    } 
 }
