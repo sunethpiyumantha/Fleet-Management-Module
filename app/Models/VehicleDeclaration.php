@@ -3,14 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon; // Add this import
 
 class VehicleDeclaration extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'serial_number', // Add to allow mass assignment
         'registration_number',
         'owner_full_name',
         'owner_initials_name',
@@ -22,8 +24,6 @@ class VehicleDeclaration extends Model
         'vehicle_model_id',
         'seats_registered',
         'seats_current',
-        'registration_certificate',
-        'insurance_certificate',
         'loan_tax_details',
         'daily_rent',
         'induction_date',
@@ -33,73 +33,58 @@ class VehicleDeclaration extends Model
         'driver_license_number',
         'driver_nic_number',
         'driver_next_of_kin',
-        'document_1',
-        'document_2',
-        'document_3',
-        'document_4',
+        'civil_number',
+        'product_classification',
+        'engine_no',
+        'chassis_number',
+        'year_of_manufacture',
+        'date_of_original_registration',
+        'engine_capacity',
+        'section_4_w_2w',
+        'speedometer_hours',
+        'code_no',
+        'color',
+        'pay_per_day',
+        'type_of_fuel',
+        'tar_weight_capacity',
+        'amount_of_fuel',
+        'reason_for_taking_over',
+        'other_matters',
+        'registration_certificate_path',
+        'insurance_certificate_path',
+        'revenue_license_certificate_path',
+        'owners_certified_nic_path',
+        'owners_certified_bank_passbook_path',
+        'suppliers_scanned_sign_document_path',
+        'affidavit_non_joint_account_path',
+        'affidavit_army_driver_path',
     ];
 
-    protected $casts = [
-        'induction_date' => 'date',
-        'daily_rent' => 'decimal:2',
-        'seats_registered' => 'integer',
-        'seats_current' => 'integer',
-    ];
-
-    protected $dates = ['deleted_at'];
-
-    /**
-     * Get the vehicle type that owns the declaration.
-     */
     public function vehicleType()
     {
         return $this->belongsTo(VehicleType::class);
     }
 
-    /**
-     * Get the vehicle model that owns the declaration.
-     */
     public function vehicleModel()
     {
         return $this->belongsTo(VehicleModel::class);
     }
 
-    /**
-     * Get the full file path for registration certificate
-     */
-    public function getRegistrationCertificateUrlAttribute()
+    protected static function boot()
     {
-        return $this->registration_certificate ? asset('storage/' . $this->registration_certificate) : null;
-    }
+        parent::boot();
 
-    /**
-     * Get the full file path for insurance certificate
-     */
-    public function getInsuranceCertificateUrlAttribute()
-    {
-        return $this->insurance_certificate ? asset('storage/' . $this->insurance_certificate) : null;
-    }
-
-    /**
-     * Get the full file path for additional documents
-     */
-    public function getDocument1UrlAttribute()
-    {
-        return $this->document_1 ? asset('storage/' . $this->document_1) : null;
-    }
-
-    public function getDocument2UrlAttribute()
-    {
-        return $this->document_2 ? asset('storage/' . $this->document_2) : null;
-    }
-
-    public function getDocument3UrlAttribute()
-    {
-        return $this->document_3 ? asset('storage/' . $this->document_3) : null;
-    }
-
-    public function getDocument4UrlAttribute()
-    {
-        return $this->document_4 ? asset('storage/' . $this->document_4) : null;
+        static::creating(function ($model) {
+            if (!$model->serial_number) {
+                $date = Carbon::now()->format('Ymd');
+                $lastRecord = static::whereDate('created_at', Carbon::today())
+                    ->latest('id')
+                    ->lockForUpdate()
+                    ->first();
+                $sequence = $lastRecord ? (int)substr($lastRecord->serial_number, -4) + 1 : 1;
+                $sequence = str_pad($sequence, 4, '0', STR_PAD_LEFT);
+                $model->serial_number = "{$date}-{$sequence}";
+            }
+        });
     }
 }
