@@ -342,7 +342,6 @@
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
                             </div>
-                            
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="section_4_w_2w" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Section 4 W/2W</label>
                                 <input type="text" id="section_4_w_2w" name="section_4_w_2w" required
