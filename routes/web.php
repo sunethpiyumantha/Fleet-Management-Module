@@ -115,6 +115,7 @@ Route::post('/vehicle-request', [VehicleRequestController::class, 'store'])->nam
 Route::get('/vehicle-request/{id}/edit', [VehicleRequestController::class, 'edit'])->name('vehicle.request.edit');
 Route::put('/vehicle-request/{id}', [VehicleRequestController::class, 'update'])->name('vehicle.request.update');
 Route::delete('/vehicle-request/{id}', [VehicleRequestController::class, 'destroy'])->name('vehicle.request.destroy');
+Route::get('/all-requests', [VehicleRequestController::class, 'allRequests'])->name('all.request');
 
 
 use App\Http\Controllers\VehicleDeclarationFormController;
@@ -128,4 +129,6 @@ Route::prefix('vehicle-declaration-form')->name('vehicle-declaration.')->group(f
     Route::get('/', [VehicleDeclarationFormController::class, 'create'])->name('create');
     Route::post('/', [VehicleDeclarationFormController::class, 'store'])->name('store');
 });
+
+
 

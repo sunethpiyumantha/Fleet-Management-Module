@@ -98,4 +98,12 @@ class VehicleRequestController extends Controller
         $subCategories = VehicleSubCategory::where('cat_id', $catId)->get(['id', 'sub_category']);
         return response()->json($subCategories);
     }
+
+    public function allRequests()
+    {
+        $categories = VehicleCategory::orderBy('category')->get();
+        $vehicles = VehicleRequest::with(['category', 'subCategory'])->get();
+
+        return view('all-request', compact('categories', 'vehicles'));
+    }
 }
