@@ -27,14 +27,6 @@ class VehicleDeclaration extends Model
         'loan_tax_details',
         'daily_rent',
         'induction_date',
-        'reg_nic',
-        'rank',
-        'driver_name',
-        'unit',
-        'code_no_driver',
-        'army_license_no',
-        'license_issued_date',
-        'license_expire_date',
         'civil_number',
         'product_classification',
         'engine_no',
@@ -90,6 +82,11 @@ class VehicleDeclaration extends Model
         return $this->belongsTo(FuelType::class);
     }
 
+    public function drivers()
+    {
+        return $this->hasMany(Driver::class);
+    }
+
     /**
      * Boot method for auto-generating serial_number if not provided
      */
@@ -99,6 +96,7 @@ class VehicleDeclaration extends Model
 
         static::creating(function ($model) {
             if (empty($model->serial_number)) {
+                // Check if a vehicle request exists or generate a temporary serial number
                 $date = Carbon::now()->format('Ymd');
                 $lastRecord = static::whereDate('created_at', Carbon::today())
                     ->latest('id')

@@ -107,33 +107,33 @@ Route::resource('vehicle-sub-categories', VehicleSubCategoryController::class)->
     'index', 'store', 'update', 'destroy'
 ])->names('vehicle-sub-category');
 
+
 use App\Http\Controllers\VehicleRequestController;
-
-Route::get('/vehicle-request', [VehicleRequestController::class, 'index'])->name('vehicle.request.index');
-Route::post('/vehicle-request', [VehicleRequestController::class, 'store'])->name('vehicle.request.store');
-Route::get('/vehicle-request/{id}/edit', [VehicleRequestController::class, 'edit'])->name('vehicle.request.edit');
-Route::delete('/vehicle-request/{id}', [VehicleRequestController::class, 'destroy'])->name('vehicle.request.destroy');
-Route::get('/get-sub-categories/{catId}', [VehicleRequestController::class, 'getSubCategories'])->name('vehicle.request.subcategories');
-Route::get('/all-requests', [VehicleRequestController::class, 'allRequests'])->name('vehicle.request.all');
-Route::get('/vehicle-request/create', [VehicleRequestController::class, 'create'])->name('vehicle.request.create');
-
-
 use App\Http\Controllers\VehicleDeclarationFormController;
 
+
 Route::get('/', function () {
-    return redirect()->route('vehicle-declaration.create');
+    return redirect()->route('vehicle.declaration.create');
 })->name('home');
 
-Route::get('/vehicle-declaration', [VehicleDeclarationFormController::class, 'create'])->name('vehicle.declaration.create');
-Route::post('/vehicle-declaration', [VehicleDeclarationFormController::class, 'store'])->name('vehicle.declaration.store');
 
-// Vehicle Declaration Routes
-Route::prefix('vehicle-declaration-form')->name('vehicle-declaration.')->group(function () {
-    Route::get('/', [VehicleDeclarationFormController::class, 'create'])->name('create');
-    Route::post('/', [VehicleDeclarationFormController::class, 'store'])->name('store');
+// Vehicle Request Routes
+Route::prefix('vehicle-request')->name('vehicle.request.')->group(function () {
+    Route::get('/', [VehicleRequestController::class, 'index'])->name('index');
+    Route::get('/create', [VehicleRequestController::class, 'create'])->name('create');
+    Route::post('/', [VehicleRequestController::class, 'store'])->name('store');
+    Route::get('/{id}/edit', [VehicleRequestController::class, 'edit'])->name('edit');
+    Route::delete('/{id}', [VehicleRequestController::class, 'destroy'])->name('destroy');
+    Route::get('/all', [VehicleRequestController::class, 'allRequests'])->name('all');
 });
 
-Route::get('vehicle/declaration/edit/{serial_number}', [VehicleDeclarationFormController::class, 'edit'])->name('vehicle.declaration.edit');
-Route::put('vehicle/declaration/{id}', [VehicleDeclarationFormController::class, 'update'])->name('vehicle.declaration.update');
+// Standalone Sub-Category Route (outside prefix group)
+Route::get('/get-sub-categories/{catId}', [VehicleRequestController::class, 'getSubCategories'])->name('vehicle.request.subcategories');
 
-
+// Vehicle Declaration Routes
+Route::prefix('vehicle-declaration')->name('vehicle.declaration.')->group(function () {
+    Route::get('/', [VehicleDeclarationFormController::class, 'create'])->name('create');
+    Route::post('/', [VehicleDeclarationFormController::class, 'store'])->name('store');
+    Route::get('/edit/{serial_number}', [VehicleDeclarationFormController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [VehicleDeclarationFormController::class, 'update'])->name('update');
+});
