@@ -211,95 +211,104 @@
                 <div id="driver-tab" class="tab-content" style="display: none; width: 100%; max-width: 1280px; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.5rem; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); animation: slideIn 0.3s ease-out;">
                     <h3 style="font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 1.5rem; border-bottom: 2px solid #f97316; padding-bottom: 0.5rem;">Driver Details (Serial: {{ old('serial_number', $declaration->serial_number ?? request('serial_number') ?? '') }})</h3>
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
-                            <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="reg_nic" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Reg No / NIC</label>
-                                <input type="text" id="reg_nic" name="reg_nic" required
-                                    value="{{ old('reg_nic', $declaration->reg_nic ?? '') }}"
-                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
-                                @error('reg_nic')
-                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
-                                @enderror
+                        <!-- Driver Form -->
+                        <div id="driver-form">
+                            <input type="hidden" id="driver-index" value="0">
+                            <input type="hidden" id="edit-driver-id" name="drivers[0][id]">
+                            <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                                <div style="flex: 1; min-width: 0; max-width: 49%;">
+                                    <label for="reg_nic" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Reg No / NIC</label>
+                                    <input type="text" id="reg_nic" name="drivers[0][reg_nic]"
+                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    @error('drivers.*.reg_nic')
+                                        <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div style="flex: 1; min-width: 0; max-width: 49%;">
+                                    <label for="rank" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Rank</label>
+                                    <input type="text" id="rank" name="drivers[0][rank]"
+                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    @error('drivers.*.rank')
+                                        <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
-                            <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="rank" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Rank</label>
-                                <input type="text" id="rank" name="rank" required
-                                    value="{{ old('rank', $declaration->rank ?? '') }}"
-                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
-                                @error('rank')
-                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
-                                @enderror
+                            <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                                <div style="flex: 1; min-width: 0; max-width: 49%;">
+                                    <label for="driver_name" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Name</label>
+                                    <input type="text" id="driver_name" name="drivers[0][driver_name]"
+                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    @error('drivers.*.driver_name')
+                                        <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div style="flex: 1; min-width: 0; max-width: 49%;">
+                                    <label for="unit" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Unit</label>
+                                    <input type="text" id="unit" name="drivers[0][unit]"
+                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    @error('drivers.*.unit')
+                                        <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
-                        </div>
-                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
-                            <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="driver_name" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Name</label>
-                                <input type="text" id="driver_name" name="driver_name" required
-                                    value="{{ old('driver_name', $declaration->driver_name ?? '') }}"
-                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
-                                @error('driver_name')
-                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
-                                @enderror
+                            <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                                <div style="flex: 1; min-width: 0; max-width: 49%;">
+                                    <label for="code_no_driver" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">If Staff Officer Vehicle, Code No</label>
+                                    <input type="text" id="code_no_driver" name="drivers[0][code_no_driver]"
+                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    @error('drivers.*.code_no_driver')
+                                        <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div style="flex: 1; min-width: 0; max-width: 49%;">
+                                    <label for="army_license_no" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Army / Driving License No</label>
+                                    <input type="text" id="army_license_no" name="drivers[0][army_license_no]"
+                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    @error('drivers.*.army_license_no')
+                                        <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
-                            <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="unit" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Unit</label>
-                                <input type="text" id="unit" name="unit" required
-                                    value="{{ old('unit', $declaration->unit ?? '') }}"
-                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
-                                @error('unit')
-                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
-                            <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="code_no_driver" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">If Staff Officer Vehicle, Code No</label>
-                                <input type="text" id="code_no_driver" name="code_no_driver"
-                                    value="{{ old('code_no_driver', $declaration->code_no_driver ?? '') }}"
-                                    style="width: 1
-                                00%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
-                                @error('code_no_driver')
-                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="army_license_no" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Army / Driving License No</label>
-                                <input type="text" id="army_license_no" name="army_license_no" required
-                                    value="{{ old('army_license_no', $declaration->army_license_no ?? '') }}"
-                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
-                                @error('army_license_no')
-                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
-                            <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="license_issued_date" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">License Issued Date</label>
-                                <input type="date" id="license_issued_date" name="license_issued_date" required
-                                    value="{{ old('license_issued_date', $declaration->license_issued_date ?? '') }}"
-                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
-                                @error('license_issued_date')
-                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="license_expire_date" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">License Expire Date</label>
-                                <input type="date" id="license_expire_date" name="license_expire_date" required
-                                    value="{{ old('license_expire_date', $declaration->license_expire_date ?? '') }}"
-                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
-                                @error('license_expire_date')
-                                    <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
-                                @enderror
+                            <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+                                <div style="flex: 1; min-width: 0; max-width: 49%;">
+                                    <label for="license_issued_date" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">License Issued Date</label>
+                                    <input type="date" id="license_issued_date" name="drivers[0][license_issued_date]"
+                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    @error('drivers.*.license_issued_date')
+                                        <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div style="flex: 1; min-width: 0; max-width: 49%;">
+                                    <label for="license_expire_date" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">License Expire Date</label>
+                                    <input type="date" id="license_expire_date" name="drivers[0][license_expire_date]"
+                                        style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                        onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    @error('drivers.*.license_expire_date')
+                                        <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
+                        <!-- Form Buttons -->
+                        <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1rem;">
+                            <button type="button" id="add-driver-btn" onclick="addDriver()" style="background: linear-gradient(90deg, #10b981 0%, #059669 100%); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s ease, transform 0.2s ease; font-weight: 600;"
+                                    onmouseover="this.style.background='linear-gradient(90deg, #059669 0%, #047857 100%)'; this.style.transform='scale(1.05)'" 
+                                    onmouseout="this.style.background='linear-gradient(90deg, #10b981 0%, #059669 100%)'; this.style.transform='scale(1)'">Add Driver</button>
+                            <button type="button" id="update-driver-btn" onclick="updateDriver()" style="display: none; background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s ease, transform 0.2s ease; font-weight: 600;"
+                                    onmouseover="this.style.background='linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='scale(1.05)'" 
+                                    onmouseout="this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'">Update Driver</button>
+                            <button type="button" onclick="resetDriverForm()" style="background: linear-gradient(90deg, #6b7280 0%, #4b5563 100%); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s ease, transform 0.2s ease; font-weight: 600;"
+                                    onmouseover="this.style.background='linear-gradient(90deg, #4b5563 0%, #374151 100%)'; this.style.transform='scale(1.05)'" 
+                                    onmouseout="this.style.background='linear-gradient(90deg, #6b7280 0%, #4b5563 100%)'; this.style.transform='scale(1)'">Clear Form</button>
+                        </div>
+                        <!-- Driver Table -->
                         <div style="margin-top: 2rem; overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem;">
                                 <thead>
@@ -317,7 +326,34 @@
                                     </tr>
                                 </thead>
                                 <tbody id="driver-table-body">
-                                    <!-- Populated by JavaScript -->
+                                    @if(isset($declaration) && $declaration->drivers)
+                                        @foreach($declaration->drivers as $index => $driver)
+                                            <tr data-driver-id="{{ $driver->id }}" data-driver-index="{{ $index }}">
+                                                <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">{{ $index + 1 }}</td>
+                                                <td style="border: 1px solid #d1d5db; padding: 8px;">{{ $driver->reg_nic }}</td>
+                                                <td style="border: 1px solid #d1d5db; padding: 8px;">{{ $driver->rank }}</td>
+                                                <td style="border: 1px solid #d1d5db; padding: 8px;">{{ $driver->driver_name }}</td>
+                                                <td style="border: 1px solid #d1d5db; padding: 8px;">{{ $driver->unit }}</td>
+                                                <td style="border: 1px solid #d1d5db; padding: 8px;">{{ $driver->code_no_driver ?? 'N/A' }}</td>
+                                                <td style="border: 1px solid #d1d5db; padding: 8px;">{{ $driver->army_license_no }}</td>
+                                                <td style="border: 1px solid #d1d5db; padding: 8px;">{{ $driver->license_issued_date }}</td>
+                                                <td style="border: 1px solid #d1d5db; padding: 8px;">{{ $driver->license_expire_date }}</td>
+                                                <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">
+                                                    <button type="button" onclick="editDriver({{ $index }})" style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; margin-right: 0.5rem;">Edit</button>
+                                                    <button type="button" onclick="deleteDriver({{ $index }})" style="background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer;">Delete</button>
+                                                    <input type="hidden" name="drivers[{{ $index }}][id]" value="{{ $driver->id }}">
+                                                    <input type="hidden" name="drivers[{{ $index }}][reg_nic]" value="{{ $driver->reg_nic }}">
+                                                    <input type="hidden" name="drivers[{{ $index }}][rank]" value="{{ $driver->rank }}">
+                                                    <input type="hidden" name="drivers[{{ $index }}][driver_name]" value="{{ $driver->driver_name }}">
+                                                    <input type="hidden" name="drivers[{{ $index }}][unit]" value="{{ $driver->unit }}">
+                                                    <input type="hidden" name="drivers[{{ $index }}][code_no_driver]" value="{{ $driver->code_no_driver ?? '' }}">
+                                                    <input type="hidden" name="drivers[{{ $index }}][army_license_no]" value="{{ $driver->army_license_no }}">
+                                                    <input type="hidden" name="drivers[{{ $index }}][license_issued_date]" value="{{ $driver->license_issued_date }}">
+                                                    <input type="hidden" name="drivers[{{ $index }}][license_expire_date]" value="{{ $driver->license_expire_date }}">
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -671,6 +707,168 @@
 
 <!-- JavaScript for tab switching and dynamic vehicle model dropdown -->
 <script>
+
+let driverIndex = {{ isset($declaration) && $declaration->drivers ? count($declaration->drivers) : 0 }};
+
+    function addDriver() {
+        const form = document.getElementById('driver-form');
+        const tableBody = document.getElementById('driver-table-body');
+        const regNic = document.getElementById('reg_nic').value;
+        const rank = document.getElementById('rank').value;
+        const driverName = document.getElementById('driver_name').value;
+        const unit = document.getElementById('unit').value;
+        const codeNoDriver = document.getElementById('code_no_driver').value;
+        const armyLicenseNo = document.getElementById('army_license_no').value;
+        const licenseIssuedDate = document.getElementById('license_issued_date').value;
+        const licenseExpireDate = document.getElementById('license_expire_date').value;
+
+        if (!regNic || !rank || !driverName || !unit || !armyLicenseNo || !licenseIssuedDate || !licenseExpireDate) {
+            alert('Please fill all required driver fields.');
+            return;
+        }
+
+        const row = document.createElement('tr');
+        row.setAttribute('data-driver-index', driverIndex);
+        row.innerHTML = `
+            <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">${tableBody.children.length + 1}</td>
+            <td style="border: 1px solid #d1d5db; padding: 8px;">${regNic}</td>
+            <td style="border: 1px solid #d1d5db; padding: 8px;">${rank}</td>
+            <td style="border: 1px solid #d1d5db; padding: 8px;">${driverName}</td>
+            <td style="border: 1px solid #d1d5db; padding: 8px;">${unit}</td>
+            <td style="border: 1px solid #d1d5db; padding: 8px;">${codeNoDriver || 'N/A'}</td>
+            <td style="border: 1px solid #d1d5db; padding: 8px;">${armyLicenseNo}</td>
+            <td style="border: 1px solid #d1d5db; padding: 8px;">${licenseIssuedDate}</td>
+            <td style="border: 1px solid #d1d5db; padding: 8px;">${licenseExpireDate}</td>
+            <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">
+                <button type="button" onclick="editDriver(${driverIndex})" style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; margin-right: 0.5rem;">Edit</button>
+                <button type="button" onclick="deleteDriver(${driverIndex})" style="background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer;">Delete</button>
+                <input type="hidden" name="drivers[${driverIndex}][reg_nic]" value="${regNic}">
+                <input type="hidden" name="drivers[${driverIndex}][rank]" value="${rank}">
+                <input type="hidden" name="drivers[${driverIndex}][driver_name]" value="${driverName}">
+                <input type="hidden" name="drivers[${driverIndex}][unit]" value="${unit}">
+                <input type="hidden" name="drivers[${driverIndex}][code_no_driver]" value="${codeNoDriver}">
+                <input type="hidden" name="drivers[${driverIndex}][army_license_no]" value="${armyLicenseNo}">
+                <input type="hidden" name="drivers[${driverIndex}][license_issued_date]" value="${licenseIssuedDate}">
+                <input type="hidden" name="drivers[${driverIndex}][license_expire_date]" value="${licenseExpireDate}">
+            </td>
+        `;
+        tableBody.appendChild(row);
+        resetDriverForm();
+        driverIndex++;
+        updateDriverFormIndex();
+    }
+
+    function editDriver(index) {
+        const row = document.querySelector(`tr[data-driver-index="${index}"]`);
+        if (!row) return;
+
+        const regNic = row.querySelector(`input[name="drivers[${index}][reg_nic]"]`).value;
+        const rank = row.querySelector(`input[name="drivers[${index}][rank]"]`).value;
+        const driverName = row.querySelector(`input[name="drivers[${index}][driver_name]"]`).value;
+        const unit = row.querySelector(`input[name="drivers[${index}][unit]"]`).value;
+        const codeNoDriver = row.querySelector(`input[name="drivers[${index}][code_no_driver]"]`).value;
+        const armyLicenseNo = row.querySelector(`input[name="drivers[${index}][army_license_no]"]`).value;
+        const licenseIssuedDate = row.querySelector(`input[name="drivers[${index}][license_issued_date]"]`).value;
+        const licenseExpireDate = row.querySelector(`input[name="drivers[${index}][license_expire_date]"]`).value;
+        const driverId = row.getAttribute('data-driver-id') || '';
+
+        document.getElementById('reg_nic').value = regNic;
+        document.getElementById('rank').value = rank;
+        document.getElementById('driver_name').value = driverName;
+        document.getElementById('unit').value = unit;
+        document.getElementById('code_no_driver').value = codeNoDriver;
+        document.getElementById('army_license_no').value = armyLicenseNo;
+        document.getElementById('license_issued_date').value = licenseIssuedDate;
+        document.getElementById('license_expire_date').value = licenseExpireDate;
+        document.getElementById('edit-driver-id').value = driverId;
+        document.getElementById('driver-index').value = index;
+
+        document.getElementById('add-driver-btn').style.display = 'none';
+        document.getElementById('update-driver-btn').style.display = 'inline-block';
+    }
+
+    function updateDriver() {
+        const index = document.getElementById('driver-index').value;
+        const driverId = document.getElementById('edit-driver-id').value;
+        const regNic = document.getElementById('reg_nic').value;
+        const rank = document.getElementById('rank').value;
+        const driverName = document.getElementById('driver_name').value;
+        const unit = document.getElementById('unit').value;
+        const codeNoDriver = document.getElementById('code_no_driver').value;
+        const armyLicenseNo = document.getElementById('army_license_no').value;
+        const licenseIssuedDate = document.getElementById('license_issued_date').value;
+        const licenseExpireDate = document.getElementById('license_expire_date').value;
+
+        if (!regNic || !rank || !driverName || !unit || !armyLicenseNo || !licenseIssuedDate || !licenseExpireDate) {
+            alert('Please fill all required driver fields.');
+            return;
+        }
+
+        const row = document.querySelector(`tr[data-driver-index="${index}"]`);
+        if (row) {
+            row.innerHTML = `
+                <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">${Array.from(row.parentNode.children).indexOf(row) + 1}</td>
+                <td style="border: 1px solid #d1d5db; padding: 8px;">${regNic}</td>
+                <td style="border: 1px solid #d1d5db; padding: 8px;">${rank}</td>
+                <td style="border: 1px solid #d1d5db; padding: 8px;">${driverName}</td>
+                <td style="border: 1px solid #d1d5db; padding: 8px;">${unit}</td>
+                <td style="border: 1px solid #d1d5db; padding: 8px;">${codeNoDriver || 'N/A'}</td>
+                <td style="border: 1px solid #d1d5db; padding: 8px;">${armyLicenseNo}</td>
+                <td style="border: 1px solid #d1d5db; padding: 8px;">${licenseIssuedDate}</td>
+                <td style="border: 1px solid #d1d5db; padding: 8px;">${licenseExpireDate}</td>
+                <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">
+                    <button type="button" onclick="editDriver(${index})" style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; margin-right: 0.5rem;">Edit</button>
+                    <button type="button" onclick="deleteDriver(${index})" style="background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer;">Delete</button>
+                    <input type="hidden" name="drivers[${index}][id]" value="${driverId}">
+                    <input type="hidden" name="drivers[${index}][reg_nic]" value="${regNic}">
+                    <input type="hidden" name="drivers[${index}][rank]" value="${rank}">
+                    <input type="hidden" name="drivers[${index}][driver_name]" value="${driverName}">
+                    <input type="hidden" name="drivers[${index}][unit]" value="${unit}">
+                    <input type="hidden" name="drivers[${index}][code_no_driver]" value="${codeNoDriver}">
+                    <input type="hidden" name="drivers[${index}][army_license_no]" value="${armyLicenseNo}">
+                    <input type="hidden" name="drivers[${index}][license_issued_date]" value="${licenseIssuedDate}">
+                    <input type="hidden" name="drivers[${index}][license_expire_date]" value="${licenseExpireDate}">
+                </td>
+            `;
+            resetDriverForm();
+        }
+    }
+
+    function deleteDriver(index) {
+        if (confirm('Are you sure you want to delete this driver?')) {
+            const row = document.querySelector(`tr[data-driver-index="${index}"]`);
+            if (row) {
+                row.remove();
+                updateSerialNumbers();
+            }
+        }
+    }
+
+    function resetDriverForm() {
+        const form = document.getElementById('driver-form');
+        form.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => input.value = '');
+        document.getElementById('edit-driver-id').value = '';
+        document.getElementById('driver-index').value = driverIndex;
+        document.getElementById('add-driver-btn').style.display = 'inline-block';
+        document.getElementById('update-driver-btn').style.display = 'none';
+        updateDriverFormIndex();
+    }
+
+    function updateDriverFormIndex() {
+        const form = document.getElementById('driver-form');
+        const index = document.getElementById('driver-index').value;
+        form.querySelectorAll('input[name^="drivers"]').forEach(input => {
+            const name = input.name.replace(/drivers\[\d+\]/, `drivers[${index}]`);
+            input.name = name;
+        });
+    }
+
+    function updateSerialNumbers() {
+        const rows = document.querySelectorAll('#driver-table-body tr');
+        rows.forEach((row, i) => {
+            row.cells[0].textContent = i + 1;
+        });
+    }
 // Tab Navigation
 function openTab(tabName) {
     // Hide all tab contents
