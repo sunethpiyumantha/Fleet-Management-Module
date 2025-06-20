@@ -10,9 +10,13 @@
         </h2>
 
         <!-- Form -->
-        <form class="mb-8" style="margin-bottom: 2rem;" method="POST" action="{{ route('vehicle.declaration.store') }}" enctype="multipart/form-data">
+        <form class="mb-8" style="margin-bottom: 2rem;" method="POST" action="{{ isset($declaration) ? route('vehicle.declaration.update', $declaration->id) : route('vehicle.declaration.store') }}" enctype="multipart/form-data">
             @csrf
-            <input type="hidden" name="serial_number" value="{{ request('serial_number') }}">
+            @if(isset($declaration))
+                @method('PUT')
+                <input type="hidden" name="id" value="{{ $declaration->id }}">
+            @endif
+            <input type="hidden" name="serial_number" value="{{ request('serial_number') ?? $declaration->serial_number ?? '' }}">
             <div style="display: flex; flex-direction: column; gap: 2rem; align-items: center;">
                 <!-- Tab Navigation -->
                 <div style="display: flex; gap: 0.75rem; justify-content: center; margin-bottom: 1.5rem; background: #f3f4f6; padding: 0.25rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
@@ -42,6 +46,7 @@
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="registration_number" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Vehicle Reg. Number</label>
                                 <input type="text" id="registration_number" name="registration_number" required
+                                    value="{{ old('registration_number', $declaration->registration_number ?? '') }}"
                                     style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                     onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('registration_number')
@@ -51,6 +56,7 @@
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="owner_full_name" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Full Name</label>
                                 <input type="text" id="owner_full_name" name="owner_full_name" required
+                                    value="{{ old('owner_full_name', $declaration->owner_full_name ?? '') }}"
                                     style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
                                     onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('owner_full_name')
@@ -113,9 +119,9 @@
                                 <select id="vehicle_type" name="vehicle_type_id" required
                                         style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem; appearance: none; background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"%23374151\"><path d=\"M7 10l-5-5 1.41-1.41L7 7.17l4.59-4.58L12 5l-5 5z\"/></svg>') no-repeat right 1rem center;"
                                         onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
-                                    <option value="" disabled selected>Select Vehicle Type</option>
+                                    <option value="" disabled {{ !isset($declaration->vehicle_type_id) ? 'selected' : '' }}>Select Vehicle Type</option>
                                     @foreach($vehicleTypes as $type)
-                                        <option value="{{ $type->id }}">{{ $type->type }}</option>
+                                        <option value="{{ $type->id }}" {{ old('vehicle_type_id', $declaration->vehicle_type_id ?? '') == $type->id ? 'selected' : '' }}>{{ $type->type }}</option>
                                     @endforeach
                                 </select>
                                 @error('vehicle_type_id')
@@ -598,7 +604,7 @@
             style="background: linear-gradient(90deg, #f97316 0%, #ea580c 100%); color: white; font-weight: 600; padding: 0.75rem 2rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: all 0.3s ease, transform 0.2s ease; font-size: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"
             onmouseover="this.style.background='linear-gradient(90deg, #ea580c 0%, #c2410c 100%)'; this.style.transform='scale(1.05)'" 
             onmouseout="this.style.background='linear-gradient(90deg, #f97316 0%, #ea580c 100%)'; this.style.transform='scale(1)'">
-        <i class="fa-solid fa-save" style="margin-right: 0.5rem;"></i> Save Declaration
+        <i class="fa-solid fa-save" style="margin-right: 0.5rem;"></i> {{ isset($declaration) ? 'Update Declaration' : 'Save Declaration' }}
     </button>
 </div>
 </div>

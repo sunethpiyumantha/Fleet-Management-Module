@@ -55,10 +55,10 @@
                                    onmouseout="this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'">
                                     Add
                                 </a>
-                                <a href="{{ route('vehicle.request.edit', $vehicle->id) }}"
-                                   style="background: linear-gradient(90deg, #16a34a 0%, #15803d 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease; margin-left: 0.5rem; text-decoration: none;"
-                                   onmouseover="this.style.background='linear-gradient(90deg, #15803d 0%, #166534 100%)'; this.style.transform='scale(1.05)'"
-                                   onmouseout="this.style.background='linear-gradient(90deg, #16a34a 0%, #15803d 100%)'; this.style.transform='scale(1)'">
+                                <a href="{{ route('vehicle.declaration.edit', ['serial_number' => $vehicle->serial_number ?? $vehicle->id]) }}"
+                                    style="background: linear-gradient(90deg, #16a34a 0%, #15803d 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease; margin-left: 0.5rem; text-decoration: none;"
+                                    onmouseover="this.style.background='linear-gradient(90deg, #15803d 0%, #166534 100%)'; this.style.transform='scale(1.05)'"
+                                    onmouseout="this.style.background='linear-gradient(90deg, #16a34a 0%, #15803d 100%)'; this.style.transform='scale(1)'">
                                     Update
                                 </a>
                                 <form action="{{ route('vehicle.request.destroy', $vehicle->id) }}" method="POST" style="display: inline;">

@@ -133,5 +133,7 @@ Route::prefix('vehicle-declaration-form')->name('vehicle-declaration.')->group(f
     Route::post('/', [VehicleDeclarationFormController::class, 'store'])->name('store');
 });
 
+Route::get('vehicle/declaration/edit/{serial_number}', [VehicleDeclarationFormController::class, 'edit'])->name('vehicle.declaration.edit');
+Route::put('vehicle/declaration/{id}', [VehicleDeclarationFormController::class, 'update'])->name('vehicle.declaration.update');
 
 
