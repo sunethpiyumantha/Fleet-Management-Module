@@ -126,7 +126,7 @@ Route::prefix('vehicle-request')->name('vehicle.request.')->group(function () {
     Route::delete('/{id}', [VehicleRequestController::class, 'destroy'])->name('destroy');
     Route::get('/all', [VehicleRequestController::class, 'allRequests'])->name('all');
 });
-
+Route::put('/vehicle/request/{id}', [VehicleRequestController::class, 'update'])->name('vehicle.request.update');
 // Standalone Sub-Category Route (outside prefix group)
 Route::get('/get-sub-categories/{catId}', [VehicleRequestController::class, 'getSubCategories'])->name('vehicle.request.subcategories');
 
