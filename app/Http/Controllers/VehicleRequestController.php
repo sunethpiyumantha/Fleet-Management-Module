@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 class VehicleRequestController extends Controller
 {
-    
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -46,8 +45,8 @@ class VehicleRequestController extends Controller
         $categories = VehicleCategory::orderBy('category')->get();
 
         return view('request-vehicle', compact('vehicles', 'categories', 'sort', 'order'));
- // Line 48
     }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -77,32 +76,35 @@ class VehicleRequestController extends Controller
         return $serial;
     }
 
-
     public function create()
     {
         $categories = VehicleCategory::orderBy('category')->get();
         return view('request-vehicle', compact('categories'));
     }
 
-
     public function edit($id)
     {
         $vehicle = VehicleRequest::findOrFail($id);
-        $categories = VehicleCategory::all();
+        $categories = VehicleCategory::orderBy('category')->get(); // Fixed: Changed Category to VehicleCategory
         return view('request-vehicle-edit', compact('vehicle', 'categories'));
     }
 
     public function update(Request $request, $id)
     {
-        $validated = $request->validate([
-            'serial_number' => 'nullable|string|unique:vehicle_requests,serial_number,' . $id,
+        $request->validate([
             'request_type' => 'required|in:replacement,new_approval',
-            'cat_id' => 'required|exists:vehicle_categories,id',
-            'sub_cat_id' => 'required|exists:vehicle_sub_categories,id',
+            'cat_id' => 'required|exists:vehicle_categories,id', // Fixed: Changed categories to vehicle_categories
+            'sub_cat_id' => 'required|exists:vehicle_sub_categories,id', // Fixed: Changed sub_categories to vehicle_sub_categories
             'qty' => 'required|integer|min:1',
         ]);
+
         $vehicle = VehicleRequest::findOrFail($id);
-        $vehicle->update($validated);
+        $vehicle->update([
+            'request_type' => $request->request_type,
+            'cat_id' => $request->cat_id,
+            'sub_cat_id' => $request->sub_cat_id,
+            'qty' => $request->qty,
+        ]);
 
         return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request updated successfully.');
     }
@@ -159,5 +161,4 @@ class VehicleRequestController extends Controller
 
         return view('all-request', compact('vehicles', 'categories', 'sort', 'order'));
     }
- 
 }

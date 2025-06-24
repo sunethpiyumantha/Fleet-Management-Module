@@ -22,6 +22,16 @@
             @method('PUT')
             <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;" class="md:flex-row md:flex-wrap md:justify-center">
                 <div style="width: 100%; max-width: 25%;">
+                    <label for="request_type" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Request Type</label>
+                    <select id="request_type" name="request_type" required
+                            style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
+                        <option value="" disabled>Select Request Type</option>
+                        <option value="replacement" {{ $vehicle->request_type == 'replacement' ? 'selected' : '' }}>Vehicle replacement</option>
+                        <option value="new_approval" {{ $vehicle->request_type == 'new_approval' ? 'selected' : '' }}>Taking over a vehicle based on a new approval</option>
+                    </select>
+                </div>
+
+                <div style="width: 100%; max-width: 25%;">
                     <label for="cat_id" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Category</label>
                     <select id="cat_id" name="cat_id" required
                             style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
@@ -43,7 +53,7 @@
                 <div style="width: 100%; max-width: 25%;">
                     <label for="required_quantity" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Required Quantity</label>
                     <input type="number" id="required_quantity" name="qty" min="1" value="{{ $vehicle->qty }}" required
-       style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
+                           style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
                 </div>
 
                 <div style="width: 100%; max-width: 25%; margin-top: 1rem;" class="md:mt-0">
