@@ -49,35 +49,42 @@
           <input type="text" disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
         </div>
       </div>
-      <div>
-        <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Year and Date of Original Registration</label>
-        <input type="text" disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
-      </div>
       <div style="display: flex; justify-content: space-between; gap: 1rem;">
+        <div style="flex: 1;">
+          <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Year and Date of Original Registration</label>
+          <input type="text" disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+        </div>
         <div style="flex: 1;">
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Type of Fuel</label>
           <input type="text" disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
         </div>
+      </div>
+      <div style="display: flex; justify-content: space-between; gap: 1rem;">
         <div style="flex: 1;">
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Engine Capacity</label>
           <input type="text" disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
         </div>
+        <div style="flex: 1;">
+          <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Tar Weight of the Vehicle</label>
+          <input type="text" disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+        </div>
       </div>
-      <div>
-        <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Tar Weight of the Vehicle</label>
-        <input type="text" disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+      <div style="display: flex; justify-content: space-between; gap: 1rem;">
+        <div style="flex: 1;">
+          <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Category</label>
+          <input type="text" disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+        </div>
+        <div style="flex: 1;">
+          <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Code Number</label>
+          <input type="text" disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+        </div>
       </div>
-      <div>
-        <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Category</label>
-        <input type="text" disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
-      </div>
-      <div>
-        <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Code Number</label>
-        <input type="text" disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
-      </div>
-      <div>
-        <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Driver</label>
-        <input type="text" disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+      <div style="display: flex; justify-content: space-between; gap: 1rem;">
+        <div style="flex: 1;">
+          <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Driver</label>
+          <input type="text" disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+        </div>
+        <div style="flex: 1;"></div> <!-- Empty div to balance the layout -->
       </div>
     </div>
   </div>
@@ -95,21 +102,32 @@
           <input type="text" name="seats_sleme" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;">
         </div>
       </div>
-      <div>
-        <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Is it comparable to a motor vehicle registration document?</label>
-        <div style="display: flex; gap: 1rem;">
-          <label><input type="radio" name="comparable" value="yes" style="margin-right: 0.25rem; color: green;"> Yes</label>
-          <label><input type="radio" name="comparable" value="no" style="margin-right: 0.25rem; color: green;"> No</label>
+      <div style="display: flex; justify-content: space-between; gap: 1rem;">
+        <div style="flex: 1;">
+          <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Is it comparable to a motor vehicle registration document?</label>
+          <div style="display: flex; gap: 1rem;">
+            <label><input type="radio" name="comparable" value="yes" style="margin-right: 0.25rem; color: green;"> Yes</label>
+            <label><input type="radio" name="comparable" value="no" style="margin-right: 0.25rem; color: green;"> No</label>
+          </div>
         </div>
+        <div style="flex: 1;"></div> <!-- Empty div to balance the layout -->
       </div>
-      <div>
-        <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Number of Seats as per the Motor Vehicle Registration Department</label>
-        <input type="text" name="seats_mvr" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;">
+      <div style="display: flex; justify-content: space-between; gap: 1rem;">
+        <div style="flex: 1;">
+          <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Number of Seats as per the Motor Vehicle Registration Department</label>
+          <input type="text" name="seats_mvr" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;">
+        </div>
+        <div style="flex: 1;"></div> <!-- Empty div to balance the layout -->
       </div>
-      <div style="text-align: center; margin-top: 1rem;">
-        <button type="submit" style="background-color: #f97316; color: white; font-weight: 600; padding: 0.375rem 0.75rem; border-radius: 0.5rem; border: none; cursor: pointer; width: 150px;">
-          Submit
-        </button>
+      <div style="display: flex; justify-content: space-between; gap: 1rem;">
+        <div style="flex: 1;">
+          <div style="text-align: center; margin-top: 1rem;">
+            <button type="submit" style="background-color: #f97316; color: white; font-weight: 600; padding: 0.375rem 0.75rem; border-radius: 0.5rem; border: none; cursor: pointer; width: 150px;">
+              Submit
+            </button>
+          </div>
+        </div>
+        <div style="flex: 1;"></div> <!-- Empty div to balance the layout -->
       </div>
     </div>
   </div>
