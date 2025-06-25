@@ -488,6 +488,9 @@
                                         <li>
                                             <a href="{{ route('vehicle.request.all') }}">All Requests</a>
                                         </li>
+                                        <li>
+                                            <a href="/vehicle-registration">Technical description</a>
+                                        </li>
                                         
                                 </li>
                                 
