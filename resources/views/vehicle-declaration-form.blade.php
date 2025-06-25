@@ -359,18 +359,17 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Vehicle Tab -->
                 <div id="vehicle-tab" class="tab-content" style="display: none; width: 100%; max-width: 1280px; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.5rem; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); animation: slideIn 0.3s ease-out;">
                     <h3 style="font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 1.5rem; border-bottom: 2px solid #f97316; padding-bottom: 0.5rem;">Vehicle Details (Serial: {{ old('serial_number', $declaration->serial_number ?? request('serial_number') ?? '') }})</h3>
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="civil_number" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Civil Number</label>
+                                <label for="civil_number" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">{{ $requestType === 'replacement' ? 'Civil Number' : 'Army Number' }}</label>
                                 <input type="text" id="civil_number" name="civil_number" required
-                                       value="{{ old('civil_number', $declaration->civil_number ?? '') }}"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    value="{{ old('civil_number', $declaration->civil_number ?? '') }}"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('civil_number')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
@@ -378,9 +377,9 @@
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="product_classification" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Product Classification</label>
                                 <input type="text" id="product_classification" name="product_classification" required
-                                       value="{{ old('product_classification', $declaration->product_classification ?? '') }}"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    value="{{ old('product_classification', $declaration->product_classification ?? '') }}"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('product_classification')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
@@ -390,9 +389,9 @@
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="engine_no" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Engine No</label>
                                 <input type="text" id="engine_no" name="engine_no" required
-                                       value="{{ old('engine_no', $declaration->engine_no ?? '') }}"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    value="{{ old('engine_no', $declaration->engine_no ?? '') }}"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('engine_no')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
@@ -400,9 +399,9 @@
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="chassis_number" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Chassis Number</label>
                                 <input type="text" id="chassis_number" name="chassis_number" required
-                                       value="{{ old('chassis_number', $declaration->chassis_number ?? '') }}"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    value="{{ old('chassis_number', $declaration->chassis_number ?? '') }}"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('chassis_number')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
@@ -412,9 +411,9 @@
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="year_of_manufacture" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Year of Manufacture</label>
                                 <input type="number" id="year_of_manufacture" name="year_of_manufacture" min="1900" required
-                                       value="{{ old('year_of_manufacture', $declaration->year_of_manufacture ?? '') }}"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    value="{{ old('year_of_manufacture', $declaration->year_of_manufacture ?? '') }}"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('year_of_manufacture')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
@@ -422,9 +421,9 @@
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="date_of_original_registration" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Date of Original Registration</label>
                                 <input type="date" id="date_of_original_registration" name="date_of_original_registration" required
-                                       value="{{ old('date_of_original_registration', $declaration->date_of_original_registration ?? '') }}"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    value="{{ old('date_of_original_registration', $declaration->date_of_original_registration ?? '') }}"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('date_of_original_registration')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
@@ -448,9 +447,9 @@
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="section_4_w_2w" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Section 4 W/2W</label>
                                 <input type="text" id="section_4_w_2w" name="section_4_w_2w" required
-                                       value="{{ old('section_4_w_2w', $declaration->section_4_w_2w ?? '') }}"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    value="{{ old('section_4_w_2w', $declaration->section_4_w_2w ?? '') }}"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('section_4_w_2w')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
@@ -460,9 +459,9 @@
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="speedometer_hours" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Speedometer Hours at Takeover</label>
                                 <input type="number" id="speedometer_hours" name="speedometer_hours" min="0" required
-                                       value="{{ old('speedometer_hours', $declaration->speedometer_hours ?? '') }}"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    value="{{ old('speedometer_hours', $declaration->speedometer_hours ?? '') }}"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('speedometer_hours')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
@@ -470,9 +469,9 @@
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="code_no_vehicle" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Code No</label>
                                 <input type="text" id="code_no_vehicle" name="code_no_vehicle" required
-                                       value="{{ old('code_no_vehicle', $declaration->code_no_vehicle ?? '') }}"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    value="{{ old('code_no_vehicle', $declaration->code_no_vehicle ?? '') }}"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('code_no_vehicle')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
@@ -496,9 +495,9 @@
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="pay_per_day" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Pay per Day</label>
                                 <input type="number" id="pay_per_day" name="pay_per_day" min="0" step="0.01" required
-                                       value="{{ old('pay_per_day', $declaration->pay_per_day ?? '') }}"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    value="{{ old('pay_per_day', $declaration->pay_per_day ?? '') }}"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('pay_per_day')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
@@ -522,9 +521,9 @@
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="tar_weight_capacity" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">TAR Weight Capacity</label>
                                 <input type="text" id="tar_weight_capacity" name="tar_weight_capacity" required
-                                       value="{{ old('tar_weight_capacity', $declaration->tar_weight_capacity ?? '') }}"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    value="{{ old('tar_weight_capacity', $declaration->tar_weight_capacity ?? '') }}"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('tar_weight_capacity')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
@@ -534,9 +533,9 @@
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="amount_of_fuel" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Amount of Fuel</label>
                                 <input type="number" id="amount_of_fuel" name="amount_of_fuel" min="0" step="0.01" required
-                                       value="{{ old('amount_of_fuel', $declaration->amount_of_fuel ?? '') }}"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    value="{{ old('amount_of_fuel', $declaration->amount_of_fuel ?? '') }}"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('amount_of_fuel')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
@@ -544,9 +543,9 @@
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="reason_for_taking_over" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Reason for Taking Over</label>
                                 <input type="text" id="reason_for_taking_over" name="reason_for_taking_over" required
-                                       value="{{ old('reason_for_taking_over', $declaration->reason_for_taking_over ?? '') }}"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    value="{{ old('reason_for_taking_over', $declaration->reason_for_taking_over ?? '') }}"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('reason_for_taking_over')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror
@@ -556,9 +555,9 @@
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
                                 <label for="other_matters" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">Other Matters</label>
                                 <input type="text" id="other_matters" name="other_matters"
-                                       value="{{ old('other_matters', $declaration->other_matters ?? '') }}"
-                                       style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem;"
-                                       onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
+                                    value="{{ old('other_matters', $declaration->other_matters ?? '') }}"
+                                    style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: all 0.3s ease; font-size: 0.9rem;"
+                                    onfocus="this.style.borderColor='#f97316'; this.style.backgroundColor='#fff7ed'" onblur="this.style.borderColor='#d1d5db'; this.style.backgroundColor='white'">
                                 @error('other_matters')
                                     <span style="color: #dc2626; font-size: 0.8rem;">{{ $message }}</span>
                                 @enderror

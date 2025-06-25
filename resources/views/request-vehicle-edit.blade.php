@@ -20,8 +20,8 @@
         <form style="margin-bottom: 2rem;" method="POST" action="{{ route('vehicle.request.update', $vehicle->id) }}">
             @csrf
             @method('PUT')
-            <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;" class="md:flex-row md:flex-wrap md:justify-center">
-                <div style="width: 100%; max-width: 25%;">
+            <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;" class="md:flex-row md:flex-wrap md:justify-center md:gap-2">
+                <div style="width: 100%; max-width: 48%; min-width: 200px;">
                     <label for="request_type" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Request Type</label>
                     <select id="request_type" name="request_type" required
                             style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
@@ -31,7 +31,7 @@
                     </select>
                 </div>
 
-                <div style="width: 100%; max-width: 25%;">
+                <div style="width: 100%; max-width: 48%; min-width: 200px;">
                     <label for="cat_id" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Category</label>
                     <select id="cat_id" name="cat_id" required
                             style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
@@ -42,7 +42,7 @@
                     </select>
                 </div>
 
-                <div style="width: 100%; max-width: 25%;">
+                <div style="width: 100%; max-width: 48%; min-width: 200px;">
                     <label for="sub_cat_id" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Sub Category</label>
                     <select id="sub_cat_id" name="sub_cat_id" required
                             style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
@@ -50,18 +50,23 @@
                     </select>
                 </div>
 
-                <div style="width: 100%; max-width: 25%;">
+                <div style="width: 100%; max-width: 48%; min-width: 200px;">
                     <label for="required_quantity" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Required Quantity</label>
                     <input type="number" id="required_quantity" name="qty" min="1" value="{{ $vehicle->qty }}" required
                            style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; box-sizing: border-box;">
                 </div>
 
-                <div style="width: 100%; max-width: 25%; margin-top: 1rem;" class="md:mt-0">
+                <div style="width: 100%; display: flex; justify-content: center; gap: 1rem; margin-top: 1rem;">
                     <button type="submit"
-                            style="width: 100%; background-color: #f97316; color: white; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: background-color 0.2s;"
+                            style="background-color: #f97316; color: white; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: background-color 0.2s;"
                             onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'">
                         <i class="fa-solid fa-save" style="margin-right: 0.25rem;"></i> Save
                     </button>
+                    <a href="{{ route('vehicle.declaration.edit', ['serial_number' => $vehicle->serial_number, 'request_type' => $vehicle->request_type]) }}"
+                       style="background-color: #16a34a; color: white; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; text-decoration: none; transition: background-color 0.2s;"
+                       onmouseover="this.style.backgroundColor='#15803d'" onmouseout="this.style.backgroundColor='#16a34a'">
+                        <i class="fa-solid fa-arrow-right" style="margin-right: 0.25rem;"></i> Proceed to Vehicle Declaration
+                    </a>
                 </div>
             </div>
         </form>
