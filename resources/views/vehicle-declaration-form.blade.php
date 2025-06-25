@@ -365,7 +365,7 @@
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                         <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
                             <div style="flex: 1; min-width: 0; max-width: 49%;">
-                                <label for="civil_number" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">{{ $requestType === 'replacement' ? 'Civil Number' : 'Army Number' }}</label>
+                                <label for="civil_number" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #4b5563;">{{ $requestType === 'new_approval' ? 'Civil Number' : 'Army Number' }}</label>
                                 <input type="text" id="civil_number" name="civil_number" required
                                     value="{{ old('civil_number', $declaration->civil_number ?? '') }}"
                                     style="width: 100%; height: 48px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.625rem 1rem; outline: none; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; font-size: 0.9rem;"
