@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\VehicleCategory;
 use App\Models\VehicleSubCategory;
 use App\Models\VehicleRequest;
+use App\Models\VehicleDeclaration;
 use Illuminate\Http\Request;
 
 class VehicleRequestController extends Controller
@@ -118,9 +119,19 @@ class VehicleRequestController extends Controller
     {
         \Log::info("Attempting to soft delete vehicle request ID: {$id}");
         $vehicle = VehicleRequest::findOrFail($id);
+
+        // Soft delete related VehicleDeclaration records
+        $declarations = VehicleDeclaration::where('serial_number', $vehicle->serial_number)->get();
+        foreach ($declarations as $declaration) {
+            \Log::info("Soft deleting vehicle declaration ID: {$declaration->id} for serial_number: {$vehicle->serial_number}");
+            $declaration->delete();
+        }
+
+        // Soft delete the VehicleRequest
         $success = $vehicle->delete();
-        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
-        return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request deleted successfully.');
+        \Log::info("Soft delete result for vehicle request ID {$id}: " . ($success ? 'Success' : 'Failed'));
+
+        return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request and associated declarations deleted successfully.');
     }
 
     public function getSubCategories($catId)

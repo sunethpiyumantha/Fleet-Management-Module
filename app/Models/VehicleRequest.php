@@ -26,6 +26,11 @@ class VehicleRequest extends Model
         return $this->belongsTo(VehicleSubCategory::class, 'sub_cat_id');
     }
 
+    public function declarations()
+    {
+       return $this->hasMany(VehicleDeclaration::class, 'serial_number', 'serial_number');
+    }
+
     protected static function boot()
     {
         parent::boot();
