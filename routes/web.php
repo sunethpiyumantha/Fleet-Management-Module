@@ -112,7 +112,7 @@ use App\Http\Controllers\VehicleRequestController;
 use App\Http\Controllers\VehicleDeclarationFormController;
 
 Route::get('/', function () {
-    return redirect()->route('vehicle.request.create'); // Redirect to vehicle request create instead of declaration
+    return view('welcome'); // Replace 'welcome' with your desired view
 })->name('home');
 
 // Vehicle Request Routes
