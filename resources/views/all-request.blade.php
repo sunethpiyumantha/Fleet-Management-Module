@@ -36,7 +36,7 @@
                                 {{ $vehicle->serial_number ?? $vehicle->id }}
                             </td>
                             <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
-                                {{ $vehicle->request_type }}
+                                {{ $vehicle->request_type === 'replacement' ? 'Vehicle Replacement' : 'New Approval' }}
                             </td>
                             <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
                                 {{ $vehicle->category->category ?? 'N/A' }}
@@ -49,13 +49,13 @@
                             </td>
                             <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
                                 <p style="font-size: 0.8rem; color: #4b5563; margin-bottom: 0.5rem;">Vehicle ID: {{ $vehicle->id }}</p>
-                                <a href="{{ route('vehicle.declaration.create', ['serial_number' => $vehicle->serial_number ?? $vehicle->id]) }}"
+                                <a href="{{ route('vehicle.declaration.create', ['serial_number' => $vehicle->serial_number ?? $vehicle->id, 'request_type' => $vehicle->request_type]) }}"
                                    style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease; text-decoration: none;"
                                    onmouseover="this.style.background='linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='scale(1.05)'"
                                    onmouseout="this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'">
                                     Add
                                 </a>
-                                <a href="{{ route('vehicle.declaration.edit', ['serial_number' => $vehicle->serial_number ?? $vehicle->id]) }}"
+                                <a href="{{ route('vehicle.declaration.edit', ['serial_number' => $vehicle->serial_number ?? $vehicle->id, 'request_type' => $vehicle->request_type]) }}"
                                     style="background: linear-gradient(90deg, #16a34a 0%, #15803d 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease; margin-left: 0.5rem; text-decoration: none;"
                                     onmouseover="this.style.background='linear-gradient(90deg, #15803d 0%, #166534 100%)'; this.style.transform='scale(1.05)'"
                                     onmouseout="this.style.background='linear-gradient(90deg, #16a34a 0%, #15803d 100%)'; this.style.transform='scale(1)'">

@@ -57,14 +57,16 @@ class VehicleRequestController extends Controller
             'qty' => 'required|integer|min:1',
         ]);
 
-        // If serial_number is empty, generate a new one
         if (empty($validated['serial_number'])) {
             $validated['serial_number'] = $this->generateUniqueSerialNumber();
         }
 
-        VehicleRequest::create($validated);
+        $vehicleRequest = VehicleRequest::create($validated);
 
-        return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request created successfully.');
+        return redirect()->route('vehicle.declaration.create', [
+            'serial_number' => $vehicleRequest->serial_number,
+            'request_type' => $vehicleRequest->request_type
+        ])->with('success', 'Vehicle request created successfully.');
     }
 
     private function generateUniqueSerialNumber()
@@ -85,7 +87,7 @@ class VehicleRequestController extends Controller
     public function edit($id)
     {
         $vehicle = VehicleRequest::findOrFail($id);
-        $categories = VehicleCategory::orderBy('category')->get(); // Fixed: Changed Category to VehicleCategory
+        $categories = VehicleCategory::orderBy('category')->get();
         return view('request-vehicle-edit', compact('vehicle', 'categories'));
     }
 
@@ -93,8 +95,8 @@ class VehicleRequestController extends Controller
     {
         $request->validate([
             'request_type' => 'required|in:replacement,new_approval',
-            'cat_id' => 'required|exists:vehicle_categories,id', // Fixed: Changed categories to vehicle_categories
-            'sub_cat_id' => 'required|exists:vehicle_sub_categories,id', // Fixed: Changed sub_categories to vehicle_sub_categories
+            'cat_id' => 'required|exists:vehicle_categories,id',
+            'sub_cat_id' => 'required|exists:vehicle_sub_categories,id',
             'qty' => 'required|integer|min:1',
         ]);
 
@@ -106,7 +108,10 @@ class VehicleRequestController extends Controller
             'qty' => $request->qty,
         ]);
 
-        return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request updated successfully.');
+        return redirect()->route('vehicle.declaration.edit', [
+            'serial_number' => $vehicle->serial_number,
+            'request_type' => $vehicle->request_type
+        ])->with('success', 'Vehicle request updated successfully.');
     }
 
     public function destroy($id)

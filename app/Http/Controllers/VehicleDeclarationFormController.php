@@ -22,6 +22,7 @@ class VehicleDeclarationFormController extends Controller
         $colors = VehicleColor::all();
         $fuelTypes = FuelType::all();
         $serialNumber = $request->query('serial_number');
+        $requestType = $request->query('request_type'); // Pass request_type
 
         return view('vehicle-declaration-form', compact(
             'vehicleTypes',
@@ -29,7 +30,8 @@ class VehicleDeclarationFormController extends Controller
             'engineCapacities',
             'colors',
             'fuelTypes',
-            'serialNumber'
+            'serialNumber',
+            'requestType' // Add to compact
         ));
     }
 
@@ -43,6 +45,7 @@ class VehicleDeclarationFormController extends Controller
         $engineCapacities = VehicleEngineCapacity::all();
         $colors = VehicleColor::all();
         $fuelTypes = FuelType::all();
+        $requestType = request()->query('request_type'); // Pass request_type from query
 
         return view('vehicle-declaration-form', compact(
             'declaration',
@@ -50,7 +53,8 @@ class VehicleDeclarationFormController extends Controller
             'vehicleModels',
             'engineCapacities',
             'colors',
-            'fuelTypes'
+            'fuelTypes',
+            'requestType' // Add to compact
         ));
     }
 
