@@ -136,3 +136,10 @@ Route::prefix('vehicle-declaration')->name('vehicle.declaration.')->group(functi
     Route::get('/edit/{serial_number}', [VehicleDeclarationFormController::class, 'edit'])->name('edit');
     Route::put('/{id}', [VehicleDeclarationFormController::class, 'update'])->name('update');
 });
+
+
+
+
+Route::get('/vehicle-registration', function () {
+    return view('vehicle-technical-description');
+});
