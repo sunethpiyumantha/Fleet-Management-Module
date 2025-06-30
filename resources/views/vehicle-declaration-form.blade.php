@@ -756,7 +756,7 @@ let driverIndex = {{ isset($declaration) && $declaration->drivers ? count($decla
         driverIndex++;
         updateDriverFormIndex();
     }
-
+// editdriver
     function editDriver(index) {
         const row = document.querySelector(`tr[data-driver-index="${index}"]`);
         if (!row) return;
