@@ -64,7 +64,7 @@
                                 <form action="{{ route('vehicle.request.destroy', $vehicle->id) }}" method="POST" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" onclick="return confirm('Delete this Vehicle Request?')"
+                                    <button type="submit" onclick="return confirm('Delete this Vehicle Request, its declarations, and all associated drivers?')"
                                             style="background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; margin-left: 0.5rem; transition: all 0.3s ease, transform 0.2s ease;"
                                             onmouseover="this.style.background='linear-gradient(90deg, #b91c1c 0%, #991b1b 100%)'; this.style.transform='scale(1.05)'"
                                             onmouseout="this.style.background='linear-gradient(90deg, #dc2626 0%, #b91c1c 100%)'; this.style.transform='scale(1)'">
