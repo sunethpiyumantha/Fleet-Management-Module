@@ -7,6 +7,8 @@ use App\Models\VehicleSubCategory;
 use App\Models\VehicleRequest;
 use App\Models\VehicleDeclaration;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB; // Add this import
+use Illuminate\Support\Facades\Log;
 
 class VehicleRequestController extends Controller
 {
@@ -117,21 +119,31 @@ class VehicleRequestController extends Controller
 
     public function destroy($id)
     {
-        \Log::info("Attempting to soft delete vehicle request ID: {$id}");
-        $vehicle = VehicleRequest::findOrFail($id);
+        DB::beginTransaction();
+        try {
+            $vehicle = VehicleRequest::findOrFail($id);
+            \Log::info("Soft deleting VehicleRequest ID: {$id}");
 
-        // Soft delete related VehicleDeclaration records
-        $declarations = VehicleDeclaration::where('serial_number', $vehicle->serial_number)->get();
-        foreach ($declarations as $declaration) {
-            \Log::info("Soft deleting vehicle declaration ID: {$declaration->id} for serial_number: {$vehicle->serial_number}");
-            $declaration->delete();
+            // Soft delete related VehicleDeclaration records and their drivers
+            foreach ($vehicle->declarations as $declaration) {
+                \Log::info("Soft deleting VehicleDeclaration ID: {$declaration->id} and its drivers");
+                $declaration->drivers()->delete(); // Soft delete drivers
+                $declaration->delete(); // Soft delete declaration
+            }
+
+            // Soft delete the VehicleRequest
+            $vehicle->delete();
+
+            DB::commit();
+            \Log::info("Successfully soft deleted VehicleRequest ID: {$id} and all related records");
+            return redirect()->route('vehicle.request.all')
+                ->with('success', 'Vehicle request, declarations, and drivers soft deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error("Failed to soft delete VehicleRequest ID: {$id}. Error: {$e->getMessage()}");
+            return redirect()->back()
+                ->with('error', 'Failed to delete vehicle request: ' . $e->getMessage());
         }
-
-        // Soft delete the VehicleRequest
-        $success = $vehicle->delete();
-        \Log::info("Soft delete result for vehicle request ID {$id}: " . ($success ? 'Success' : 'Failed'));
-
-        return redirect()->route('vehicle.request.index')->with('success', 'Vehicle request and associated declarations deleted successfully.');
     }
 
     public function getSubCategories($catId)
