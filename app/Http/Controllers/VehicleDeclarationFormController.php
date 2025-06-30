@@ -37,9 +37,10 @@ class VehicleDeclarationFormController extends Controller
 
     public function edit($serial_number)
     {
-        $declaration = VehicleDeclaration::with(['drivers' => function ($query) {
-            $query->withTrashed(); // Include soft-deleted drivers
-        }])->where('serial_number', $serial_number)->firstOrFail();
+        $declaration = VehicleDeclaration::with('drivers') // Load only non-deleted drivers
+        ->where('serial_number', $serial_number)
+        ->firstOrFail();
+
         $vehicleTypes = VehicleType::all();
         $vehicleModels = VehicleModel::all();
         $engineCapacities = VehicleEngineCapacity::all();
@@ -47,9 +48,15 @@ class VehicleDeclarationFormController extends Controller
         $fuelTypes = FuelType::all();
         $requestType = request()->query('request_type'); // Pass request_type from query
 
+        $deletedDrivers = VehicleDeclaration::find($declaration->id)
+        ->drivers()
+        ->onlyTrashed()
+        ->get();
+
         return view('vehicle-declaration-form', compact(
             'declaration',
             'vehicleTypes',
+            'deletedDrivers',
             'vehicleModels',
             'engineCapacities',
             'colors',
