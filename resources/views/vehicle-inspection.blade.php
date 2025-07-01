@@ -53,7 +53,7 @@
                             </td>
                             <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
                                 <p style="font-size: 0.8rem; color: #4b5563; margin-bottom: 0.5rem;">Vehicle ID: {{ $vehicle->id }}</p>
-                                <a href="{{ route('vehicle.inspection.create', ['serial_number' => $vehicle->serial_number ?? $vehicle->id, 'request_type' => $vehicle->request_type]) }}"
+                                <a href="{{ route('vehicle.technical.create', ['serial_number' => $vehicle->serial_number ?? $vehicle->id, 'request_type' => $vehicle->request_type]) }}"
                                    style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease; text-decoration: none;"
                                    onmouseover="this.style.background='linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='scale(1.05)'"
                                    onmouseout="this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'">
@@ -94,13 +94,11 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Staggered animation for table rows
     const tableRows = document.querySelectorAll('#vehicleTable tbody tr');
     tableRows.forEach((row, index) => {
         row.style.animationDelay = `${index * 0.1}s`;
     });
 
-    // Prevent accidental form submission on refresh
     const searchForm = document.getElementById('searchForm');
     searchForm.addEventListener('submit', (e) => {
         console.log('Form submitted to:', searchForm.action);
