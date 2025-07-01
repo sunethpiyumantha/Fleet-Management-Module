@@ -143,3 +143,6 @@ Route::prefix('vehicle-declaration')->name('vehicle.declaration.')->group(functi
 Route::get('/vehicle-registration', function () {
     return view('vehicle-technical-description');
 });
+Route::get('/vehicle-inspection-request', function () {
+    return view('vehicle-inspection');
+});
