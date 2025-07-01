@@ -489,7 +489,8 @@
                                             <a href="{{ route('vehicle.request.all') }}">All Requests</a>
                                         </li>
                                         <li>
-                                            <a href="/vehicle-inspection-request">Vehicle Inspection request</a>
+                                            <a href="{{ route('vehicle.inspection.index') }}">Vehicle Inspection request</a>
+
                                         </li>
 
                                         <li>
