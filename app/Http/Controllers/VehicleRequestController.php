@@ -189,4 +189,54 @@ class VehicleRequestController extends Controller
 
         return view('all-request', compact('vehicles', 'categories', 'sort', 'order'));
     }
+
+    public function vehicleInspection(Request $request)
+    {
+        \Log::info('vehicleInspection method called', [
+            'url' => $request->fullUrl(),
+            'search' => $request->input('search'),
+            'sort' => $request->input('sort', 'created_at'),
+            'order' => $request->input('order', 'desc'),
+            'per_page' => $request->input('per_page', 15)
+        ]);
+
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'created_at');
+        $order = $request->input('order', 'desc');
+        $perPage = $request->input('per_page', 15);
+
+        $sortableColumns = ['created_at', 'category', 'sub_category'];
+        $sort = in_array($sort, $sortableColumns) ? $sort : 'created_at';
+        $order = in_array(strtolower($order), ['asc', 'desc']) ? $order : 'desc';
+
+        $vehicles = VehicleRequest::query()
+            ->when($search, function ($query) use ($search) {
+                $query->where('serial_number', 'like', "%{$search}%")
+                    ->orWhere('request_type', 'like', "%{$search}%")
+                    ->orWhereHas('category', fn ($q) => $q->where('category', 'like', "%{$search}%"))
+                    ->orWhereHas('subCategory()', fn ($q) => $q->where('sub_category', 'like', "%{$search}%"));
+            })
+            ->when($sort, function ($query) use ($sort, $order) {
+                if ($sort === 'category') {
+                    return $query->join('vehicle_categories', 'vehicle_requests.cat_id', '=', 'vehicle_categories.id')
+                        ->orderBy('vehicle_categories.category', $order)
+                        ->select('vehicle_requests.*');
+                } elseif ($sort === 'sub_category') {
+                    return $query->join('vehicle_sub_categories', 'vehicle_requests.sub_cat_id', '=', 'vehicle_sub_categories.id')
+                        ->orderBy('vehicle_sub_categories.sub_category', $order)
+                        ->select('vehicle_requests.*');
+                }
+                return $query->orderBy($sort, $order);
+            })
+            ->with(['category', 'subCategory'])
+            ->paginate($perPage);
+
+        $categories = VehicleCategory::orderBy('category')->get();
+
+        \Log::info('vehicleInspection returning view', ['vehicle_count' => $vehicles->count()]);
+
+        return view('vehicle-inspection', compact('vehicles', 'categories', 'sort', 'order'));
+    }
+
+
 }

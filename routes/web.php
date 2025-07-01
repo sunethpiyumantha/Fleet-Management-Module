@@ -112,7 +112,7 @@ use App\Http\Controllers\VehicleRequestController;
 use App\Http\Controllers\VehicleDeclarationFormController;
 
 Route::get('/', function () {
-    return view('welcome'); // Replace 'welcome' with your desired view
+    return redirect()->route('vehicle.inspection.index');
 })->name('home');
 
 // Vehicle Request Routes
@@ -126,9 +126,6 @@ Route::prefix('vehicle-request')->name('vehicle.request.')->group(function () {
     Route::get('/all', [VehicleRequestController::class, 'allRequests'])->name('all');
 });
 
-// Standalone Sub-Category Route
-Route::get('/get-sub-categories/{catId}', [VehicleRequestController::class, 'getSubCategories'])->name('vehicle.request.subcategories');
-
 // Vehicle Declaration Routes
 Route::prefix('vehicle-declaration')->name('vehicle.declaration.')->group(function () {
     Route::get('/', [VehicleDeclarationFormController::class, 'create'])->name('create');
@@ -136,6 +133,17 @@ Route::prefix('vehicle-declaration')->name('vehicle.declaration.')->group(functi
     Route::get('/edit/{serial_number}', [VehicleDeclarationFormController::class, 'edit'])->name('edit');
     Route::put('/{id}', [VehicleDeclarationFormController::class, 'update'])->name('update');
 });
+
+// Vehicle Inspection Routes
+Route::prefix('vehicle-inspection')->name('vehicle.inspection.')->group(function () {
+    Route::get('/', [VehicleRequestController::class, 'vehicleInspection'])->name('index');
+    Route::get('/create/{serial_number}/{request_type}', [VehicleRequestController::class, 'createInspection'])->name('create');
+    Route::post('/store', [VehicleRequestController::class, 'storeInspection'])->name('store');
+});
+
+// AJAX for Subcategories
+Route::get('/get-sub-categories/{catId}', [VehicleRequestController::class, 'getSubCategories'])->name('vehicle.request.subcategories');
+
 
 
 
