@@ -11,25 +11,22 @@
     <div style="display: flex; flex-direction: column; gap: 1rem;">
       <div style="display: flex; justify-content: space-between; gap: 1rem;">
         <div style="flex: 1;">
-          {{-- have some error --}}
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle No (Army / Civil)</label>
-          <input type="text" disabled value="{{ $VehicleDeclaration->civil_number ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+          <input type="text" disabled value="{{ $vehicleDeclaration->civil_number ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
         </div>
         <div style="flex: 1;">
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Type of Vehicle</label>
-          <input type="text" disabled value="{{ $vehicleRequest->category->category ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+          <input type="text" disabled value="{{ $vehicleDeclaration->vehicleType->name ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
         </div>
       </div>
       <div style="display: flex; justify-content: space-between; gap: 1rem;">
         <div style="flex: 1;">
-          {{-- have some error --}}
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Manufacturer</label>
-          <input type="text" disabled value="{{ $vehicleDeclaration->year_of_manufacture ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+          <input type="text" disabled value="{{ $vehicleDeclaration->vehicleModel->manufacturer ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
         </div>
         <div style="flex: 1;">
-          {{-- have some error --}}
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Model</label>
-          <input type="text" disabled value="{{ $vehicleDeclaration->model ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+          <input type="text" disabled value="{{ $vehicleDeclaration->vehicleModel->name ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
         </div>
       </div>
       <div style="display: flex; justify-content: space-between; gap: 1rem;">
@@ -54,14 +51,12 @@
       </div>
       <div style="display: flex; justify-content: space-between; gap: 1rem;">
         <div style="flex: 1;">
-          {{-- have some error --}}
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Type of Fuel</label>
-          <input type="text" disabled value="{{ $vehicleDeclaration->fuel_type ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+          <input type="text" disabled value="{{ $vehicleDeclaration->fuelType->name ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
         </div>
         <div style="flex: 1;">
-          {{-- have some error --}}
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Engine Capacity</label>
-          <input type="text" disabled value="{{ $vehicleDeclaration->engine_capacity ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+          <input type="text" disabled value="{{ $vehicleDeclaration->engineCapacity->capacity ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
         </div>
       </div>
       <div style="display: flex; justify-content: space-between; gap: 1rem;">
@@ -79,10 +74,9 @@
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Code Number</label>
           <input type="text" disabled value="{{ $vehicleDeclaration->code_no_vehicle ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
         </div>
-        <div style="flex: 1;"> 
-          {{-- have some error --}}
+        <div style="flex: 1;">
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Driver</label>
-          <input type="text" disabled value="{{ $vehicleDeclaration->driver_name ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+          <input type="text" disabled value="{{ $vehicleDeclaration->drivers->first()->driver_name ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
         </div>
       </div>
     </div>

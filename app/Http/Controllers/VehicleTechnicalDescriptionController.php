@@ -11,12 +11,25 @@ class VehicleTechnicalDescriptionController extends Controller
 {
     public function create($serial_number, $request_type)
     {
-        $vehicleRequest = VehicleRequest::where('serial_number', $serial_number)
-            ->orWhere('id', $serial_number)
-            ->with('category')
+        // Load VehicleRequest with category relationship
+        $vehicleRequest = VehicleRequest::with('category')
+            ->where('serial_number', $serial_number)
             ->firstOrFail();
-        $vehicleDeclaration = VehicleDeclaration::where('serial_number', $serial_number)->first();
-        return view('vehicle-technical-description', compact('vehicleRequest', 'vehicleDeclaration'));
+
+        // Load VehicleDeclaration with all necessary relationships
+        $vehicleDeclaration = VehicleDeclaration::with([
+            'vehicleType',
+            'vehicleModel',
+            'fuelType',
+            'engineCapacity',
+            'drivers' => function ($query) {
+                $query->whereNull('deleted_at'); // Only non-deleted drivers
+            }
+        ])
+            ->where('serial_number', $serial_number)
+            ->firstOrFail();
+
+        return view('vehicle-technical-description', compact('vehicleRequest', 'vehicleDeclaration', 'request_type'));
     }
 
     public function store(Request $request, $serial_number)
