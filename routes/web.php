@@ -111,8 +111,9 @@ Route::resource('vehicle-sub-categories', VehicleSubCategoryController::class)->
 use App\Http\Controllers\VehicleRequestController;
 use App\Http\Controllers\VehicleDeclarationFormController;
 
+// routes/web.php
 Route::get('/', function () {
-    return redirect()->route('vehicle.inspection.index');
+    return view('welcome');
 })->name('home');
 
 // Vehicle Request Routes
