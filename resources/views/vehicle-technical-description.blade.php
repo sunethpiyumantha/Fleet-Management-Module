@@ -5,7 +5,9 @@
 @section('content')
 <div style="max-width: 64rem; margin: 0 auto; padding: 2.5rem 1.5rem;">
   <div style="background-color: white; border: 1px solid #f97316; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 1.5rem; margin-bottom: 2rem;">
-    <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">Vehicle Technical Description</h2>
+    <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">
+      Vehicle Technical Description - Serial No: {{ $vehicleRequest->serial_number ?? $vehicleDeclaration->serial_number ?? 'N/A' }}
+    </h2>
 
     <h3 style="font-size: 1.25rem; font-weight: 600; color: #ea580c; margin-bottom: 1rem;">Pre-filled Data (from Declaration Form)</h3>
     <div style="display: flex; flex-direction: column; gap: 1rem;">
