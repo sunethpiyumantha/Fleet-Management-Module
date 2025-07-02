@@ -11,19 +11,17 @@ class VehicleTechnicalDescriptionController extends Controller
 {
     public function create($serial_number, $request_type)
     {
-        // Load VehicleRequest with category relationship
         $vehicleRequest = VehicleRequest::with('category')
             ->where('serial_number', $serial_number)
             ->firstOrFail();
 
-        // Load VehicleDeclaration with all necessary relationships
         $vehicleDeclaration = VehicleDeclaration::with([
             'vehicleType',
             'vehicleModel',
             'fuelType',
             'engineCapacity',
             'drivers' => function ($query) {
-                $query->whereNull('deleted_at'); // Only non-deleted drivers
+                $query->whereNull('deleted_at');
             }
         ])
             ->where('serial_number', $serial_number)
@@ -50,5 +48,13 @@ class VehicleTechnicalDescriptionController extends Controller
         ]);
 
         return redirect()->route('vehicle.inspection.index')->with('success', 'Technical description submitted successfully.');
+    }
+
+    public function destroy($serial_number)
+    {
+        $vehicleDeclaration = VehicleDeclaration::withTrashed()->where('serial_number', $serial_number)->firstOrFail();
+        $vehicleDeclaration->delete();
+
+        return redirect()->route('some.route')->with('success', 'Declaration soft deleted successfully.');
     }
 }

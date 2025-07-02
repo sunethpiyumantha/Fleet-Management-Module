@@ -16,6 +16,7 @@ class CreateVehicleTechnicalDescriptionsTable extends Migration
             $table->string('comparable');
             $table->string('seats_mvr');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
