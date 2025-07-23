@@ -87,6 +87,19 @@ class VehicleDeclaration extends Model
         return $this->hasMany(Driver::class);
     }
 
+    public function technicalDescriptions()
+    {
+        return $this->hasMany(VehicleTechnicalDescription::class, 'serial_number', 'serial_number');
+    }
+
+    public function delete()
+    {
+        // Soft delete related technical descriptions
+        $this->technicalDescriptions()->update(['deleted_at' => now()]);
+
+        // Soft delete the declaration itself
+        return parent::delete();
+    }
     /**
      * Boot method for auto-generating serial_number if not provided
      */

@@ -493,9 +493,9 @@
 
                                         </li>
 
-                                        <li>
+                                        {{--<li>
                                             <a href="/vehicle-registration">Technical description</a>
-                                        </li>
+                                        </li>--}}
                                         
                                 </li>
                                 

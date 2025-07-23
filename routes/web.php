@@ -111,8 +111,9 @@ Route::resource('vehicle-sub-categories', VehicleSubCategoryController::class)->
 use App\Http\Controllers\VehicleRequestController;
 use App\Http\Controllers\VehicleDeclarationFormController;
 
+// routes/web.php
 Route::get('/', function () {
-    return redirect()->route('vehicle.inspection.index');
+    return view('welcome');
 })->name('home');
 
 // Vehicle Request Routes
@@ -144,8 +145,11 @@ Route::prefix('vehicle-inspection')->name('vehicle.inspection.')->group(function
 // AJAX for Subcategories
 Route::get('/get-sub-categories/{catId}', [VehicleRequestController::class, 'getSubCategories'])->name('vehicle.request.subcategories');
 
+use App\Http\Controllers\VehicleTechnicalDescriptionController;
 
 
+Route::get('/vehicle-technical-description/{serial_number}/{request_type}', [VehicleTechnicalDescriptionController::class, 'create'])->name('vehicle.technical.create');
+Route::post('/vehicle-technical-description/{serial_number}', [VehicleTechnicalDescriptionController::class, 'store'])->name('vehicle.technical.store');
 
 
 Route::get('/vehicle-registration', function () {
