@@ -158,3 +158,8 @@ Route::get('/vehicle-registration', function () {
 Route::get('/vehicle-inspection-request', function () {
     return view('vehicle-inspection');
 });
+
+Route::get('/certificate-of-industrial-aptitude', function () {
+    return view('certificate-of-industrial-aptitude');
+})->name('vehicle.technical.description');
+
