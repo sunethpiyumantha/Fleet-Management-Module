@@ -493,9 +493,9 @@
 
                                         </li>
 
-                                        {{--<li>
-                                            <a href="/vehicle-registration">Technical description</a>
-                                        </li>--}}
+                                        <li>
+                                            <a href="/certificate-of-industrial-aptitude">certificate-of-industrial-aptitude</a>
+                                        </li>
                                         
                                 </li>
                                 
