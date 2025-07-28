@@ -4,6 +4,13 @@
 
 @section('content')
 <div style="max-width: 64rem; margin: 0 auto; padding: 2.5rem 1.5rem;">
+  <!-- Success Message Display -->
+  @if (session('success'))
+    <div style="background-color: #d1fae5; border: 1px solid #10b981; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem; color: #065f46; font-size: 0.875rem; font-weight: 500; text-align: center;">
+      {{ session('success') }}
+    </div>
+  @endif
+
   <div style="background-color: white; border: 1px solid #f97316; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 1.5rem; margin-bottom: 2rem;">
     <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">
       Vehicle Technical Description - Serial No: {{ $vehicleRequest->serial_number ?? $vehicleDeclaration->serial_number ?? 'N/A' }}
@@ -18,7 +25,14 @@
         </div>
         <div style="flex: 1;">
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Type of Vehicle</label>
-          <input type="text" disabled value="{{ $vehicleDeclaration->vehicleType->name ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+          <select disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+            <option value="" {{ !isset($vehicleDeclaration->vehicleType->type) ? 'selected' : '' }}>N/A</option>
+            @foreach(\App\Models\VehicleType::all() as $vehicleType)
+              <option value="{{ $vehicleType->type }}" {{ isset($vehicleDeclaration->vehicleType->type) && $vehicleDeclaration->vehicleType->type == $vehicleType->type ? 'selected' : '' }}>
+                {{ $vehicleType->type }}
+              </option>
+            @endforeach
+          </select>
         </div>
       </div>
       <div style="display: flex; justify-content: space-between; gap: 1rem;">
@@ -28,7 +42,14 @@
         </div>
         <div style="flex: 1;">
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Model</label>
-          <input type="text" disabled value="{{ $vehicleDeclaration->vehicleModel->name ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+          <select disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+            <option value="" {{ !isset($vehicleDeclaration->vehicleModel->model) ? 'selected' : '' }}>N/A</option>
+            @foreach(\App\Models\VehicleModel::all() as $vehicleModel)
+              <option value="{{ $vehicleModel->model }}" {{ isset($vehicleDeclaration->vehicleModel->model) && $vehicleDeclaration->vehicleModel->model == $vehicleModel->model ? 'selected' : '' }}>
+                {{ $vehicleModel->model }}
+              </option>
+            @endforeach
+          </select>
         </div>
       </div>
       <div style="display: flex; justify-content: space-between; gap: 1rem;">
@@ -54,11 +75,25 @@
       <div style="display: flex; justify-content: space-between; gap: 1rem;">
         <div style="flex: 1;">
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Type of Fuel</label>
-          <input type="text" disabled value="{{ $vehicleDeclaration->fuelType->name ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+          <select disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+            <option value="" {{ !isset($vehicleDeclaration->fuelType->fuel_type) ? 'selected' : '' }}>N/A</option>
+            @foreach(\App\Models\FuelType::all() as $fuelType)
+              <option value="{{ $fuelType->fuel_type }}" {{ isset($vehicleDeclaration->fuelType->fuel_type) && $vehicleDeclaration->fuelType->fuel_type == $fuelType->fuel_type ? 'selected' : '' }}>
+                {{ $fuelType->fuel_type }}
+              </option>
+            @endforeach
+          </select>
         </div>
         <div style="flex: 1;">
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Engine Capacity</label>
-          <input type="text" disabled value="{{ $vehicleDeclaration->engineCapacity->capacity ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+          <select disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+            <option value="" {{ !isset($vehicleDeclaration->engineCapacity->engine_capacity) ? 'selected' : '' }}>N/A</option>
+            @foreach(\App\Models\VehicleEngineCapacity::all() as $engineCapacity)
+              <option value="{{ $engineCapacity->engine_capacity }}" {{ isset($vehicleDeclaration->engineCapacity->engine_capacity) && $vehicleDeclaration->engineCapacity->engine_capacity == $engineCapacity->engine_capacity ? 'selected' : '' }}>
+                {{ $engineCapacity->engine_capacity }}
+              </option>
+            @endforeach
+          </select>
         </div>
       </div>
       <div style="display: flex; justify-content: space-between; gap: 1rem;">
@@ -68,7 +103,18 @@
         </div>
         <div style="flex: 1;">
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Category</label>
-          <input type="text" disabled value="{{ $vehicleRequest->category->category ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+          <select disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+                <option value="" {{ !isset($vehicleRequest->category->category) ? 'selected' : '' }}>N/A</option>
+                @isset($categories)
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ isset($vehicleRequest->category->id) && $vehicleRequest->category->id == $category->id ? 'selected' : '' }}>
+                            {{ $category->category }}
+                        </option>
+                    @endforeach
+                @else
+                    <option value="">No categories available</option>
+                @endisset
+            </select>
         </div>
       </div>
       <div style="display: flex; justify-content: space-between; gap: 1rem;">
@@ -131,7 +177,7 @@
         <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
             <div style="text-align: center; margin-top: 1rem;">
-              <button type="submit" style="background-color: #f97316; color: white; font-weight: 600; padding: 0.375rem 0.75rem; border-radius: 0.5rem; border: none; cursor: pointer; width: 150px; transition: background-color 0.3s ease, transform 0.2s ease;"
+              <button type="submit" style="background-color: #f97316; color: white; font-weight: 600; padding: 0.375rem 0.75rem; border-radius: 0.5rem; border: none; cursor: pointer; width: 150px; transition: background-color 0.3s ease, transform: 0.2s ease;"
                       onmouseover="this.style.backgroundColor='#ea580c'; this.style.transform='scale(1.05)'"
                       onmouseout="this.style.backgroundColor='#f97316'; this.style.transform='scale(1)'">
                 Submit
