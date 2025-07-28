@@ -163,3 +163,11 @@ Route::get('/certificate-of-industrial-aptitude', function () {
     return view('certificate-of-industrial-aptitude');
 })->name('vehicle.technical.description');
 
+Route::get('/vehicle-inspection-form2', function () {
+    return view('vehicle-inspection-form2');
+})->name('vehicle-inspection-form2');
+
+
+
+
+
