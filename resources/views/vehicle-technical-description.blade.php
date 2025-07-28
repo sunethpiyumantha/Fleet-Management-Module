@@ -103,7 +103,18 @@
         </div>
         <div style="flex: 1;">
           <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Category</label>
-          <input type="text" disabled value="{{ $vehicleRequest->category->category ?? 'N/A' }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+          <select disabled style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; background-color: #f3f4f6; color: green;">
+                <option value="" {{ !isset($vehicleRequest->category->category) ? 'selected' : '' }}>N/A</option>
+                @isset($categories)
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ isset($vehicleRequest->category->id) && $vehicleRequest->category->id == $category->id ? 'selected' : '' }}>
+                            {{ $category->category }}
+                        </option>
+                    @endforeach
+                @else
+                    <option value="">No categories available</option>
+                @endisset
+            </select>
         </div>
       </div>
       <div style="display: flex; justify-content: space-between; gap: 1rem;">
