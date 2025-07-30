@@ -5,9 +5,12 @@
 @section('content')
 <div style="max-width: 64rem; margin: 0 auto; padding: 2.5rem 1.5rem;">
   <div style="background-color: white; border: 1px solid #f97316; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 1.5rem;">
-    <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">
+    <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 0.5rem;">
       Certificate of Industrial Aptitude
     </h2>
+    <p style="font-size: 1rem; color: #374151; text-align: center; margin-bottom: 1.5rem;">
+      Serial Number: {{ $serial_number }}
+    </p>
 
     <form method="POST" action="{{ route('vehicle.certificate.store') }}" enctype="multipart/form-data">
       @csrf
