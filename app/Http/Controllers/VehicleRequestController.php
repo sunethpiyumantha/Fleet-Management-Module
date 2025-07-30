@@ -7,7 +7,7 @@ use App\Models\VehicleSubCategory;
 use App\Models\VehicleRequest;
 use App\Models\VehicleDeclaration;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // Add this import
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class VehicleRequestController extends Controller
@@ -124,14 +124,12 @@ class VehicleRequestController extends Controller
             $vehicle = VehicleRequest::findOrFail($id);
             \Log::info("Soft deleting VehicleRequest ID: {$id}");
 
-            // Soft delete related VehicleDeclaration records and their drivers
             foreach ($vehicle->declarations as $declaration) {
                 \Log::info("Soft deleting VehicleDeclaration ID: {$declaration->id} and its drivers");
-                $declaration->drivers()->delete(); // Soft delete drivers
-                $declaration->delete(); // Soft delete declaration
+                $declaration->drivers()->delete();
+                $declaration->delete();
             }
 
-            // Soft delete the VehicleRequest
             $vehicle->delete();
 
             DB::commit();
@@ -214,7 +212,7 @@ class VehicleRequestController extends Controller
                 $query->where('serial_number', 'like', "%{$search}%")
                     ->orWhere('request_type', 'like', "%{$search}%")
                     ->orWhereHas('category', fn ($q) => $q->where('category', 'like', "%{$search}%"))
-                    ->orWhereHas('subCategory()', fn ($q) => $q->where('sub_category', 'like', "%{$search}%"));
+                    ->orWhereHas('subCategory', fn ($q) => $q->where('sub_category', 'like', "%{$search}%"));
             })
             ->when($sort, function ($query) use ($sort, $order) {
                 if ($sort === 'category') {
@@ -238,5 +236,120 @@ class VehicleRequestController extends Controller
         return view('vehicle-inspection', compact('vehicles', 'categories', 'sort', 'order'));
     }
 
+    public function vehicleInspectionForm2(Request $request)
+    {
+        \Log::info('vehicleInspectionForm2 method called', [
+            'url' => $request->fullUrl(),
+            'search' => $request->input('search'),
+            'sort' => $request->input('sort', 'created_at'),
+            'order' => $request->input('order', 'desc'),
+            'per_page' => $request->input('per_page', 15)
+        ]);
 
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'created_at');
+        $order = $request->input('order', 'desc');
+        $perPage = $request->input('per_page', 15);
+
+        $sortableColumns = ['created_at', 'category', 'sub_category'];
+        $sort = in_array($sort, $sortableColumns) ? $sort : 'created_at';
+        $order = in_array(strtolower($order), ['asc', 'desc']) ? $order : 'desc';
+
+        $vehicles = VehicleRequest::query()
+            ->when($search, function ($query) use ($search) {
+                $query->where('serial_number', 'like', "%{$search}%")
+                    ->orWhere('request_type', 'like', "%{$search}%")
+                    ->orWhereHas('category', fn ($q) => $q->where('category', 'like', "%{$search}%"))
+                    ->orWhereHas('subCategory', fn ($q) => $q->where('sub_category', 'like', "%{$search}%"));
+            })
+            ->when($sort, function ($query) use ($sort, $order) {
+                if ($sort === 'category') {
+                    return $query->join('vehicle_categories', 'vehicle_requests.cat_id', '=', 'vehicle_categories.id')
+                        ->orderBy('vehicle_categories.category', $order)
+                        ->select('vehicle_requests.*');
+                } elseif ($sort === 'sub_category') {
+                    return $query->join('vehicle_sub_categories', 'vehicle_requests.sub_cat_id', '=', 'vehicle_sub_categories.id')
+                        ->orderBy('vehicle_sub_categories.sub_category', $order)
+                        ->select('vehicle_requests.*');
+                }
+                return $query->orderBy($sort, $order);
+            })
+            ->with(['category', 'subCategory'])
+            ->paginate($perPage);
+
+        $categories = VehicleCategory::orderBy('category')->get();
+
+        \Log::info('vehicleInspectionForm2 returning view', ['vehicle_count' => $vehicles->count()]);
+
+        return view('vehicle-inspection-form2', compact('vehicles', 'categories', 'sort', 'order'));
+    }
+
+    public function certificateCreate(Request $request)
+    {
+        \Log::info('certificateCreate method called', [
+            'serial_number' => $request->query('serial_number'),
+            'request_type' => $request->query('request_type')
+        ]);
+
+        $serial_number = $request->query('serial_number');
+        $request_type = $request->query('request_type');
+
+        $vehicle = VehicleRequest::where('serial_number', $serial_number)
+            ->where('request_type', $request_type)
+            ->firstOrFail();
+
+        return view('certificate-of-industrial-aptitude', compact('vehicle', 'serial_number', 'request_type'));
+    }
+
+    public function certificateStore(Request $request)
+    {
+        $validated = $request->validate([
+            'engine_number' => 'required|string|max:255',
+            'chassis_number' => 'required|string|max:255',
+            'engine_performance' => 'required|string|max:255',
+            'electrical_system' => 'required|string|max:255',
+            'transmission_system' => 'required|string|max:255',
+            'tires' => 'required|string|max:255',
+            'brake_system' => 'required|string|max:255',
+            'suspension_system' => 'required|string|max:255',
+            'air_conditioning' => 'required|string|max:255',
+            'seats_condition' => 'required|string|max:255',
+            'fuel_efficiency' => 'required|string|max:255',
+            'speedometer_reading' => 'required|string|max:255',
+            'speedometer_operation' => 'required|string|max:255',
+            'running_distance_function' => 'required|string|max:255',
+            'improvements' => 'required|string',
+            'transmission_operation' => 'required|string|max:255',
+            'battery_type' => 'required|string|max:255',
+            'battery_capacity' => 'required|string|max:255',
+            'battery_number' => 'required|string|max:255',
+            'water_capacity' => 'nullable|string|max:255',
+            'cover_outer' => 'required|string|max:255',
+            'certificate_validity' => 'required|string|max:255',
+            'seats_mvr' => 'required|string|max:255',
+            'seats_installed' => 'required|string|max:255',
+            'other_matters' => 'nullable|string',
+            'vehicle_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('vehicle_picture')) {
+            $path = $request->file('vehicle_picture')->store('vehicle_pictures', 'public');
+            $validated['vehicle_picture'] = $path;
+        }
+
+        DB::beginTransaction();
+        try {
+            $certificate = new VehicleCertificate;
+            $certificate->fill($validated);
+            $certificate->vehicle_request_id = VehicleRequest::where('serial_number', $request->serial_number)->first()->id;
+            $certificate->save();
+
+            DB::commit();
+            return redirect()->route('vehicle.inspection.form2')->with('success', 'Certificate of Industrial Aptitude submitted successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Failed to store certificate: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to submit certificate: ' . $e->getMessage());
+        }
+    }
 }

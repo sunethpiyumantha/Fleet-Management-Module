@@ -1,4 +1,3 @@
-```blade
 @extends('layouts.app')
 
 @section('title', 'Certificate of Industrial Aptitude')
@@ -10,8 +9,10 @@
       Certificate of Industrial Aptitude
     </h2>
 
-    <form method="POST" action="#">
+    <form method="POST" action="{{ route('vehicle.certificate.store') }}" enctype="multipart/form-data">
       @csrf
+      <input type="hidden" name="serial_number" value="{{ $serial_number }}">
+      <input type="hidden" name="request_type" value="{{ $request_type }}">
       <div style="display: flex; flex-direction: column; gap: 1rem;">
         <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
@@ -237,9 +238,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('form');
   form.addEventListener('submit', (e) => {
-    e.preventDefault(); // Prevent form submission
-    console.log('Form submission prevented for UI preview');
-    alert('Form submitted (preview mode)');
+    console.log('Form submitted to:', form.action);
   });
 });
 </script>

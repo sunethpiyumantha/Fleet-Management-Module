@@ -1,18 +1,19 @@
+```blade
 @extends('layouts.app')
 
-@section('title', 'Vehicle Inspection')
+@section('title', 'Vehicle Inspection Form 2')
 
 @section('content')
 <!-- Main container -->
 <div style="max-width: 80rem; margin: 0 auto; padding: 2rem 1rem; font-family: Arial, sans-serif;">
     <div style="background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%); border: 2px solid #f97316; border-radius: 1.5rem; box-shadow: 0 12px 20px -5px rgba(0,0,0,0.15), 0 6px 8px -4px rgba(0,0,0,0.1); padding: 1.5rem;">
         <h2 style="font-size: 2rem; font-weight: 700; color: #ea580c; text-align: center; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 1px;">
-            All Vehicle Inspection Form 02
+            Vehicle Inspection Form 2
         </h2>
 
         <!-- Search Form -->
-        <form id="searchForm" style="margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: flex-start;">
-            <input type="text" name="search" placeholder="Search by serial or category..." style="padding: 0.5rem; width: 100%; max-width: 300px; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.9rem;">
+        <form method="GET" action="{{ route('vehicle.inspection.form2') }}" id="searchForm" style="margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: flex-start;">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by serial or category..." style="padding: 0.5rem; width: 100%; max-width: 300px; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.9rem;">
             <button type="submit" style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.9rem; font-weight: 600; transition: background 0.3s ease, transform 0.2s ease;"
                     onmouseover="this.style.background='#2563eb'; this.style.transform='scale(1.05)'"
                     onmouseout="this.style.background='#3b82f6'; this.style.transform='scale(1)'">
@@ -34,22 +35,47 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    <!-- Sample Row -->
-                    
-                    <!-- Empty State -->
-                    <tr>
-                        <td colspan="6" style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
-                            No vehicle requests found.
-                        </td>
-                    </tr>
+                    @forelse ($vehicles as $vehicle)
+                        <tr style="transition: background-color 0.3s ease, transform 0.2s ease; animation: slideIn 0.3s ease forwards;">
+                            <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
+                                {{ $vehicle->serial_number ?? $vehicle->id }}
+                            </td>
+                            <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
+                                {{ $vehicle->request_type === 'replacement' ? 'Vehicle Replacement' : 'New Approval' }}
+                            </td>
+                            <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
+                                {{ $vehicle->category->category ?? 'N/A' }}
+                            </td>
+                            <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
+                                {{ $vehicle->subCategory->sub_category ?? 'N/A' }}
+                            </td>
+                            <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
+                                {{ $vehicle->qty }}
+                            </td>
+                            <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
+                                <p style="font-size: 0.8rem; color: #4b5563; margin-bottom: 0.5rem;">Vehicle ID: {{ $vehicle->id }}</p>
+                                <a href="{{ route('vehicle.certificate.create', ['serial_number' => $vehicle->serial_number ?? $vehicle->id, 'request_type' => $vehicle->request_type]) }}"
+                                   style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease; text-decoration: none;"
+                                   onmouseover="this.style.background='linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='scale(1.05)'"
+                                   onmouseout="this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'">
+                                    Vehicle Inspection
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
+                                No vehicle requests found.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
         <!-- Pagination Links -->
         <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 0.5rem;">
-            <a href="#" style="padding: 0.5rem 1rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; text-decoration: none; color: #374151;">Previous</a>
-            <a href="#" style="padding: 0.5rem 1rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; text-decoration: none; color: #374151;">Next</a>
+            {{ $vehicles->links() }}
         </div>
     </div>
 </div>
@@ -76,9 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const searchForm = document.getElementById('searchForm');
     searchForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        console.log('Form submitted');
+        console.log('Form submitted to:', searchForm.action);
     });
 });
 </script>
 @endsection
+```
