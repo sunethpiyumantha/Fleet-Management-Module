@@ -122,23 +122,31 @@ class VehicleRequestController extends Controller
         DB::beginTransaction();
         try {
             $vehicle = VehicleRequest::findOrFail($id);
-            \Log::info("Soft deleting VehicleRequest ID: {$id}");
+            Log::info("Soft deleting VehicleRequest ID: {$id}, serial_number: {$vehicle->serial_number}");
 
+            // Soft delete related vehicle declarations and their drivers
             foreach ($vehicle->declarations as $declaration) {
-                \Log::info("Soft deleting VehicleDeclaration ID: {$declaration->id} and its drivers");
+                Log::info("Soft deleting VehicleDeclaration ID: {$declaration->id} and its drivers");
                 $declaration->drivers()->delete();
                 $declaration->delete();
             }
 
+            // Soft delete related vehicle certificates
+            $certificates = VehicleCertificate::where('vehicle_request_id', $id)->get();
+            foreach ($certificates as $certificate) {
+                $certificate->delete();
+                Log::info("Soft deleted VehicleCertificate ID: {$certificate->id}, serial_number: {$certificate->serial_number}");
+            }
+
             $vehicle->delete();
+            Log::info("Successfully soft deleted VehicleRequest ID: {$id}, serial_number: {$vehicle->serial_number}");
 
             DB::commit();
-            \Log::info("Successfully soft deleted VehicleRequest ID: {$id} and all related records");
             return redirect()->route('vehicle.request.all')
-                ->with('success', 'Vehicle request, declarations, and drivers soft deleted successfully.');
+                ->with('success', 'Vehicle request, declarations, certificates, and drivers soft deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error("Failed to soft delete VehicleRequest ID: {$id}. Error: {$e->getMessage()}");
+            Log::error("Failed to soft delete VehicleRequest ID: {$id}. Error: {$e->getMessage()}");
             return redirect()->back()
                 ->with('error', 'Failed to delete vehicle request: ' . $e->getMessage());
         }
@@ -380,4 +388,6 @@ class VehicleRequestController extends Controller
             return redirect()->back()->with('error', 'Failed to submit certificate: ' . $e->getMessage());
         }
     }
+
+    
 }

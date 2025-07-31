@@ -40,6 +40,7 @@ return new class extends Migration
             $table->text('other_matters')->nullable();
             $table->string('vehicle_picture')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
