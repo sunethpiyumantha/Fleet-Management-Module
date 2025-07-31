@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class VehicleCertificate extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'vehicle_request_id',
+        'serial_number',
+        'request_type',
         'engine_number',
         'chassis_number',
         'engine_performance',
@@ -35,4 +40,9 @@ class VehicleCertificate extends Model
         'other_matters',
         'vehicle_picture',
     ];
+
+    public function vehicleRequest()
+    {
+        return $this->belongsTo(VehicleRequest::class);
+    }
 }

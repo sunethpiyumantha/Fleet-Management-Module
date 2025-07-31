@@ -9,7 +9,7 @@ use App\Models\VehicleDeclaration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\VehicleCertificate;
 class VehicleRequestController extends Controller
 {
     public function index(Request $request)
@@ -294,16 +294,30 @@ class VehicleRequestController extends Controller
         $serial_number = $request->query('serial_number');
         $request_type = $request->query('request_type');
 
+        // Fetch VehicleRequest
         $vehicle = VehicleRequest::where('serial_number', $serial_number)
             ->where('request_type', $request_type)
             ->firstOrFail();
 
-        return view('certificate-of-industrial-aptitude', compact('vehicle', 'serial_number', 'request_type'));
+        // Fetch associated VehicleDeclaration
+        $declaration = VehicleDeclaration::with('technicalDescriptions')
+            ->where('serial_number', $serial_number)
+            ->first();
+
+        if (!$declaration) {
+            \Log::warning('No VehicleDeclaration found for serial_number: ' . $serial_number);
+            // Optionally redirect or handle missing declaration
+            // For now, proceed with null declaration
+        }
+
+        return view('certificate-of-industrial-aptitude', compact('vehicle', 'serial_number', 'request_type', 'declaration'));
     }
 
-    public function certificateStore(Request $request)
+   public function certificateStore(Request $request)
     {
         $validated = $request->validate([
+            'serial_number' => 'required|string|max:255',
+            'request_type' => 'required|string|max:255',
             'engine_number' => 'required|string|max:255',
             'chassis_number' => 'required|string|max:255',
             'engine_performance' => 'required|string|max:255',
@@ -339,10 +353,24 @@ class VehicleRequestController extends Controller
 
         DB::beginTransaction();
         try {
+            // Save to VehicleCertificate
             $certificate = new VehicleCertificate;
             $certificate->fill($validated);
             $certificate->vehicle_request_id = VehicleRequest::where('serial_number', $request->serial_number)->first()->id;
             $certificate->save();
+
+            // Update VehicleDeclaration with matching fields
+            $declaration = VehicleDeclaration::where('serial_number', $request->serial_number)->first();
+            if ($declaration) {
+                $declaration->update([
+                    'engine_no' => $request->engine_number,
+                    'chassis_number' => $request->chassis_number,
+                    'seats_registered' => $request->seats_mvr,
+                    'seats_current' => $request->seats_installed,
+                    'other_matters' => $request->other_matters,
+                    // 'amount_of_fuel' => $request->fuel_efficiency, // Commented out until mapping is confirmed
+                ]);
+            }
 
             DB::commit();
             return redirect()->route('vehicle.inspection.form2')->with('success', 'Certificate of Industrial Aptitude submitted successfully.');

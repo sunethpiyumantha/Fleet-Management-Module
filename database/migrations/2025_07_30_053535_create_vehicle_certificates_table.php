@@ -4,13 +4,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateVehicleCertificatesTable extends Migration
+return new class extends Migration
 {
     public function up()
     {
         Schema::create('vehicle_certificates', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('vehicle_request_id');
+            $table->foreignId('vehicle_request_id')->constrained()->onDelete('cascade');
+            $table->string('serial_number');
+            $table->string('request_type');
             $table->string('engine_number');
             $table->string('chassis_number');
             $table->string('engine_performance');
@@ -38,8 +40,6 @@ class CreateVehicleCertificatesTable extends Migration
             $table->text('other_matters')->nullable();
             $table->string('vehicle_picture')->nullable();
             $table->timestamps();
-
-            $table->foreign('vehicle_request_id')->references('id')->on('vehicle_requests')->onDelete('cascade');
         });
     }
 
@@ -47,4 +47,4 @@ class CreateVehicleCertificatesTable extends Migration
     {
         Schema::dropIfExists('vehicle_certificates');
     }
-}
+};
