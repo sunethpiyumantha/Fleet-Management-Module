@@ -159,13 +159,10 @@ Route::get('/vehicle-inspection-request', function () {
     return view('vehicle-inspection');
 });
 
-Route::get('/certificate-of-industrial-aptitude', function () {
-    return view('certificate-of-industrial-aptitude');
-})->name('vehicle.technical.description');
 
-Route::get('/vehicle-inspection-form2', function () {
-    return view('vehicle-inspection-form2');
-})->name('vehicle-inspection-form2');
+Route::get('/vehicle-inspection-form2', [VehicleRequestController::class, 'vehicleInspectionForm2'])->name('vehicle.inspection.form2');
+Route::get('/vehicle/certificate/create', [VehicleRequestController::class, 'certificateCreate'])->name('vehicle.certificate.create');
+Route::post('/vehicle/certificate/store', [VehicleRequestController::class, 'certificateStore'])->name('vehicle.certificate.store');
 
 
 

@@ -1,4 +1,3 @@
-```blade
 @extends('layouts.app')
 
 @section('title', 'Certificate of Industrial Aptitude')
@@ -6,24 +5,29 @@
 @section('content')
 <div style="max-width: 64rem; margin: 0 auto; padding: 2.5rem 1.5rem;">
   <div style="background-color: white; border: 1px solid #f97316; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 1.5rem;">
-    <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">
+    <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 0.5rem;">
       Certificate of Industrial Aptitude
     </h2>
+    <p style="font-size: 1rem; color: #374151; text-align: center; margin-bottom: 1.5rem;">
+      Serial Number: {{ $serial_number }}
+    </p>
 
-    <form method="POST" action="#">
+    <form method="POST" action="{{ route('vehicle.certificate.store') }}" enctype="multipart/form-data">
       @csrf
+      <input type="hidden" name="serial_number" value="{{ $serial_number }}">
+      <input type="hidden" name="request_type" value="{{ $request_type }}">
       <div style="display: flex; flex-direction: column; gap: 1rem;">
         <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Engine Number</label>
-            <input type="text" name="engine_number" value="{{ old('engine_number') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
+            <input type="text" name="engine_number" value="{{ old('engine_number', $declaration->engine_no ?? '') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
             @error('engine_number')
               <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
             @enderror
           </div>
           <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Chassis Number</label>
-            <input type="text" name="chassis_number" value="{{ old('chassis_number') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
+            <input type="text" name="chassis_number" value="{{ old('chassis_number', $declaration->chassis_number ?? '') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
             @error('chassis_number')
               <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
             @enderror
@@ -96,7 +100,7 @@
         <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Km Driven per Liter of Fuel</label>
-            <input type="text" name="fuel_efficiency" value="{{ old('fuel_efficiency') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
+            <input type="text" name="fuel_efficiency" value="{{ old('fuel_efficiency', $declaration->amount_of_fuel ?? '') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
             @error('fuel_efficiency')
               <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
             @enderror
@@ -192,14 +196,14 @@
         <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Number of Seats as per the Motor Vehicle Registration Department</label>
-            <input type="text" name="seats_mvr" value="{{ old('seats_mvr') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
+            <input type="text" name="seats_mvr" value="{{ old('seats_mvr', $declaration->seats_registered ?? '') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
             @error('seats_mvr')
               <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
             @enderror
           </div>
           <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Number of Seats Installed</label>
-            <input type="text" name="seats_installed" value="{{ old('seats_installed') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
+            <input type="text" name="seats_installed" value="{{ old('seats_installed', $declaration->seats_current ?? '') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
             @error('seats_installed')
               <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
             @enderror
@@ -208,7 +212,7 @@
         <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Other Matters</label>
-            <textarea name="other_matters" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;">{{ old('other_matters') }}</textarea>
+            <textarea name="other_matters" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;">{{ old('other_matters', $declaration->other_matters ?? '') }}</textarea>
             @error('other_matters')
               <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
             @enderror
@@ -237,9 +241,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('form');
   form.addEventListener('submit', (e) => {
-    e.preventDefault(); // Prevent form submission
-    console.log('Form submission prevented for UI preview');
-    alert('Form submitted (preview mode)');
+    console.log('Form submitted to:', form.action);
   });
 });
 </script>
