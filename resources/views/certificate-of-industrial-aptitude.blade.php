@@ -17,22 +17,59 @@
       <input type="hidden" name="serial_number" value="{{ $serial_number }}">
       <input type="hidden" name="request_type" value="{{ $request_type }}">
       <div style="display: flex; flex-direction: column; gap: 1rem;">
-        <div style="display: flex; justify-content: space-between; gap: 1rem;">
-          <div style="flex: 1;">
-            <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Engine Number</label>
-            <input type="text" name="engine_number" value="{{ old('engine_number', $declaration->engine_no ?? '') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
-            @error('engine_number')
-              <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
-            @enderror
+        <!-- Pre-filled Fields Section -->
+        <div style="border: 1px solid #d1d5db; border-radius: 0.5rem; padding: 1rem; background-color: #f9fafb;">
+          <h3 style="font-size: 1.25rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Pre-filled Vehicle Information</h3>
+          <div style="display: flex; justify-content: space-between; gap: 1rem;">
+            <div style="flex: 1;">
+              <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Engine Number</label>
+              <input type="text" name="engine_number" value="{{ old('engine_number', $declaration->engine_no ?? '') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
+              @error('engine_number')
+                <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
+              @enderror
+            </div>
+            <div style="flex: 1;">
+              <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Chassis Number</label>
+              <input type="text" name="chassis_number" value="{{ old('chassis_number', $declaration->chassis_number ?? '') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
+              @error('chassis_number')
+                <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
+              @enderror
+            </div>
           </div>
-          <div style="flex: 1;">
-            <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Chassis Number</label>
-            <input type="text" name="chassis_number" value="{{ old('chassis_number', $declaration->chassis_number ?? '') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
-            @error('chassis_number')
-              <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
-            @enderror
+          <div style="display: flex; justify-content: space-between; gap: 1rem; margin-top: 1rem;">
+            <div style="flex: 1;">
+              <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Km Driven per Liter of Fuel</label>
+              <input type="text" name="fuel_efficiency" value="{{ old('fuel_efficiency', $declaration->amount_of_fuel ?? '') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
+              @error('fuel_efficiency')
+                <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
+              @enderror
+            </div>
+            <div style="flex: 1;">
+              <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Number of Seats as per the Motor Vehicle Registration Department</label>
+              <input type="text" name="seats_mvr" value="{{ old('seats_mvr', $declaration->seats_registered ?? '') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
+              @error('seats_mvr')
+                <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
+              @enderror
+            </div>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 1rem; margin-top: 1rem;">
+            <div style="flex: 1;">
+              <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Number of Seats Installed</label>
+              <input type="text" name="seats_installed" value="{{ old('seats_installed', $declaration->seats_current ?? '') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
+              @error('seats_installed')
+                <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
+              @enderror
+            </div>
+            <div style="flex: 1;">
+              <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Other Matters</label>
+              <textarea name="other_matters" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;">{{ old('other_matters', $declaration->other_matters ?? '') }}</textarea>
+              @error('other_matters')
+                <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
+              @enderror
+            </div>
           </div>
         </div>
+        <!-- Other Fields Section -->
         <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Engine Performance</label>
@@ -99,21 +136,12 @@
         </div>
         <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
-            <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Km Driven per Liter of Fuel</label>
-            <input type="text" name="fuel_efficiency" value="{{ old('fuel_efficiency', $declaration->amount_of_fuel ?? '') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
-            @error('fuel_efficiency')
-              <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
-            @enderror
-          </div>
-          <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Speedometer Reading During Fitness Testing</label>
             <input type="text" name="speedometer_reading" value="{{ old('speedometer_reading') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
             @error('speedometer_reading')
               <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
             @enderror
           </div>
-        </div>
-        <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Speedometer Operation</label>
             <input type="text" name="speedometer_operation" value="{{ old('speedometer_operation') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
@@ -121,19 +149,12 @@
               <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
             @enderror
           </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Running Distance Function</label>
             <input type="text" name="running_distance_function" value="{{ old('running_distance_function') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
             @error('running_distance_function')
-              <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
-            @enderror
-          </div>
-        </div>
-        <div style="display: flex; justify-content: space-between; gap: 1rem;">
-          <div style="flex: 1;">
-            <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Details of Improvements Made to the Vehicle</label>
-            <textarea name="improvements" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>{{ old('improvements') }}</textarea>
-            @error('improvements')
               <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
             @enderror
           </div>
@@ -147,12 +168,21 @@
         </div>
         <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Details of Improvements Made to the Vehicle</label>
+            <textarea name="improvements" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>{{ old('improvements') }}</textarea>
+            @error('improvements')
+              <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
+            @enderror
+          </div>
+          <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Battery Type</label>
             <input type="text" name="battery_type" value="{{ old('battery_type') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
             @error('battery_type')
               <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
             @enderror
           </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Battery Capacity</label>
             <input type="text" name="battery_capacity" value="{{ old('battery_capacity') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
@@ -160,8 +190,6 @@
               <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
             @enderror
           </div>
-        </div>
-        <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Battery Number</label>
             <input type="text" name="battery_number" value="{{ old('battery_number') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
@@ -169,6 +197,8 @@
               <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
             @enderror
           </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Water Capacity (For Water Bowsers and Trailer Water Bowsers Only)</label>
             <input type="text" name="water_capacity" value="{{ old('water_capacity') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;">
@@ -176,8 +206,6 @@
               <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
             @enderror
           </div>
-        </div>
-        <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Cover Outer Size and Number (with Extra Cover Outer)</label>
             <input type="text" name="cover_outer" value="{{ old('cover_outer') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
@@ -185,35 +213,12 @@
               <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
             @enderror
           </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; gap: 1rem;">
           <div style="flex: 1;">
             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Validity Period of the Certificate of Eligibility</label>
             <input type="text" name="certificate_validity" value="{{ old('certificate_validity') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
             @error('certificate_validity')
-              <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
-            @enderror
-          </div>
-        </div>
-        <div style="display: flex; justify-content: space-between; gap: 1rem;">
-          <div style="flex: 1;">
-            <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Number of Seats as per the Motor Vehicle Registration Department</label>
-            <input type="text" name="seats_mvr" value="{{ old('seats_mvr', $declaration->seats_registered ?? '') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
-            @error('seats_mvr')
-              <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
-            @enderror
-          </div>
-          <div style="flex: 1;">
-            <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Number of Seats Installed</label>
-            <input type="text" name="seats_installed" value="{{ old('seats_installed', $declaration->seats_current ?? '') }}" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;" required>
-            @error('seats_installed')
-              <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
-            @enderror
-          </div>
-        </div>
-        <div style="display: flex; justify-content: space-between; gap: 1rem;">
-          <div style="flex: 1;">
-            <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Other Matters</label>
-            <textarea name="other_matters" style="width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; color: green;">{{ old('other_matters', $declaration->other_matters ?? '') }}</textarea>
-            @error('other_matters')
               <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
             @enderror
           </div>
