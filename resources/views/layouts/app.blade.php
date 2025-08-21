@@ -494,10 +494,6 @@
                                         </li>
 
                                         <li>
-                                            <a href="/certificate-of-industrial-aptitude">certificate-of-industrial-aptitude</a>
-                                        </li>
-
-                                        <li>
                                             <a href="/vehicle-inspection-form2">Vehicle Inspection form 02</a>
                                         </li>
                                         
