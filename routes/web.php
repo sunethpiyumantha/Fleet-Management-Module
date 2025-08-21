@@ -167,7 +167,13 @@ Route::get('/vehicle-inspection-form2', function () {
     return view('vehicle-inspection-form2');
 })->name('vehicle-inspection-form2');
 
+Route::get('/all-drivers', function () {
+    return view('all-drivers');
+})->name('all-drivers');
 
+Route::get('/driver-amendment', function () {
+    return view('driver-amendment');
+})->name('driver-amendment');
 
 
 
