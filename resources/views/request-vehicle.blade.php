@@ -29,7 +29,7 @@
             @csrf
             <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
                 <!-- First Line: Vehicle Request Type and Vehicle Category -->
-                <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 500px;">
+                <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
                     <div style="flex: 1 1 250px;">
                         <label for="request_type" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Request Type</label>
                         <select id="request_type" name="request_type" required
@@ -48,22 +48,52 @@
                                 <option value="{{ $category->id }}">{{ $category->category }}</option>
                             @endforeach
                         </select>
-                    </div>
-                </div>
-
-                <!-- Second Line: Vehicle Sub Category and Required Quantity -->
-                <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 500px;">
-                    <div style="flex: 1 1 250px;">
+                    </div><div style="flex: 1 1 250px;">
                         <label for="sub_cat_id" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Sub Category</label>
                         <select id="sub_cat_id" name="sub_cat_id" required
                                 style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
                             <option value="" disabled selected>Select Sub-Category</option>
                         </select>
                     </div>
+                    
+                    
+                </div>
+
+                <!-- Second Line: Vehicle Sub Category and Required Quantity -->
+                <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
+                    
                     <div style="flex: 1 1 250px;">
                         <label for="required_quantity" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Required Quantity</label>
                         <input type="number" id="required_quantity" name="qty" min="1" required
                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
+                    </div>
+                    <div style="flex: 1 1 250px;">
+                        <label for="attachment" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Book</label>
+                        <input type="file" id="attachment" name="attachment" accept=".pdf,.doc,.docx,.jpg,.png" required
+                            style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
+                    </div>
+                    <div style="flex: 1 1 250px;">
+                        <label for="attachment" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle image 01</label>
+                        <input type="file" id="attachment" name="attachment" accept=".pdf,.doc,.docx,.jpg,.png" required
+                            style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
+                    
+                    <div style="flex: 1 1 250px;">
+                        <label for="attachment" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle image 02</label>
+                        <input type="file" id="attachment" name="attachment" accept=".pdf,.doc,.docx,.jpg,.png" required
+                            style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
+                    </div>
+                    <div style="flex: 1 1 250px;">
+                        <label for="attachment" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle image 03</label>
+                        <input type="file" id="attachment" name="attachment" accept=".pdf,.doc,.docx,.jpg,.png" required
+                            style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
+                    </div>
+                    <div style="flex: 1 1 250px;">
+                        <label for="attachment" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle image 04</label>
+                        <input type="file" id="attachment" name="attachment" accept=".pdf,.doc,.docx,.jpg,.png" required
+                            style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
                     </div>
                 </div>
 
