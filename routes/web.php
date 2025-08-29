@@ -172,5 +172,10 @@ Route::get('/driver-amendment', function () {
     return view('driver-amendment');
 })->name('driver-amendment');
 
+Route::get('/user-roles', function () {
+    return view('user-roles');
+})->name('user-roles');
 
-
+Route::get('/user-creation', function () {
+    return view('user-creation');
+})->name('user-creation');
