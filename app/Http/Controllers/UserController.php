@@ -1,0 +1,77 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+
+class UserController extends Controller
+{
+    public function index()
+    {
+        Log::info('UserController::index called at ' . date('Y-m-d H:i:s'));
+        $roles = Role::whereNull('deleted_at')->orderBy('name')->get();
+        $users = User::with('role')->withTrashed()->orderBy('name')->paginate(10);
+
+        return view('user-creation', compact('roles', 'users'));
+    }
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username',
+            'password' => 'required|string|min:6',
+            'user_role' => 'required|exists:roles,id',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $user = new User();
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->password = bcrypt($request->password);
+        $user->role_id = $request->user_role;
+        $user->save();
+
+        return redirect()->back()->with('success', 'User created successfully at ' . date('Y-m-d H:i:s'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,' . $id,
+            'password' => 'nullable|string|min:6',
+            'user_role' => 'required|exists:roles,id',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $user = User::withTrashed()->findOrFail($id);
+        $user->name = $request->name;
+        $user->username = $request->username;
+        if ($request->password) {
+            $user->password = bcrypt($request->password);
+        }
+        $user->role_id = $request->user_role;
+        $user->save();
+
+        return redirect()->back()->with('success', 'User updated successfully at ' . date('Y-m-d H:i:s'));
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->back()->with('success', 'User soft deleted successfully at ' . date('Y-m-d H:i:s'));
+    }
+}

@@ -173,6 +173,7 @@ Route::get('/driver-amendment', function () {
 })->name('driver-amendment');
 
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 
 Route::get('/user-roles', [RoleController::class, 'index'])->name('roles.index');
 Route::post('/user-roles', [RoleController::class, 'store'])->name('roles.store');
@@ -180,6 +181,7 @@ Route::put('/user-roles/{id}', [RoleController::class, 'update'])->name('roles.u
 Route::delete('/user-roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
 Route::patch('/user-roles/{id}/restore', [RoleController::class, 'restore'])->name('roles.restore');
 
-Route::get('/user-creation', function () {
-    return view('user-creation');
-})->name('user-creation');
+Route::get('/user-creation', [UserController::class, 'index'])->name('users.index');
+Route::post('/user-creation', [UserController::class, 'store'])->name('users.store');
+Route::put('/user-creation/{id}', [UserController::class, 'update'])->name('users.update');
+Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->name('users.destroy');
