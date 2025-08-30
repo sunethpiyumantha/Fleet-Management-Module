@@ -94,71 +94,61 @@
 
         <!-- Table -->
         <div style="overflow-x: auto;">
-            <table id="userTable"
-                   style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden;">
-                <thead style="background-color: #f97316; color: white; cursor: pointer;">
-                    <tr>
-                        <th style="padding: 0.75rem;">Name ▲▼</th>
-                        <th style="padding: 0.75rem;">Username ▲▼</th>
-                        <th style="padding: 0.75rem;">User Role ▲▼</th>
-                        <th style="padding: 0.75rem; text-align: center;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    @if (isset($users) && $users->isNotEmpty())
-                        @foreach ($users as $user)
-                            <tr>
-                                <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">
-                                    {{ $user->name }}
-                                    @if ($user->deleted_at)
-                                        <span style="color: #dc2626; font-size: 0.75rem;"> (Deleted)</span>
-                                    @endif
-                                </td>
-                                <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $user->username }}</td>
-                                <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $user->role->name }}</td>
-                                <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
-                                    @if ($user->deleted_at)
-                                        <!-- Restore can be added later if needed -->
-                                    @else
-                                        <!-- Update -->
-                                        <form action="{{ route('users.update', $user->id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('PUT')
-                                            <input type="text" name="name" value="{{ $user->name }}" style="padding: 0.25rem; border-radius: 0.25rem; border: 1px solid #ccc; margin-right: 0.5rem;">
-                                            <input type="text" name="username" value="{{ $user->username }}" style="padding: 0.25rem; border-radius: 0.25rem; border: 1px solid #ccc; margin-right: 0.5rem;">
-                                            <input type="password" name="password" placeholder="New password (optional)" style="padding: 0.25rem; border-radius: 0.25rem; border: 1px solid #ccc; margin-right: 0.5rem;">
-                                            <select name="user_role" style="padding: 0.25rem; border-radius: 0.25rem; border: 1px solid #ccc; margin-right: 0.5rem;">
-                                                @foreach ($roles as $role)
-                                                    <option value="{{ $role->id }}" {{ $user->role_id == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
-                                                @endforeach
-                                            </select>
-                                            <button type="submit" style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">Update</button>
-                                        </form>
-                                        <!-- Delete -->
-                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" onclick="return confirm('Soft delete this user?')" style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Delete</button>
-                                        </form>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    @else
+        <table id="userTable"
+            style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden;">
+            <thead style="background-color: #f97316; color: white; cursor: pointer;">
+                <tr>
+                    <th style="padding: 0.75rem;">Name ▲▼</th>
+                    <th style="padding: 0.75rem;">Username ▲▼</th>
+                    <th style="padding: 0.75rem;">User Role ▲▼</th>
+                    <th style="padding: 0.75rem; text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                @if (isset($users) && $users->isNotEmpty())
+                    @foreach ($users as $user)
                         <tr>
-                            <td colspan="4" style="padding: 0.75rem; text-align: center;">No users found.</td>
+                            <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">
+                                {{ $user->name }}
+                                @if ($user->deleted_at)
+                                    <span style="color: #dc2626; font-size: 0.75rem;"> (Deleted)</span>
+                                @endif
+                            </td>
+                            <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $user->username }}</td>
+                            <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $user->role->name }}</td>
+                            <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
+                                @if ($user->deleted_at)
+                                    <!-- Restore can be added later if needed -->
+                                @else
+                                    <!-- Update -->
+                                    <a href="{{ route('users.edit', $user->id) }}"
+                                    style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; text-decoration: none; margin-right: 0.5rem;">
+                                        Edit
+                                    </a>
+                                    <!-- Delete -->
+                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" onclick="return confirm('Soft delete this user?')" style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Delete</button>
+                                    </form>
+                                @endif
+                            </td>
                         </tr>
-                    @endif
-                </tbody>
-            </table>
-        </div>
+                    @endforeach
+                @else
+                    <tr>
+                        <td colspan="4" style="padding: 0.75rem; text-align: center;">No users found.</td>
+                    </tr>
+                @endif
+            </tbody>
+        </table>
+    </div>
 
-        <!-- Pagination -->
-        <div id="pagination" style="margin-top: 1rem; text-align: center;">
-            @if (isset($users) && $users->hasPages())
-                {{ $users->links('pagination::tailwind') }}
-            @endif
-        </div>
+    <!-- Pagination -->
+    <div id="pagination" style="margin-top: 1rem; text-align: center;">
+        @if (isset($users) && $users->hasPages())
+            {{ $users->links('pagination::tailwind') }}
+        @endif
     </div>
 </div>
 @endsection

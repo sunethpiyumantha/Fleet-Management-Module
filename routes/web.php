@@ -183,5 +183,6 @@ Route::patch('/user-roles/{id}/restore', [RoleController::class, 'restore'])->na
 
 Route::get('/user-creation', [UserController::class, 'index'])->name('users.index');
 Route::post('/user-creation', [UserController::class, 'store'])->name('users.store');
+Route::get('/user-creation/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
 Route::put('/user-creation/{id}', [UserController::class, 'update'])->name('users.update');
 Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->name('users.destroy');

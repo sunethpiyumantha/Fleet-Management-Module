@@ -42,6 +42,13 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'User created successfully at ' . date('Y-m-d H:i:s'));
     }
 
+    public function edit($id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        $roles = Role::whereNull('deleted_at')->orderBy('name')->get();
+        return view('user-edit', compact('user', 'roles'));
+    }
+
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -64,7 +71,7 @@ class UserController extends Controller
         $user->role_id = $request->user_role;
         $user->save();
 
-        return redirect()->back()->with('success', 'User updated successfully at ' . date('Y-m-d H:i:s'));
+        return redirect()->route('users.index')->with('success', 'User updated successfully at ' . date('Y-m-d H:i:s'));
     }
 
     public function destroy($id)
