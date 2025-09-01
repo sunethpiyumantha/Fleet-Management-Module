@@ -79,7 +79,7 @@
                         @enderror
                     </div>
                     <div style="flex: 1 1 250px;">
-                        <label for="vehicle_book" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Book (Current: {{ $vehicle->vehicle_book_path ? basename($vehicle->vehicle_book_path) : 'None' }})</label>
+                        <label for="vehicle_book" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Book </label>
                         <input type="file" id="vehicle_book" name="vehicle_book" accept=".pdf,.doc,.docx,.jpg,.png"
                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem; @error('vehicle_book') border-color: #b91c1c; @enderror">
                         @if($vehicle->vehicle_book_path)
@@ -90,7 +90,7 @@
                         @enderror
                     </div>
                     <div style="flex: 1 1 250px;">
-                        <label for="image_01" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image 01 (Current: {{ $vehicle->image_01_path ? basename($vehicle->image_01_path) : 'None' }})</label>
+                        <label for="image_01" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image 01 </label>
                         <input type="file" id="image_01" name="image_01" accept=".jpg,.png"
                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem; @error('image_01') border-color: #b91c1c; @enderror">
                         @if($vehicle->image_01_path)
@@ -105,7 +105,7 @@
                 <!-- Third Line: Images 02, 03, 04 -->
                 <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
                     <div style="flex: 1 1 250px;">
-                        <label for="image_02" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image 02 (Current: {{ $vehicle->image_02_path ? basename($vehicle->image_02_path) : 'None' }})</label>
+                        <label for="image_02" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image 02 </label>
                         <input type="file" id="image_02" name="image_02" accept=".jpg,.png"
                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem; @error('image_02') border-color: #b91c1c; @enderror">
                         @if($vehicle->image_02_path)
@@ -116,7 +116,7 @@
                         @enderror
                     </div>
                     <div style="flex: 1 1 250px;">
-                        <label for="image_03" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image 03 (Current: {{ $vehicle->image_03_path ? basename($vehicle->image_03_path) : 'None' }})</label>
+                        <label for="image_03" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image 03 </label>
                         <input type="file" id="image_03" name="image_03" accept=".jpg,.png"
                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem; @error('image_03') border-color: #b91c1c; @enderror">
                         @if($vehicle->image_03_path)
@@ -127,7 +127,7 @@
                         @enderror
                     </div>
                     <div style="flex: 1 1 250px;">
-                        <label for="image_04" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image 04 (Current: {{ $vehicle->image_04_path ? basename($vehicle->image_04_path) : 'None' }})</label>
+                        <label for="image_04" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image 04 </label>
                         <input type="file" id="image_04" name="image_04" accept=".jpg,.png"
                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem; @error('image_04') border-color: #b91c1c; @enderror">
                         @if($vehicle->image_04_path)
