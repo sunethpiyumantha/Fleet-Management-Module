@@ -154,7 +154,7 @@ class VehicleRequestController extends Controller
 
         $vehicle->update($validated);
 
-        return redirect()->route('vehicle.declaration.edit', [
+        return redirect()->route('vehicle.request.all', [
             'serial_number' => $vehicle->serial_number,
             'request_type' => $vehicle->request_type
         ])->with('success', 'Vehicle request updated successfully.');
