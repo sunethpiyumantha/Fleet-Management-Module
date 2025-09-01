@@ -91,40 +91,53 @@ class VehicleDeclarationFormController extends Controller
     public function update(Request $request, $id)
     {
         $declaration = VehicleDeclaration::findOrFail($id);
-        $validated = $this->validateRequest($request, $id);
 
-        // Handle file uploads
-        $filePaths = $this->handleFileUploads($request, $declaration);
+        try {
+            $validated = $this->validateRequest($request, $id);
 
-        // Update vehicle declaration
-        $declaration->update(array_merge(
-            $request->except(['drivers', ...array_keys($filePaths)]),
-            $filePaths
-        ));
+            // Handle file uploads
+            $filePaths = $this->handleFileUploads($request, $declaration);
 
-        // Sync drivers with soft delete
-        $existingDriverIds = $declaration->drivers()->withTrashed()->pluck('id')->toArray();
-        $submittedDriverIds = array_filter(array_column($request->drivers, 'id'));
+            // Update vehicle declaration
+            $declaration->update(array_merge(
+                $request->except(['drivers', ...array_keys($filePaths)]),
+                $filePaths
+            ));
 
-        // Soft delete drivers not in the submitted list
-        Driver::whereIn('id', array_diff($existingDriverIds, $submittedDriverIds))->delete();
+            // Sync drivers with soft delete
+            $existingDriverIds = $declaration->drivers()->withTrashed()->pluck('id')->toArray();
+            $submittedDriverIds = array_filter(array_column($request->drivers ?? [], 'id'));
 
-        // Update or create drivers
-        if ($request->has('drivers')) {
-            foreach ($request->drivers as $driverData) {
-                if (isset($driverData['id']) && in_array($driverData['id'], $existingDriverIds)) {
-                    $driver = Driver::withTrashed()->find($driverData['id']);
-                    if ($driver->trashed()) {
-                        $driver->restore(); // Restore soft-deleted driver if resubmitted
+            // Soft delete drivers not in the submitted list
+            Driver::whereIn('id', array_diff($existingDriverIds, $submittedDriverIds))->delete();
+
+            // Update or create drivers
+            if ($request->has('drivers')) {
+                foreach ($request->drivers as $driverData) {
+                    if (isset($driverData['id']) && in_array($driverData['id'], $existingDriverIds)) {
+                        $driver = Driver::withTrashed()->find($driverData['id']);
+                        if ($driver->trashed()) {
+                            $driver->restore(); // Restore soft-deleted driver if resubmitted
+                        }
+                        $driver->update($driverData);
+                    } else {
+                        $declaration->drivers()->create($driverData);
                     }
-                    $driver->update($driverData);
-                } else {
-                    $declaration->drivers()->create($driverData);
                 }
             }
-        }
 
-        return redirect()->route('vehicle.request.all')->with('success', 'Vehicle declaration updated successfully!');
+            return redirect()->route('vehicle.request.all')->with('success', 'Vehicle declaration updated successfully!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->validator->errors())
+                ->withInput()
+                ->with('error', 'Please correct the errors below.');
+        } catch (\Exception $e) {
+            \Log::error('Update failed: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'An error occurred while updating the declaration. Please try again.')
+                ->withInput();
+        }
     }
 
     public function restoreDriver($id)

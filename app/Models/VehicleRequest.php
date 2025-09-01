@@ -8,13 +8,28 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 use App\Models\VehicleCategory;
 use App\Models\VehicleSubCategory;
+use App\Models\VehicleDeclaration;
+use App\Models\VehicleCertificate;
 
 class VehicleRequest extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $table = 'vehicle_requests';
-    protected $fillable = ['cat_id', 'sub_cat_id', 'qty', 'date_submit', 'status', 'request_type', 'serial_number'];
+    protected $fillable = [
+        'serial_number',
+        'request_type',
+        'cat_id',
+        'sub_cat_id',
+        'qty',
+        'date_submit',
+        'status',
+        'vehicle_book_path',
+        'image_01_path',
+        'image_02_path',
+        'image_03_path',
+        'image_04_path',
+    ];
 
     public function category()
     {
@@ -28,7 +43,12 @@ class VehicleRequest extends Model
 
     public function declarations()
     {
-       return $this->hasMany(VehicleDeclaration::class, 'serial_number', 'serial_number');
+        return $this->hasMany(VehicleDeclaration::class, 'serial_number', 'serial_number');
+    }
+
+    public function certificates()
+    {
+        return $this->hasMany(VehicleCertificate::class, 'vehicle_request_id');
     }
 
     protected static function boot()

@@ -6,10 +6,12 @@ use App\Models\VehicleCategory;
 use App\Models\VehicleSubCategory;
 use App\Models\VehicleRequest;
 use App\Models\VehicleDeclaration;
+use App\Models\VehicleCertificate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Models\VehicleCertificate;
+use Illuminate\Support\Facades\Storage;
+
 class VehicleRequestController extends Controller
 {
     public function index(Request $request)
@@ -19,7 +21,7 @@ class VehicleRequestController extends Controller
         $order = $request->input('order', 'desc');
         $perPage = $request->input('per_page', 15);
 
-        $sortableColumns = ['created_at', 'category', 'sub_category'];
+        $sortableColumns = ['created_at', 'category', 'sub_category', 'date_submit', 'status'];
         $sort = in_array($sort, $sortableColumns) ? $sort : 'created_at';
         $order = in_array(strtolower($order), ['asc', 'desc']) ? $order : 'desc';
 
@@ -27,18 +29,19 @@ class VehicleRequestController extends Controller
             ->when($search, function ($query) use ($search) {
                 $query->where('serial_number', 'like', "%{$search}%")
                     ->orWhere('request_type', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%")
                     ->orWhereHas('category', fn ($q) => $q->where('category', 'like', "%{$search}%"))
                     ->orWhereHas('subCategory', fn ($q) => $q->where('sub_category', 'like', "%{$search}%"));
             })
             ->when($sort, function ($query) use ($sort, $order) {
                 if ($sort === 'category') {
                     return $query->join('vehicle_categories', 'vehicle_requests.cat_id', '=', 'vehicle_categories.id')
-                                ->orderBy('vehicle_categories.category', $order)
-                                ->select('vehicle_requests.*');
+                        ->orderBy('vehicle_categories.category', $order)
+                        ->select('vehicle_requests.*');
                 } elseif ($sort === 'sub_category') {
                     return $query->join('vehicle_sub_categories', 'vehicle_requests.sub_cat_id', '=', 'vehicle_sub_categories.id')
-                                ->orderBy('vehicle_sub_categories.sub_category', $order)
-                                ->select('vehicle_requests.*');
+                        ->orderBy('vehicle_sub_categories.sub_category', $order)
+                        ->select('vehicle_requests.*');
                 }
                 return $query->orderBy($sort, $order);
             })
@@ -50,19 +53,38 @@ class VehicleRequestController extends Controller
         return view('request-vehicle', compact('vehicles', 'categories', 'sort', 'order'));
     }
 
+    public function create()
+    {
+        $categories = VehicleCategory::orderBy('category')->get();
+        return view('request-vehicle', compact('categories'));
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'serial_number' => 'nullable|string|unique:vehicle_requests,serial_number',
             'request_type' => 'required|in:replacement,new_approval',
             'cat_id' => 'required|exists:vehicle_categories,id',
             'sub_cat_id' => 'required|exists:vehicle_sub_categories,id',
             'qty' => 'required|integer|min:1',
+            'vehicle_book' => 'required|file|mimes:pdf,doc,docx,jpg,png|max:2048',
+            'image_01' => 'required|file|mimes:jpg,png|max:2048',
+            'image_02' => 'required|file|mimes:jpg,png|max:2048',
+            'image_03' => 'required|file|mimes:jpg,png|max:2048',
+            'image_04' => 'required|file|mimes:jpg,png|max:2048',
+            'date_submit' => 'nullable|date',
+            'status' => 'nullable|string|in:pending,approved,rejected',
         ]);
 
-        if (empty($validated['serial_number'])) {
-            $validated['serial_number'] = $this->generateUniqueSerialNumber();
-        }
+        // Handle file uploads
+        $validated['vehicle_book_path'] = $request->file('vehicle_book')->store('attachments', 'public');
+        $validated['image_01_path'] = $request->file('image_01')->store('attachments', 'public');
+        $validated['image_02_path'] = $request->file('image_02')->store('attachments', 'public');
+        $validated['image_03_path'] = $request->file('image_03')->store('attachments', 'public');
+        $validated['image_04_path'] = $request->file('image_04')->store('attachments', 'public');
+
+        // Set default values
+        $validated['date_submit'] = $validated['date_submit'] ?? now()->toDateString();
+        $validated['status'] = $validated['status'] ?? 'pending';
 
         $vehicleRequest = VehicleRequest::create($validated);
 
@@ -72,46 +94,67 @@ class VehicleRequestController extends Controller
         ])->with('success', 'Vehicle request created successfully.');
     }
 
-    private function generateUniqueSerialNumber()
-    {
-        do {
-            $serial = now()->format('Ymd') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
-        } while (VehicleRequest::where('serial_number', $serial)->exists());
-
-        return $serial;
-    }
-
-    public function create()
-    {
-        $categories = VehicleCategory::orderBy('category')->get();
-        return view('request-vehicle', compact('categories'));
-    }
-
     public function edit($id)
     {
         $vehicle = VehicleRequest::findOrFail($id);
         $categories = VehicleCategory::orderBy('category')->get();
-        return view('request-vehicle-edit', compact('vehicle', 'categories'));
+        $subCategories = VehicleSubCategory::where('cat_id', $vehicle->cat_id)->get();
+        return view('request-vehicle-edit', compact('vehicle', 'categories', 'subCategories'));
     }
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'request_type' => 'required|in:replacement,new_approval',
             'cat_id' => 'required|exists:vehicle_categories,id',
             'sub_cat_id' => 'required|exists:vehicle_sub_categories,id',
             'qty' => 'required|integer|min:1',
+            'vehicle_book' => 'nullable|file|mimes:pdf,doc,docx,jpg,png|max:2048',
+            'image_01' => 'nullable|file|mimes:jpg,png|max:2048',
+            'image_02' => 'nullable|file|mimes:jpg,png|max:2048',
+            'image_03' => 'nullable|file|mimes:jpg,png|max:2048',
+            'image_04' => 'nullable|file|mimes:jpg,png|max:2048',
+            'date_submit' => 'nullable|date',
+            'status' => 'nullable|string|in:pending,approved,rejected',
         ]);
 
         $vehicle = VehicleRequest::findOrFail($id);
-        $vehicle->update([
-            'request_type' => $request->request_type,
-            'cat_id' => $request->cat_id,
-            'sub_cat_id' => $request->sub_cat_id,
-            'qty' => $request->qty,
-        ]);
 
-        return redirect()->route('vehicle.declaration.edit', [
+        // Handle file uploads if provided
+        if ($request->hasFile('vehicle_book')) {
+            if ($vehicle->vehicle_book_path) {
+                Storage::disk('public')->delete($vehicle->vehicle_book_path);
+            }
+            $validated['vehicle_book_path'] = $request->file('vehicle_book')->store('attachments', 'public');
+        }
+        if ($request->hasFile('image_01')) {
+            if ($vehicle->image_01_path) {
+                Storage::disk('public')->delete($vehicle->image_01_path);
+            }
+            $validated['image_01_path'] = $request->file('image_01')->store('attachments', 'public');
+        }
+        if ($request->hasFile('image_02')) {
+            if ($vehicle->image_02_path) {
+                Storage::disk('public')->delete($vehicle->image_02_path);
+            }
+            $validated['image_02_path'] = $request->file('image_02')->store('attachments', 'public');
+        }
+        if ($request->hasFile('image_03')) {
+            if ($vehicle->image_03_path) {
+                Storage::disk('public')->delete($vehicle->image_03_path);
+            }
+            $validated['image_03_path'] = $request->file('image_03')->store('attachments', 'public');
+        }
+        if ($request->hasFile('image_04')) {
+            if ($vehicle->image_04_path) {
+                Storage::disk('public')->delete($vehicle->image_04_path);
+            }
+            $validated['image_04_path'] = $request->file('image_04')->store('attachments', 'public');
+        }
+
+        $vehicle->update($validated);
+
+        return redirect()->route('vehicle.request.all', [
             'serial_number' => $vehicle->serial_number,
             'request_type' => $vehicle->request_type
         ])->with('success', 'Vehicle request updated successfully.');
@@ -124,6 +167,14 @@ class VehicleRequestController extends Controller
             $vehicle = VehicleRequest::findOrFail($id);
             Log::info("Soft deleting VehicleRequest ID: {$id}, serial_number: {$vehicle->serial_number}");
 
+            // Delete associated files
+            foreach (['vehicle_book_path', 'image_01_path', 'image_02_path', 'image_03_path', 'image_04_path'] as $field) {
+                if ($vehicle->$field) {
+                    Storage::disk('public')->delete($vehicle->$field);
+                    Log::info("Deleted file: {$vehicle->$field}");
+                }
+            }
+
             // Soft delete related vehicle declarations and their drivers
             foreach ($vehicle->declarations as $declaration) {
                 Log::info("Soft deleting VehicleDeclaration ID: {$declaration->id} and its drivers");
@@ -134,6 +185,10 @@ class VehicleRequestController extends Controller
             // Soft delete related vehicle certificates
             $certificates = VehicleCertificate::where('vehicle_request_id', $id)->get();
             foreach ($certificates as $certificate) {
+                if ($certificate->vehicle_picture) {
+                    Storage::disk('public')->delete($certificate->vehicle_picture);
+                    Log::info("Deleted certificate image: {$certificate->vehicle_picture}");
+                }
                 $certificate->delete();
                 Log::info("Soft deleted VehicleCertificate ID: {$certificate->id}, serial_number: {$certificate->serial_number}");
             }
@@ -165,7 +220,7 @@ class VehicleRequestController extends Controller
         $order = $request->input('order', 'desc');
         $perPage = $request->input('per_page', 15);
 
-        $sortableColumns = ['created_at', 'category', 'sub_category'];
+        $sortableColumns = ['created_at', 'category', 'sub_category', 'date_submit', 'status'];
         $sort = in_array($sort, $sortableColumns) ? $sort : 'created_at';
         $order = in_array(strtolower($order), ['asc', 'desc']) ? $order : 'desc';
 
@@ -173,6 +228,7 @@ class VehicleRequestController extends Controller
             ->when($search, function ($query) use ($search) {
                 $query->where('serial_number', 'like', "%{$search}%")
                     ->orWhere('request_type', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%")
                     ->orWhereHas('category', fn ($q) => $q->where('category', 'like', "%{$search}%"))
                     ->orWhereHas('subCategory', fn ($q) => $q->where('sub_category', 'like', "%{$search}%"));
             })
@@ -211,7 +267,7 @@ class VehicleRequestController extends Controller
         $order = $request->input('order', 'desc');
         $perPage = $request->input('per_page', 15);
 
-        $sortableColumns = ['created_at', 'category', 'sub_category'];
+        $sortableColumns = ['created_at', 'category', 'sub_category', 'date_submit', 'status'];
         $sort = in_array($sort, $sortableColumns) ? $sort : 'created_at';
         $order = in_array(strtolower($order), ['asc', 'desc']) ? $order : 'desc';
 
@@ -219,6 +275,7 @@ class VehicleRequestController extends Controller
             ->when($search, function ($query) use ($search) {
                 $query->where('serial_number', 'like', "%{$search}%")
                     ->orWhere('request_type', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%")
                     ->orWhereHas('category', fn ($q) => $q->where('category', 'like', "%{$search}%"))
                     ->orWhereHas('subCategory', fn ($q) => $q->where('sub_category', 'like', "%{$search}%"));
             })
@@ -259,7 +316,7 @@ class VehicleRequestController extends Controller
         $order = $request->input('order', 'desc');
         $perPage = $request->input('per_page', 15);
 
-        $sortableColumns = ['created_at', 'category', 'sub_category'];
+        $sortableColumns = ['created_at', 'category', 'sub_category', 'date_submit', 'status'];
         $sort = in_array($sort, $sortableColumns) ? $sort : 'created_at';
         $order = in_array(strtolower($order), ['asc', 'desc']) ? $order : 'desc';
 
@@ -267,6 +324,7 @@ class VehicleRequestController extends Controller
             ->when($search, function ($query) use ($search) {
                 $query->where('serial_number', 'like', "%{$search}%")
                     ->orWhere('request_type', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%")
                     ->orWhereHas('category', fn ($q) => $q->where('category', 'like', "%{$search}%"))
                     ->orWhereHas('subCategory', fn ($q) => $q->where('sub_category', 'like', "%{$search}%"));
             })
@@ -302,26 +360,22 @@ class VehicleRequestController extends Controller
         $serial_number = $request->query('serial_number');
         $request_type = $request->query('request_type');
 
-        // Fetch VehicleRequest
         $vehicle = VehicleRequest::where('serial_number', $serial_number)
             ->where('request_type', $request_type)
             ->firstOrFail();
 
-        // Fetch associated VehicleDeclaration
         $declaration = VehicleDeclaration::with('technicalDescriptions')
             ->where('serial_number', $serial_number)
             ->first();
 
         if (!$declaration) {
             \Log::warning('No VehicleDeclaration found for serial_number: ' . $serial_number);
-            // Optionally redirect or handle missing declaration
-            // For now, proceed with null declaration
         }
 
         return view('certificate-of-industrial-aptitude', compact('vehicle', 'serial_number', 'request_type', 'declaration'));
     }
 
-   public function certificateStore(Request $request)
+    public function certificateStore(Request $request)
     {
         $validated = $request->validate([
             'serial_number' => 'required|string|max:255',
@@ -361,13 +415,11 @@ class VehicleRequestController extends Controller
 
         DB::beginTransaction();
         try {
-            // Save to VehicleCertificate
             $certificate = new VehicleCertificate;
             $certificate->fill($validated);
             $certificate->vehicle_request_id = VehicleRequest::where('serial_number', $request->serial_number)->first()->id;
             $certificate->save();
 
-            // Update VehicleDeclaration with matching fields
             $declaration = VehicleDeclaration::where('serial_number', $request->serial_number)->first();
             if ($declaration) {
                 $declaration->update([
@@ -376,7 +428,6 @@ class VehicleRequestController extends Controller
                     'seats_registered' => $request->seats_mvr,
                     'seats_current' => $request->seats_installed,
                     'other_matters' => $request->other_matters,
-                    // 'amount_of_fuel' => $request->fuel_efficiency, // Commented out until mapping is confirmed
                 ]);
             }
 
@@ -388,6 +439,4 @@ class VehicleRequestController extends Controller
             return redirect()->back()->with('error', 'Failed to submit certificate: ' . $e->getMessage());
         }
     }
-
-    
 }
