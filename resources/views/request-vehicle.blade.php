@@ -148,20 +148,33 @@
                             </button>
                         </td>
                         <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
-                            <form action="{{ route('vehicle.request.edit', $vehicle->id) }}" method="GET" style="display: inline;">
-                                <button type="submit" style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">
-                                    Update
-                                </button>
-                            </form>
-                            <form action="{{ route('vehicle.request.destroy', $vehicle->id) }}" method="POST" style="display: inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" onclick="return confirm('Delete this Vehicle Request?')"
-                                        style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">
-                                    Delete
-                                </button>
-                            </form>
-                        </td>
+    <div style="display: flex; justify-content: center; gap: 0.5rem;">
+        <!-- Update Button -->
+        <form action="{{ route('vehicle.request.edit', $vehicle->id) }}" method="GET">
+            <button type="submit" 
+                    style="background-color: #16a34a; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; font-size: 0.875rem; font-weight: 500; transition: background-color 0.2s ease, transform 0.1s ease; cursor: pointer;"
+                    onmouseover="this.style.backgroundColor='#13893b'; this.style.transform='scale(1.05)'"
+                    onmouseout="this.style.backgroundColor='#16a34a'; this.style.transform='scale(1)'"
+                    aria-label="Edit vehicle request">
+                Update
+            </button>
+        </form>
+
+        <!-- Delete Button -->
+        <form action="{{ route('vehicle.request.destroy', $vehicle->id) }}" method="POST">
+            @csrf
+            @method('DELETE')
+            <button type="submit" 
+                    onclick="return confirm('Are you sure you want to delete this vehicle request?')"
+                    style="background-color: #dc2626; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; font-size: 0.875rem; font-weight: 500; transition: background-color 0.2s ease, transform 0.1s ease; cursor: pointer;"
+                    onmouseover="this.style.backgroundColor='#b91c1c'; this.style.transform='scale(1.05)'"
+                    onmouseout="this.style.backgroundColor='#dc2626'; this.style.transform='scale(1)'"
+                    aria-label="Delete vehicle request">
+                Delete
+            </button>
+        </form>
+    </div>
+</td>
                     </tr>
                 @empty
                     <tr>
