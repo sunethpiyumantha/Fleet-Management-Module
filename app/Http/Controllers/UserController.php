@@ -10,11 +10,24 @@ use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        Log::info('UserController::index called at ' . date('Y-m-d H:i:s'));
+        Log::info('UserController::index called at ' . date('Y-m-d H:i:s'), ['search' => $request->query('search')]);
+
+        // Get the search term from the query string
+        $search = $request->query('search');
+
+        // Query users, excluding soft-deleted ones, and apply search if provided
+        $users = User::with('role')
+            ->whereNull('deleted_at') // Only include non-deleted users
+            ->when($search, function ($query, $search) {
+                return $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('username', 'like', "%{$search}%");
+            })
+            ->orderBy('name')
+            ->paginate(10);
+
         $roles = Role::whereNull('deleted_at')->orderBy('name')->get();
-        $users = User::with('role')->withTrashed()->orderBy('name')->paginate(10);
 
         return view('user-creation', compact('roles', 'users'));
     }

@@ -86,8 +86,8 @@
             <input type="text" name="search" id="searchInput" placeholder="Search Users..."
                    style="border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.5rem 0.75rem; width: 100%; max-width: 300px; outline: none;"
                    value="{{ request('search') }}">
-            <button type="submit"
-                    style="background-color: #f97316; color: white; border: none; border-radius: 0.375rem; padding: 0.4rem 0.8rem; cursor: pointer; font-size: 0.875rem;">
+            <button type="submit" title="Search Users"
+                style="background-color: #f97316; color: white; border: none; border-radius: 0.375rem; padding: 0.6rem 1rem; cursor: pointer; font-size: 1rem;">
                 🔍
             </button>
         </form>
@@ -106,32 +106,25 @@
             </thead>
             <tbody id="tableBody">
                 @if (isset($users) && $users->isNotEmpty())
-                    @foreach ($users as $user)
+                    @foreach ($users->whereNull('deleted_at') as $user)
                         <tr>
                             <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">
                                 {{ $user->name }}
-                                @if ($user->deleted_at)
-                                    <span style="color: #dc2626; font-size: 0.75rem;"> (Deleted)</span>
-                                @endif
                             </td>
                             <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $user->username }}</td>
                             <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $user->role->name }}</td>
                             <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
-                                @if ($user->deleted_at)
-                                    <!-- Restore can be added later if needed -->
-                                @else
-                                    <!-- Update -->
-                                    <a href="{{ route('users.edit', $user->id) }}"
-                                    style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; text-decoration: none; margin-right: 0.5rem;">
-                                        Edit
-                                    </a>
-                                    <!-- Delete -->
-                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" onclick="return confirm('Soft delete this user?')" style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Delete</button>
-                                    </form>
-                                @endif
+                                <!-- Update -->
+                                <a href="{{ route('users.edit', $user->id) }}"
+                                style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; text-decoration: none; margin-right: 0.5rem;">
+                                    Edit
+                                </a>
+                                <!-- Delete -->
+                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" onclick="return confirm('Soft delete this user?')" style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Delete</button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach
