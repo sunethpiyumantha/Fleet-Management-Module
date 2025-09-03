@@ -384,8 +384,7 @@
                                 <li class="app-sidebar__heading"></li>
                                 <li>
                                     <a href="index.html" class="mm-active">
-                                        <i>Dashboards</i>
-                                        
+                                        <i>Dashboards</i> 
                                     </a>
                                 </li>
                                 <li class="app-sidebar__heading">Navigation</li>
