@@ -186,3 +186,7 @@ Route::post('/user-creation', [UserController::class, 'store'])->name('users.sto
 Route::get('/user-creation/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
 Route::put('/user-creation/{id}', [UserController::class, 'update'])->name('users.update');
 Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
+Route::get('/vehicles-basic-info', function () {
+    return view('vehicles-basic-info');
+})->name('driver-amendment');
