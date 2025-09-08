@@ -62,6 +62,7 @@
                     </div>
                     <div style="flex: 1 1 250px;">
                         <label for="vehicle_book" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Book</label>
+                        <input type="file" id)}
                         <input type="file" id="vehicle_book" name="vehicle_book" accept=".pdf,.doc,.docx,.jpg,.png" required
                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
                     </div>
@@ -82,6 +83,7 @@
                         <input type="file" id="image_03" name="image_03" accept=".jpg,.png" required
                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
                     </div>
+                    <div style="flex Dotenv
                     <div style="flex: 1 1 250px;">
                         <label for="image_04" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image 04</label>
                         <input type="file" id="image_04" name="image_04" accept=".jpg,.png" required
@@ -119,8 +121,8 @@
                     <th style="padding: 0.75rem; cursor: pointer;" onclick="sortTable(2)">Vehicle Category ▲▼</th>
                     <th style="padding: 0.75rem; cursor: pointer;" onclick="sortTable(3)">Sub Category ▲▼</th>
                     <th style="padding: 0.75rem; cursor: pointer;" onclick="sortTable(4)">Quantity ▲▼</th>
-                    <th style="padding: 0.75rem; cursor: pointer;" onclick="sortTable(5)">Date Submitted ▲▼</th>
-                    <th style="padding: 0.75rem; cursor: pointer;" onclick="sortTable(6)">Status ▲▼</th>
+                    <th style="padding: 0.75rem; cursor: pointer;" onclick="sortTable(5)">Status ▲▼</th>
+                    <th style="padding: 0.75rem;">Vehicle Book</th>
                     <th style="padding: 0.75rem;">Images</th>
                     <th style="padding: 0.75rem; text-align: center;">Actions</th>
                 </tr>
@@ -135,8 +137,17 @@
                         <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ optional($vehicle->category)->category ?? 'N/A' }}</td>
                         <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ optional($vehicle->subCategory)->sub_category ?? 'N/A' }}</td>
                         <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $vehicle->qty }}</td>
-                        <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $vehicle->date_submit ?? 'N/A' }}</td>
                         <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $vehicle->status ?? 'N/A' }}</td>
+                        <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6; text-align: center;">
+                            @if($vehicle->vehicle_book_path)
+                                <button onclick="openFileModal('{{ $vehicle->serial_number }}', '{{ Storage::url($vehicle->vehicle_book_path) }}')"
+                                        style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none;">
+                                    <i class="fa-solid fa-file"></i> View
+                                </button>
+                            @else
+                                <span>N/A</span>
+                            @endif
+                        </td>
                         <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6; text-align: center;">
                             <button onclick="openImageModal('{{ $vehicle->serial_number }}', [
                                 @if($vehicle->image_01_path) '{{ Storage::url($vehicle->image_01_path) }}', @endif
@@ -148,33 +159,33 @@
                             </button>
                         </td>
                         <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
-    <div style="display: flex; justify-content: center; gap: 0.5rem;">
-        <!-- Update Button -->
-        <form action="{{ route('vehicle.request.edit', $vehicle->id) }}" method="GET">
-            <button type="submit" 
-                    style="background-color: #16a34a; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; font-size: 0.875rem; font-weight: 500; transition: background-color 0.2s ease, transform 0.1s ease; cursor: pointer;"
-                    onmouseover="this.style.backgroundColor='#13893b'; this.style.transform='scale(1.05)'"
-                    onmouseout="this.style.backgroundColor='#16a34a'; this.style.transform='scale(1)'"
-                    aria-label="Edit vehicle request">
-                Update
-            </button>
-        </form>
+                            <div style="display: flex; justify-content: center; gap: 0.5rem;">
+                                <!-- Update Button -->
+                                <form action="{{ route('vehicle.request.edit', $vehicle->id) }}" method="GET">
+                                    <button type="submit" 
+                                            style="background-color: #16a34a; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; font-size: 0.875rem; font-weight: 500; transition: background-color 0.2s ease, transform 0.1s ease; cursor: pointer;"
+                                            onmouseover="this.style.backgroundColor='#13893b'; this.style.transform='scale(1.05)'"
+                                            onmouseout="this.style.backgroundColor='#16a34a'; this.style.transform='scale(1)'"
+                                            aria-label="Edit vehicle request">
+                                        Update
+                                    </button>
+                                </form>
 
-        <!-- Delete Button -->
-        <form action="{{ route('vehicle.request.destroy', $vehicle->id) }}" method="POST">
-            @csrf
-            @method('DELETE')
-            <button type="submit" 
-                    onclick="return confirm('Are you sure you want to delete this vehicle request?')"
-                    style="background-color: #dc2626; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; font-size: 0.875rem; font-weight: 500; transition: background-color 0.2s ease, transform 0.1s ease; cursor: pointer;"
-                    onmouseover="this.style.backgroundColor='#b91c1c'; this.style.transform='scale(1.05)'"
-                    onmouseout="this.style.backgroundColor='#dc2626'; this.style.transform='scale(1)'"
-                    aria-label="Delete vehicle request">
-                Delete
-            </button>
-        </form>
-    </div>
-</td>
+                                <!-- Delete Button -->
+                                <form action="{{ route('vehicle.request.destroy', $vehicle->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" 
+                                            onclick="return confirm('Are you sure you want to delete this vehicle request?')"
+                                            style="background-color: #dc2626; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; font-size: 0.875rem; font-weight: 500; transition: background-color 0.2s ease, transform 0.1s ease; cursor: pointer;"
+                                            onmouseover="this.style.backgroundColor='#b91c1c'; this.style.transform='scale(1.05)'"
+                                            onmouseout="this.style.backgroundColor='#dc2626'; this.style.transform='scale(1)'"
+                                            aria-label="Delete vehicle request">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
                     </tr>
                 @empty
                     <tr>
@@ -191,12 +202,12 @@
     </div>
 </div>
 
-<!-- Image Modal -->
-<div id="imageModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
+<!-- File Modal (for Images and Vehicle Book) -->
+<div id="fileModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
     <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; max-width: 90%; max-height: 90%; overflow: auto;">
-        <h3 id="modalTitle" style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Vehicle Images</h3>
-        <div id="imageContainer" style="display: flex; flex-wrap: wrap; gap: 1rem;"></div>
-        <button onclick="closeImageModal()" style="margin-top: 1rem; background-color: #f97316; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer;"
+        <h3 id="modalTitle" style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Vehicle File</h3>
+        <div id="fileContainer" style="display: flex; flex-wrap: wrap; gap: 1rem;"></div>
+        <button onclick="closeFileModal()" style="margin-top: 1rem; background-color: #f97316; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer;"
                 onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'">
             Close
         </button>
@@ -235,7 +246,7 @@
 
     // Sorting
     function sortTable(columnIndex) {
-        const sortColumns = ['serial_number', 'request_type', 'category', 'sub_category', 'qty', 'date_submit', 'status'];
+        const sortColumns = ['serial_number', 'request_type', 'category', 'sub_category', 'qty', 'status'];
         const currentSort = "{{ $sort }}";
         const currentOrder = "{{ $order }}";
         const newSort = sortColumns[columnIndex];
@@ -246,9 +257,9 @@
 
     // Image Modal
     function openImageModal(serialNumber, images) {
-        const modal = document.getElementById('imageModal');
+        const modal = document.getElementById('fileModal');
         const title = document.getElementById('modalTitle');
-        const container = document.getElementById('imageContainer');
+        const container = document.getElementById('fileContainer');
 
         title.textContent = `Vehicle Images for ${serialNumber}`;
         container.innerHTML = '';
@@ -269,17 +280,59 @@
         modal.style.display = 'flex';
     }
 
-    function closeImageModal() {
-        document.getElementById('imageModal').style.display = 'none';
+    // File Modal (for Vehicle Book)
+    function openFileModal(serialNumber, filePath) {
+        const modal = document.getElementById('fileModal');
+        const title = document.getElementById('modalTitle');
+        const container = document.getElementById('fileContainer');
+
+        title.textContent = `Vehicle Book for ${serialNumber}`;
+        container.innerHTML = '';
+
+        if (!filePath) {
+            container.innerHTML = '<p>No file available.</p>';
+        } else {
+            const fileExtension = filePath.split('.').pop().toLowerCase();
+            if (['jpg', 'png'].includes(fileExtension)) {
+                const img = document.createElement('img');
+                img.src = filePath;
+                img.style.maxWidth = '400px';
+                img.style.maxHeight = '400px';
+                img.style.borderRadius = '0.25rem';
+                container.appendChild(img);
+            } else {
+                const link = document.createElement('a');
+                link.href = filePath;
+                link.textContent = 'Download Vehicle Book';
+                link.style.display = 'inline-block';
+                link.style.padding = '0.5rem 1rem';
+                link.style.backgroundColor = '#16a34a';
+                link.style.color = 'white';
+                link.style.borderRadius = '0.375rem';
+                link.style.textDecoration = 'none';
+                link.setAttribute('download', '');
+                container.appendChild(link);
+            }
+        }
+
+        modal.style.display = 'flex';
+    }
+
+    function closeFileModal() {
+        document.getElementById('fileModal').style.display = 'none';
     }
 </script>
 
 <style>
-    /* Ensure modal images are responsive */
-    #imageContainer img {
+    /* Ensure modal images and files are responsive */
+    #fileContainer img {
         width: 100%;
         height: auto;
         object-fit: contain;
+    }
+    #fileContainer a {
+        font-size: 0.875rem;
+        font-weight: 500;
     }
 </style>
 @endsection
