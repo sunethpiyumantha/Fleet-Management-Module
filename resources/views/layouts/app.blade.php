@@ -528,10 +528,23 @@
                                     <li>
                                         <a href="/user-creation">
                                             <i class="metismenu-icon"></i>
-                                                User Creation
+                                                User Creation 
                                         </a>
                                     </li>
                                 </ul>
+                                <li>
+                                    <a href="">
+                                        <i class="metismenu-icon pe-7s-diamond"></i>
+                                       Vehicle
+                                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                                    </a>
+                                <ul>
+                                    <li>
+                                        <a href="/vehicles-basic-info">
+                                            <i class="metismenu-icon"></i>
+                                                Vehicles Basic Information
+                                        </a>
+                                    </li>
 
                                 
                                 

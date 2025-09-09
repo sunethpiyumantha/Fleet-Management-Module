@@ -22,6 +22,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\LoginController;
 
+login
 // Public routes
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('home');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -169,3 +170,20 @@ Route::middleware('auth')->group(function () {
     Route::put('/user-creation/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 });
+
+Route::get('/user-roles', [RoleController::class, 'index'])->name('roles.index');
+Route::post('/user-roles', [RoleController::class, 'store'])->name('roles.store');
+Route::put('/user-roles/{id}', [RoleController::class, 'update'])->name('roles.update');
+Route::delete('/user-roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
+Route::patch('/user-roles/{id}/restore', [RoleController::class, 'restore'])->name('roles.restore');
+
+Route::get('/user-creation', [UserController::class, 'index'])->name('users.index');
+Route::post('/user-creation', [UserController::class, 'store'])->name('users.store');
+Route::get('/user-creation/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+Route::put('/user-creation/{id}', [UserController::class, 'update'])->name('users.update');
+Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
+Route::get('/vehicles-basic-info', function () {
+    return view('vehicles-basic-info');
+})->name('driver-amendment');
+main
