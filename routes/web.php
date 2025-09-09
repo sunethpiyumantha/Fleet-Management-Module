@@ -22,7 +22,6 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\LoginController;
 
-login
 // Public routes
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('home');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -147,14 +146,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/vehicle-technical-description/{serial_number}', [VehicleTechnicalDescriptionController::class, 'store'])->name('vehicle.technical.store');
 
     // Other views/routes
-    Route::get('/vehicle-registration', function () { return view('vehicle-technical-description'); });
-    Route::get('/vehicle-inspection-request', function () { return view('vehicle-inspection'); });
+    Route::get('/vehicle-registration', function () { return view('vehicle-technical-description'); })->name('vehicle.registration');
+    Route::get('/vehicle-inspection-request', function () { return view('vehicle-inspection'); })->name('vehicle.inspection.request');
     Route::get('/vehicle-inspection-form2', [VehicleRequestController::class, 'vehicleInspectionForm2'])->name('vehicle.inspection.form2');
     Route::get('/vehicle/certificate/create', [VehicleRequestController::class, 'certificateCreate'])->name('vehicle.certificate.create');
     Route::post('/vehicle/certificate/store', [VehicleRequestController::class, 'certificateStore'])->name('vehicle.certificate.store');
 
     Route::get('/all-drivers', function () { return view('all-drivers'); })->name('all-drivers');
     Route::get('/driver-amendment', function () { return view('driver-amendment'); })->name('driver-amendment');
+    Route::get('/vehicles-basic-info', function () { return view('vehicles-basic-info'); })->name('vehicles.basic-info');
 
     // Roles
     Route::get('/user-roles', [RoleController::class, 'index'])->name('roles.index');
@@ -170,20 +170,3 @@ Route::middleware('auth')->group(function () {
     Route::put('/user-creation/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 });
-
-Route::get('/user-roles', [RoleController::class, 'index'])->name('roles.index');
-Route::post('/user-roles', [RoleController::class, 'store'])->name('roles.store');
-Route::put('/user-roles/{id}', [RoleController::class, 'update'])->name('roles.update');
-Route::delete('/user-roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
-Route::patch('/user-roles/{id}/restore', [RoleController::class, 'restore'])->name('roles.restore');
-
-Route::get('/user-creation', [UserController::class, 'index'])->name('users.index');
-Route::post('/user-creation', [UserController::class, 'store'])->name('users.store');
-Route::get('/user-creation/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
-Route::put('/user-creation/{id}', [UserController::class, 'update'])->name('users.update');
-Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->name('users.destroy');
-
-Route::get('/vehicles-basic-info', function () {
-    return view('vehicles-basic-info');
-})->name('driver-amendment');
-main
