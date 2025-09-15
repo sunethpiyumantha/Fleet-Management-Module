@@ -545,6 +545,12 @@
                                                 Vehicles Basic Information
                                         </a>
                                     </li>
+                                    <li>
+                                        <a href="/all-vehicle-info">
+                                            <i class="metismenu-icon"></i>
+                                                All Vehicles Information
+                                        </a>
+                                    </li>
 
                                 
                                 
