@@ -169,4 +169,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/user-creation/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/user-creation/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
+    //all vehicle info
+    Route::get('/all-vehicle-info', function () {
+    return view('all-vehicle-info'); 
+});
 });
