@@ -553,12 +553,7 @@
                                         <img src="{{ asset('assets/add-button.png') }}" style="width: 24px; height: 24px; margin-left: 85px;">
                                     </a>
                                 <ul>
-                                    <li>
-                                        <a href="/vehicles-basic-info">
-                                            <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
-                                                Vehicles Basic Information
-                                        </a>
-                                    </li>
+                                    
                                     <li>
                                         <a href="/all-vehicle-info">
                                             <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
