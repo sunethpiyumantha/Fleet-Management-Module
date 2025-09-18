@@ -1,27 +1,37 @@
-
+```blade
 @extends('layouts.app')
 
-@section('title', 'Vehicle Basic Information - ' . ($vehicle->serial_number ?? 'New Vehicle'))
+@section('title', 'Vehicle Management')
 
 @section('content')
-<div style="max-width: 64rem; margin: 0 auto; padding: 2.5rem 1.5rem;">
-    <div style="background-color: white; border: 1px solid #f97316; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 1.5rem;">
-        <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">Vehicle Management</h2>
+<div style="width: 100%; padding: 20px; font-family: Arial, sans-serif; background: white;">
 
-        @if (session('success'))
-            <div style="background-color: #d1fae5; color: #065f46; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if ($errors->any())
-            <div style="background-color: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
-                <ul style="margin: 0; padding-left: 1rem; list-style-type: disc;">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+    <!-- Page Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+    
+    </div>
+
+    <!-- Blue Header -->
+    <div style="background: #0077B6; color: white; font-weight: bold; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+        Manage Vehicles
+    </div>
+
+    <!-- Success or Error Messages -->
+    @if (session('success'))
+        <div style="background-color: #ADE8F4; color: #023E8A; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div style="background-color: #CAF0F8; color: #03045E; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+            <ul style="margin: 0; padding-left: 1rem;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <!-- Modern Tabs Navigation -->
     <div class="tab-bar">
@@ -85,289 +95,311 @@
         }
     </style>
 
-        <!-- Form -->
-        <form class="mb-8" style="margin-bottom: 2rem;" method="POST" action="/vehicles/store" enctype="multipart/form-data">
-            @csrf
+    <!-- Form -->
+    <form style="margin-bottom: 20px;" method="POST" enctype="multipart/form-data">
+        @csrf
 
-            <!-- Tab 1: Vehicle Identification & Basic Details -->
-            <div id="tab1" class="tab-content active">
-                <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
-                    <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
-                        <div style="flex: 1 1 250px;">
-                            <label for="vehicle_type" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Type</label>
-                            <select id="vehicle_type" name="vehicle_type" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Vehicle Type</option>
-                                <!-- Add options dynamically or statically -->
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="vehicle_allocation_type" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Allocation Type</label>
-                            <select id="vehicle_allocation_type" name="vehicle_allocation_type" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Allocation Type</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="vehicle_army_no" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Army No</label>
-                            <input type="text" id="vehicle_army_no" name="vehicle_army_no" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
+        <!-- Tab 1: Vehicle Identification & Basic Details -->
+        <div id="tab1" class="tab-content active">
+            <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="vehicle_type" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Type</label>
+                        <select id="vehicle_type" name="vehicle_type" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Vehicle Type</option>
+                        </select>
                     </div>
-                    <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
-                        <div style="flex: 1 1 250px;">
-                            <label for="civil_no" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Civil No</label>
-                            <input type="text" id="civil_no" name="civil_no" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="chassis_no" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Chassis No</label>
-                            <input type="text" id="chassis_no" name="chassis_no" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="engine_no" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Engine No</label>
-                            <input type="text" id="engine_no" name="engine_no" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="vehicle_allocation_type" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Allocation Type</label>
+                        <select id="vehicle_allocation_type" name="vehicle_allocation_type" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Allocation Type</option>
+                        </select>
                     </div>
-                    <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
-                        <div style="flex: 1 1 250px;">
-                            <label for="vehicle_make" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Make</label>
-                            <select id="vehicle_make" name="vehicle_make" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Make</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="vehicle_model" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Model</label>
-                            <select id="vehicle_model" name="vehicle_model" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Model</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="vehicle_category" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Category</label>
-                            <select id="vehicle_category" name="vehicle_category" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Category</option>
-                            </select>
-                        </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="vehicle_army_no" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Army No</label>
+                        <input type="text" id="vehicle_army_no" name="vehicle_army_no" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
                     </div>
-                    <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
-                        <div style="flex: 1 1 250px;">
-                            <label for="vehicle_sub_category" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Sub Category</label>
-                            <select id="vehicle_sub_category" name="vehicle_sub_category" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Sub-Category</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="color" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Color</label>
-                            <select id="color" name="color" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Color</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="status" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Status</label>
-                            <select id="status" name="status" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Status</option>
-                            </select>
-                        </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="civil_no" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Civil No</label>
+                        <input type="text" id="civil_no" name="civil_no" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
                     </div>
-                    <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
-                        <div style="flex: 1 1 250px;">
-                            <label for="current_vehicle_status" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Current Vehicle Status</label>
-                            <select id="current_vehicle_status" name="current_vehicle_status" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Status</option>
-                                <option value="on_road">On Road</option>
-                                <option value="off_road">Off Road</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="t5_location" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">T5 Location (Estb)</label>
-                            <select id="t5_location" name="t5_location" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Location</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="parking_place" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Parking Place</label>
-                            <input type="text" id="parking_place" name="parking_place" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="chassis_no" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Chassis No</label>
+                        <input type="text" id="chassis_no" name="chassis_no" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="engine_no" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Engine No</label>
+                        <input type="text" id="engine_no" name="engine_no" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="vehicle_make" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Make</label>
+                        <select id="vehicle_make" name="vehicle_make" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Make</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="vehicle_model" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Model</label>
+                        <select id="vehicle_model" name="vehicle_model" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Model</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="vehicle_category" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Category</label>
+                        <select id="vehicle_category" name="vehicle_category" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Category</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="vehicle_sub_category" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Sub Category</label>
+                        <select id="vehicle_sub_category" name="vehicle_sub_category" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Sub-Category</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="color" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Color</label>
+                        <select id="color" name="color" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Color</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="status" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Status</label>
+                        <select id="status" name="status" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Status</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="current_vehicle_status" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Current Vehicle Status</label>
+                        <select id="current_vehicle_status" name="current_vehicle_status" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Status</option>
+                            <option value="on_road">On Road</option>
+                            <option value="off_road">Off Road</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="t5_location" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">T5 Location (Estb)</label>
+                        <select id="t5_location" name="t5_location" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Location</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="parking_place" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Parking Place</label>
+                        <input type="text" id="parking_place" name="parking_place" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Tab 2: Technical Specifications -->
-            <div id="tab2" class="tab-content">
-                <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
-                    <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
-                        <div style="flex: 1 1 250px;">
-                            <label for="front_tire_size" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Front Tire Size</label>
-                            <select id="front_tire_size" name="front_tire_size" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Front Tire Size</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="rear_tire_size" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Rear Tire Size</label>
-                            <select id="rear_tire_size" name="rear_tire_size" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Rear Tire Size</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="engine_capacity" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Engine Capacity</label>
-                            <select id="engine_capacity" name="engine_capacity" required style="width: 1
-                            00%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Engine Capacity</option>
-                            </select>
-                        </div>
+        <!-- Tab 2: Technical Specifications -->
+        <div id="tab2" class="tab-content">
+            <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="front_tire_size" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Front Tire Size</label>
+                        <select id="front_tire_size" name="front_tire_size" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Front Tire Size</option>
+                        </select>
                     </div>
-                    <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
-                        <div style="flex: 1 1 250px;">
-                            <label for="fuel_type" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Fuel Type</label>
-                            <select id="fuel_type" name="fuel_type" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Fuel Type</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="seating_capacity" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Seating Capacity</label>
-                            <input type="text" id="seating_capacity" name="seating_capacity" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="gross_weight" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Gross Weight</label>
-                            <input type="text" id="gross_weight" name="gross_weight" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="rear_tire_size" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Rear Tire Size</label>
+                        <select id="rear_tire_size" name="rear_tire_size" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Rear Tire Size</option>
+                        </select>
                     </div>
-                    <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
-                        <div style="flex: 1 1 250px;">
-                            <label for="tare_weight" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Tare Weight</label>
-                            <input type="text" id="tare_weight" name="tare_weight" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="load_capacity" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Load Capacity</label>
-                            <input type="text" id="load_capacity" name="load_capacity" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="engine_capacity" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Engine Capacity</label>
+                        <select id="engine_capacity" name="engine_capacity" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Engine Capacity</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="fuel_type" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Fuel Type</label>
+                        <select id="fuel_type" name="fuel_type" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Fuel Type</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="seating_capacity" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Seating Capacity</label>
+                        <input type="text" id="seating_capacity" name="seating_capacity" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="gross_weight" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Gross Weight</label>
+                        <input type="text" id="gross_weight" name="gross_weight" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="tare_weight" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Tare Weight</label>
+                        <input type="text" id="tare_weight" name="tare_weight" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="load_capacity" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Load Capacity</label>
+                        <input type="text" id="load_capacity" name="load_capacity" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Tab 3: Administrative & Legal Information -->
-            <div id="tab3" class="tab-content">
-                <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
-                    <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
-                        <div style="flex: 1 1 250px;">
-                            <label for="acquired_date" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Acquired Date</label>
-                            <input type="date" id="acquired_date" name="acquired_date" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="handover_date" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Handover Date to Ordnance</label>
-                            <input type="date" id="handover_date" name="handover_date" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="part_x_no" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Part X No (Itr Ref)</label>
-                            <input type="text" id="part_x_no" name="part_x_no" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
+        <!-- Tab 3: Administrative & Legal Information -->
+        <div id="tab3" class="tab-content">
+            <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="acquired_date" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Acquired Date</label>
+                        <input type="date" id="acquired_date" name="acquired_date" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
                     </div>
-                    <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
-                        <div style="flex: 1 1 250px;">
-                            <label for="part_x_location" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Part X Location (Estb)</label>
-                            <select id="part_x_location" name="part_x_location" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Location</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="part_x_date" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Part X Date</label>
-                            <input type="date" id="part_x_date" name="part_x_date" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="insurance_period_from" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Insurance Period From</label>
-                            <input type="date" id="insurance_period_from" name="insurance_period_from" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="handover_date" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Handover Date to Ordnance</label>
+                        <input type="date" id="handover_date" name="handover_date" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
                     </div>
-                    <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
-                        <div style="flex: 1 1 250px;">
-                            <label for="insurance_period_to" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Insurance Period To</label>
-                            <input type="date" id="insurance_period_to" name="insurance_period_to" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="emission_test_status" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Emission Test Status</label>
-                            <select id="emission_test_status" name="emission_test_status" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Status</option>
-                                <option value="yes">Yes</option>
-                                <option value="no">No</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="emission_test_year" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Emission Test Year</label>
-                            <input type="text" id="emission_test_year" name="emission_test_year" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="part_x_no" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Part X No (Itr Ref)</label>
+                        <input type="text" id="part_x_no" name="part_x_no" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="part_x_location" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Part X Location (Estb)</label>
+                        <select id="part_x_location" name="part_x_location" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Location</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="part_x_date" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Part X Date</label>
+                        <input type="date" id="part_x_date" name="part_x_date" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="insurance_period_from" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Insurance Period From</label>
+                        <input type="date" id="insurance_period_from" name="insurance_period_from" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="insurance_period_to" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Insurance Period To</label>
+                        <input type="date" id="insurance_period_to" name="insurance_period_to" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="emission_test_status" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Emission Test Status</label>
+                        <select id="emission_test_status" name="emission_test_status" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Status</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="emission_test_year" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Emission Test Year</label>
+                        <input type="text" id="emission_test_year" name="emission_test_year" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Tab 4: Operational, Workshop & Miscellaneous Information -->
-            <div id="tab4" class="tab-content">
-                <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
-                    <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
-                        <div style="flex: 1 1 250px;">
-                            <label for="workshop" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Workshop</label>
-                            <select id="workshop" name="workshop" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Workshop</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="admitted_workshop" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Admitted Workshop</label>
-                            <select id="admitted_workshop" name="admitted_workshop" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Admitted Workshop</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="workshop_admitted_date" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Workshop Admitted Date</label>
-                            <input type="date" id="workshop_admitted_date" name="workshop_admitted_date" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
+        <!-- Tab 4: Operational, Workshop & Miscellaneous Information -->
+        <div id="tab4" class="tab-content">
+            <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="workshop" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Workshop</label>
+                        <select id="workshop" name="workshop" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Workshop</option>
+                        </select>
                     </div>
-                    <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
-                        <div style="flex: 1 1 250px;">
-                            <label for="service_date" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Service Date</label>
-                            <input type="text" id="service_date" name="service_date" readonly style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem; background-color: #f3f4f6;">
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="next_service_date" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Next Service Date</label>
-                            <input type="text" id="next_service_date" name="next_service_date" readonly style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem; background-color: #f3f4f6;">
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="driver" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Driver</label>
-                            <select id="driver" name="driver" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Driver</option>
-                            </select>
-                        </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="admitted_workshop" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Admitted Workshop</label>
+                        <select id="admitted_workshop" name="admitted_workshop" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Admitted Workshop</option>
+                        </select>
                     </div>
-                    <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
-                        <div style="flex: 1 1 250px;">
-                            <label for="fault" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Fault</label>
-                            <select id="fault" name="fault" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                                <option value="" disabled selected>Select Fault</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1 1 500px;">
-                            <label for="remarks" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Remarks</label>
-                            <textarea id="remarks" name="remarks" style="width: 100%; height: 100px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;"></textarea>
-                        </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="workshop_admitted_date" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Workshop Admitted Date</label>
+                        <input type="date" id="workshop_admitted_date" name="workshop_admitted_date" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
                     </div>
-                    <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
-                        <div style="flex: 1 1 250px;">
-                            <label for="image_front" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image (Front View)</label>
-                            <input type="file" id="image_front" name="image_front" accept=".jpg,.png" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="image_rear" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image (Rear View)</label>
-                            <input type="file" id="image_rear" name="image_rear" accept=".jpg,.png" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
-                        <div style="flex: 1 1 250px;">
-                            <label for="image_side" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image (Side View)</label>
-                            <input type="file" id="image_side" name="image_side" accept=".jpg,.png" required style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                        </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="service_date" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Service Date</label>
+                        <input type="text" id="service_date" name="service_date" readonly style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; background-color: #f3f4f6;">
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="next_service_date" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Next Service Date</label>
+                        <input type="text" id="next_service_date" name="next_service_date" readonly style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; background-color: #f3f4f6;">
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="driver" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Driver</label>
+                        <select id="driver" name="driver" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Driver</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="fault" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Fault</label>
+                        <select id="fault" name="fault" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                            <option value="" disabled selected>Select Fault</option>
+                        </select>
+                    </div>
+                    <div style="flex: 2; min-width: 220px;">
+                        <label for="remarks" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Remarks</label>
+                        <textarea id="remarks" name="remarks" style="width: 100%; height: 100px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; padding: 8px;"></textarea>
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="image_front" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Image (Front View)</label>
+                        <input type="file" id="image_front" name="image_front" accept=".jpg,.png" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="image_rear" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Image (Rear View)</label>
+                        <input type="file" id="image_rear" name="image_rear" accept=".jpg,.png" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="image_side" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Image (Side View)</label>
+                        <input type="file" id="image_side" name="image_side" accept=".jpg,.png" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Submit Button -->
-            <div style="width: 100%; display: flex; justify-content: center; margin-top: 1.5rem;">
-                <button type="submit" style="background-color: #f97316; color: white; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer;" onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'">
-                    <i class="fa-solid fa-plus-circle" style="margin-right: 0.25rem;"></i> Submit
-                </button>
-            </div>
-        </form>
+        <!-- Submit Button -->
+        <div style="width: 100%; display: flex; justify-content: center; margin-top: 15px;">
+            <button type="submit" style="background-color: #00B4D8; color: white; font-weight: 600; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer;" onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
+                <i class="fa-solid fa-plus-circle" style="margin-right: 0.25rem;"></i> Submit
+            </button>
+        </div>
+    </form>
+
+    <!-- Search Bar -->
+    <form method="GET" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
+        <input type="text" name="search" id="searchInput" placeholder="Search Vehicles..." value="{{ request('search') }}" style="flex: 1; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
+        <button type="submit" style="background-color: #0096C7; color: white; border: none; border-radius: 5px; padding: 8px 15px; cursor: pointer;" onmouseover="this.style.backgroundColor='#023E8A'" onmouseout="this.style.backgroundColor='#0096C7'">🔍</button>
+    </form>
+
+    <!-- Vehicles Table -->
+    <div style="overflow-x: auto;">
+        <table id="vehicleTable" style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; border: 1px solid #90E0EF;">
+            <thead style="background: #023E8A; color: white; text-align: left;">
+                <tr>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(0)">Vehicle Army No ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(1)">Vehicle Type ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination" style="margin-top: 15px; text-align: center;"></div>
 
     <!-- Image Modal -->
     <div id="imageModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
@@ -410,34 +442,34 @@
                 return;
             }
 
-                fetch(`/get-sub-categories/${catId}`, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.json();
-                })
-                .then(data => {
-                    subCatSelect.innerHTML = '<option value="" disabled selected>Select Sub-Category</option>';
-                    if (data.length === 0) {
-                        subCatSelect.innerHTML = '<option value="" disabled selected>No sub-categories available</option>';
-                    } else {
-                        data.forEach(subCat => {
-                            const option = document.createElement('option');
-                            option.value = subCat.id;
-                            option.textContent = subCat.sub_category;
-                            subCatSelect.appendChild(option);
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching sub-categories:', error);
-                    subCatSelect.innerHTML = '<option value="" disabled selected>Error loading sub-categories</option>';
-                });
+            fetch(`/get-sub-categories/${catId}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                subCatSelect.innerHTML = '<option value="" disabled selected>Select Sub-Category</option>';
+                if (data.length === 0) {
+                    subCatSelect.innerHTML = '<option value="" disabled selected>No sub-categories available</option>';
+                } else {
+                    data.forEach(subCat => {
+                        const option = document.createElement('option');
+                        option.value = subCat.id;
+                        option.textContent = subCat.sub_category;
+                        subCatSelect.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching sub-categories:', error);
+                subCatSelect.innerHTML = '<option value="" disabled selected>Error loading sub-categories</option>';
             });
+        });
 
         // Image Modal
         function openImageModal(vehicleArmyNo, images) {
@@ -531,3 +563,4 @@
     </script>
 </div>
 @endsection
+```
