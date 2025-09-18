@@ -439,4 +439,33 @@ class VehicleRequestController extends Controller
             return redirect()->back()->with('error', 'Failed to submit certificate: ' . $e->getMessage());
         }
     }
+
+    public function allVehicleInfo(Request $request)
+    {
+        $search = $request->input('search');
+        $perPage = $request->input('per_page', 15);
+
+        $vehicles = VehicleRequest::query()
+            ->when($search, function ($query) use ($search) {
+                $query->where('serial_number', 'like', "%{$search}%")
+                    ->orWhere('request_type', 'like', "%{$search}%")
+                    ->orWhereHas('category', fn ($q) => $q->where('category', 'like', "%{$search}%"))
+                    ->orWhereHas('subCategory', fn ($q) => $q->where('sub_category', 'like', "%{$search}%"));
+            })
+            ->with(['category', 'subCategory'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+
+        return view('all-vehicle-info', compact('vehicles'));
+    }
+
+    // In VehicleRequestController.php
+    public function showBasicInfo($serial_number)
+    {
+        $vehicle = VehicleRequest::with(['category', 'subCategory', 'declarations', 'certificates'])
+            ->where('serial_number', $serial_number)
+            ->firstOrFail();
+
+        return view('vehicles-basic-info', compact('vehicle'));
+    }
 }

@@ -171,7 +171,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
     //all vehicle info
-    Route::get('/all-vehicle-info', function () {
-    return view('all-vehicle-info'); 
-});
+Route::get('/vehicle-basic-info/{serial_number}', [VehicleRequestController::class, 'showBasicInfo'])->name('vehicle.basic.info');
+Route::get('/all-vehicle-info', [VehicleRequestController::class, 'allVehicleInfo'])->name('vehicle.all.info');
+
 });

@@ -11,13 +11,20 @@
         </h2>
 
         <!-- Search Form -->
-        <form id="searchForm" style="margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: flex-start;">
-            <input type="text" name="search" placeholder="Search by serial or category..." style="padding: 0.5rem; width: 100%; max-width: 300px; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.9rem;">
+        <form method="GET" action="{{ route('vehicle.all.info') }}" style="margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: flex-start;">
+            <input type="text" name="search" placeholder="Search by serial or category..." value="{{ request('search') }}" style="padding: 0.5rem; width: 100%; max-width: 300px; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.9rem;">
             <button type="submit" style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.9rem; font-weight: 600; transition: background 0.3s ease, transform 0.2s ease;"
                     onmouseover="this.style.background='#2563eb'; this.style.transform='scale(1.05)'"
                     onmouseout="this.style.background='#3b82f6'; this.style.transform='scale(1)'">
                 Search
             </button>
+            @if(request('search'))
+                <a href="{{ route('vehicle.all.info') }}" style="background: #ef4444; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: background 0.3s ease, transform 0.2s ease;"
+                   onmouseover="this.style.background='#dc2626'; this.style.transform='scale(1.05)'"
+                   onmouseout="this.style.background='#ef4444'; this.style.transform='scale(1)'">
+                    Clear
+                </a>
+            @endif
         </form>
 
         <!-- Vehicle Requests Table -->
@@ -30,71 +37,60 @@
                         <th style="padding: 1rem; font-weight: 600; font-size: 0.9rem; text-align: left;">Vehicle Category</th>
                         <th style="padding: 1rem; font-weight: 600; font-size: 0.9rem; text-align: left;">Sub Category</th>
                         <th style="padding: 1rem; font-weight: 600; font-size: 0.9rem; text-align: left;">Quantity</th>
+                        <th style="padding: 1rem; font-weight: 600; font-size: 0.9rem; text-align: left;">Status</th>
                         <th style="padding: 1rem; font-weight: 600; font-size: 0.9rem; text-align: center;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    <!-- Static sample data -->
+                    @forelse($vehicles as $vehicle)
                     <tr style="transition: background-color 0.3s ease, transform 0.2s ease; animation: slideIn 0.3s ease forwards;">
                         <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
-                            V12345
+                            {{ $vehicle->serial_number }}
                         </td>
                         <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
-                            Vehicle Replacement
+                            {{ ucfirst(str_replace('_', ' ', $vehicle->request_type)) }}
                         </td>
                         <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
-                            Truck
+                            {{ $vehicle->category->category ?? 'N/A' }}
                         </td>
                         <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
-                            Heavy Duty
+                            {{ $vehicle->subCategory->sub_category ?? 'N/A' }}
                         </td>
                         <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
-                            2
-                        </td> 
-                        <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
-                            <p style="font-size: 0.8rem; color: #4b5563; margin-bottom: 0.5rem;">Vehicle ID: 1</p>
-                            <a href="#" style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease; text-decoration: none;"
-                               onmouseover="this.style.background='linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='scale(1.05)'"
-                               onmouseout="this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'">
-                                Vehicle Information
-                            </a>
-                        </td>
-                    </tr>
-                    <tr style="transition: background-color 0.3s ease, transform 0.2s ease; animation: slideIn 0.3s ease forwards;">
-                        <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
-                            V67890
+                            {{ $vehicle->qty }}
                         </td>
                         <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
-                            New Approval
-                        </td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
-                            Car
-                        </td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
-                            Sedan
-                        </td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151;">
-                            1
+                            <span style="padding: 0.25rem 0.5rem; border-radius: 0.25rem; 
+                                @if($vehicle->status === 'approved') background-color: #10b981; color: white;
+                                @elseif($vehicle->status === 'rejected') background-color: #ef4444; color: white;
+                                @else background-color: #f59e0b; color: white; @endif">
+                                {{ ucfirst($vehicle->status) }}
+                            </span>
                         </td>
                         <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
-                            <p style="font-size: 0.8rem; color: #4b5563; margin-bottom: 0.5rem;">Vehicle ID: 2</p>
-                            <a href="#" style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease; text-decoration: none;"
-                               onmouseover="this.style.background='linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='scale(1.05)'"
-                               onmouseout="this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'">
-                                Vehicle Information
-                            </a>
+                            <p style="font-size: 0.8rem; color: #4b5563; margin-bottom: 0.5rem;">Vehicle ID: {{ $vehicle->id }}</p>
+                            <a href="{{ route('vehicle.basic.info', ['serial_number' => $vehicle->serial_number]) }}" 
+                                style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease; text-decoration: none; display: inline-block;"
+                                onmouseover="this.style.background='linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='scale(1.05)'"
+                                onmouseout="this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'">
+                                    Vehicle Information
+                             </a>
                         </td>
                     </tr>
+                    @empty
+                    <tr>
+                        <td colspan="7" style="padding: 2rem; text-align: center; color: #6b7280;">
+                            No vehicle requests found.
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
-        <!-- Pagination Links (Static Placeholder) -->
+        <!-- Pagination Links -->
         <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 0.5rem;">
-            <a href="#" style="padding: 0.5rem 1rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; text-decoration: none; color: #374151;">Previous</a>
-            <a href="#" style="padding: 0.5rem 1rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; text-decoration: none; color: #374151;">1</a>
-            <a href="#" style="padding: 0.5rem 1rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; text-decoration: none; color: #374151;">2</a>
-            <a href="#" style="padding: 0.5rem 1rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; text-decoration: none; color: #374151;">Next</a>
+            {{ $vehicles->links('pagination::simple-tailwind') }}
         </div>
     </div>
 </div>
@@ -110,6 +106,31 @@
         transform: translateY(0);
     }
 }
+
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.pagination a, .pagination span {
+    padding: 0.5rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    color: #374151;
+}
+
+.pagination a:hover {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.pagination .current {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
 </style>
 
 <script>
@@ -117,12 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const tableRows = document.querySelectorAll('#vehicleTable tbody tr');
     tableRows.forEach((row, index) => {
         row.style.animationDelay = `${index * 0.1}s`;
-    });
-
-    const searchForm = document.getElementById('searchForm');
-    searchForm.addEventListener('submit', (e) => {
-        e.preventDefault(); // Prevent default form submission
-        console.log('Form submitted with search value:', searchForm.querySelector('input[name="search"]').value);
     });
 });
 </script>
