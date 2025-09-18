@@ -64,7 +64,7 @@
             </div>    
             <div class="app-header__content">
                 <div>
-                    <h2 style="text-align: center; font-weight: bold;">Fleet Management Module</h2>
+                    <h4 style="text-align: center; font-weight: bold;">Fleet Management Module</h4>
                 </div>
             </div>
         </div>        
@@ -390,164 +390,178 @@
                                 <li class="app-sidebar__heading">Navigation</li>
                                 <li>
                                     <a href="#">
-                                        <i class="metismenu-icon pe-7s-diamond"></i>
+                                        <img src="{{ asset('assets/car.png') }}" style="padding:1px; 24px; height: 24px; margin-right: 10px;">
                                        Master Data
-                                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                                       <img src="{{ asset('assets/add-button.png') }}" style="width: 24px; height: 24px; margin-left: 55px;">
+                                        
                                     </a>
                                     <ul>
                                         <li>
                                             <a href="{{ route('vehicle-types.index') }}">
-                                                <i class="metismenu-icon"></i>
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                     Vehicle Type 
-                                                </a>
+                                            </a>
                                         </li>
                                         <li>
                                             <a href="{{ route('vehicle-allocation-type.index') }}">
-                                                <i class="metismenu-icon"></i>Vehicle Allocation Type
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
+                                                Vehicle Allocation Type
                                                 </a>
                                         </li>
                                         <li>
                                             <a href="{{ route('vehicle-category.index') }}">
-                                                <i class="metismenu-icon"></i>Vehicle Category
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
+                                                Vehicle Category
                                             </a>
                                         </li>
                                         <li>
                                             <a href="{{ route('vehicle-sub-category.index') }}">
-                                                <i class="metismenu-icon"></i>Vehicle Sub Category
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
+                                                Vehicle Sub Category
                                             </a>
                                         </li>
                                         <li>
                                             <a href="{{ route('vehicle-tire-sizes.index') }}">
-                                                <i class="metismenu-icon">
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                 </i>Vehicle Tire sizes
                                             </a>
                                         </li>
                                         <li>
                                             <a href="{{ route('vehicle-make.index') }}">
-                                                <i class="metismenu-icon">
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                 </i>Vehicle Make
                                             </a>
                                         </li>
                                         <li>
                                             <a href="{{ route('vehicle-models.index') }}">
-                                                <i class="metismenu-icon">
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                 </i>Vehicle Model
                                             </a>
                                         </li>
                                         <li>
                                             <a href="{{ route('vehicle-engine-capacity.index') }}">
-                                                <i class="metismenu-icon"></i>Vehicle Engine Capacity
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
+                                                Vehicle Engine Capacity
                                             </a>
 
                                         </li>
                                         <li>
                                             <a href="{{ route('fuel-types.index') }}">
-                                                <i class="metismenu-icon">
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                 </i>Fuel Type
                                             </a>
                                         </li>
                                         <li>
                                             <a href="{{ route('vehicle-color.index') }}">
-                                                <i class="metismenu-icon">
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                 </i>Vehicle Color
                                             </a>
                                         </li>
                                         <li>
                                             <a href="{{ route('vehicle-status.index') }}">
-                                                <i class="metismenu-icon">
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                 </i>Vehicle Status
                                             </a>
                                         </li>
                                         <li>
                                             <a href="{{ route('workshops.index') }}">
-                                                <i class="metismenu-icon">
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                 </i>Workshop
                                             </a>
                                         </li>
                                         <li>
                                             <a href="{{ route('establishments.index') }}">
-                                                <i class="metismenu-icon">
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                 </i>Establishment
                                             </a>
                                     </ul>
                                 </li>
                                 <li>
                                     <a href="">
-                                        <i class="metismenu-icon pe-7s-diamond"></i>
+                                        <img src="{{ asset('assets/appeals.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                        Request by Vehicle
-                                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                                        <img src="{{ asset('assets/add-button.png') }}" style="width: 24px; height: 24px; margin-left: 10px;">
                                     </a>
                                     <ul>
                                         <li>
                                             <a href="{{ route('vehicle.request.index') }}">
-                                                <i class="metismenu-icon"></i>
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                     Vehicle Request 
                                                 </a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('vehicle.request.all') }}">All Requests</a>
+                                            <a href="{{ route('vehicle.request.all') }}">
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
+                                                All Requests
+                                            </a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('vehicle.inspection.index') }}">Vehicle Inspection request</a>
+                                            <a href="{{ route('vehicle.inspection.index') }}">
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
+                                                Vehicle Inspection request
+                                            </a>
 
                                         </li>
 
                                         <li>
-                                            <a href="/vehicle-inspection-form2">Vehicle Inspection form 02</a>
+                                            <a href="/vehicle-inspection-form2">
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
+                                                Vehicle Inspection form 02
+                                            </a>
                                         </li>
                                         
                                 </li>
                                 </ul>
                                 <li>
                                     <a href="">
-                                        <i class="metismenu-icon pe-7s-diamond"></i>
+                                        <img src="{{ asset('assets/amendment.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                        Driver Amendment
-                                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                                        <img src="{{ asset('assets/add-button.png') }}" style="width: 24px; height: 24px; margin-left: 12px;">
                                     </a>
                                 <ul>
                                     <li>
                                         <a href="/all-drivers">
-                                            <i class="metismenu-icon"></i>
+                                            <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                 Drivers
                                         </a>
                                     </li>
                                 </ul>
                                 <li>
                                     <a href="">
-                                        <i class="metismenu-icon pe-7s-diamond"></i>
+                                        <img src="{{ asset('assets/group.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                        User
-                                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                                        <img src="{{ asset('assets/add-button.png') }}" style="width: 24px; height: 24px; margin-left: 102.5px;">
                                     </a>
                                 <ul>
                                     <li>
                                         <a href="/user-roles">
-                                            <i class="metismenu-icon"></i>
+                                            <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                 User Role
                                         </a>
                                     </li>
                                     <li>
                                         <a href="/user-creation">
-                                            <i class="metismenu-icon"></i>
+                                            <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                 User Creation 
                                         </a>
                                     </li>
                                 </ul>
                                 <li>
                                     <a href="">
-                                        <i class="metismenu-icon pe-7s-diamond"></i>
+                                        <img src="{{ asset('assets/fleet-management.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                        Vehicle
-                                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                                        <img src="{{ asset('assets/add-button.png') }}" style="width: 24px; height: 24px; margin-left: 85px;">
                                     </a>
                                 <ul>
                                     <li>
                                         <a href="/vehicles-basic-info">
-                                            <i class="metismenu-icon"></i>
+                                            <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                 Vehicles Basic Information
                                         </a>
                                     </li>
                                     <li>
                                         <a href="/all-vehicle-info">
-                                            <i class="metismenu-icon"></i>
+                                            <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                 All Vehicles Information
                                         </a>
                                     </li>
