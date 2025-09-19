@@ -69,9 +69,9 @@
             </div>
         </div>        
         <div class="ui-theme-settings">
-            <button type="button" id="TooltipDemo" class="btn-open-options btn btn-warning">
+            <!--<button type="button" id="TooltipDemo" class="btn-open-options btn btn-warning">
                 <i class="fa fa-cog fa-w-16 fa-spin fa-2x"></i>
-            </button>
+            </button> -->
             <div class="theme-settings__inner">
                 <div class="scrollbar-container">
                     <div class="theme-settings__options-wrapper">
@@ -236,7 +236,7 @@
                                 Restore Default
                             </button>
                         </h3>
-                        <div class="p-3">
+                         <div class="p-3">
                             <ul class="list-group">
                                 <li class="list-group-item">
                                     <h5 class="pb-2">Choose Color Scheme
@@ -319,7 +319,7 @@
                                     </div>
                                 </li>
                             </ul>
-                        </div>
+                        </div> 
                         <h3 class="themeoptions-heading">
                             <div>Main Content Options</div>
                             <button type="button" class="btn-pill btn-shadow btn-wide ml-auto active btn btn-focus btn-sm">Restore Default
@@ -346,7 +346,8 @@
                     </div>
                 </div>
             </div>
-        </div>        <div class="app-main">
+        </div> 
+        <div class="app-main">
                 <div class="app-sidebar sidebar-shadow">
                     <div class="app-header__logo">
                         <div class="logo-src"></div>
