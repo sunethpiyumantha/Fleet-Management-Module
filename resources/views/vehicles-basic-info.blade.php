@@ -3,22 +3,14 @@
 @section('title', 'Vehicle Management')
 
 @section('content')
-<div style="width: 100%; padding: 20px; font-family: Arial, sans-serif; background: white;">
+<div style="width: 100%; padding: 8px; font-family: Arial, sans-serif; background: white;">
 
-    <!-- Page Header -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        @if(isset($vehicle))
-        <h1 style="font-size: 1.5rem; font-weight: bold; color: #023E8A;">
-            Vehicle Information - {{ $vehicle->serial_number }}
-        </h1>
-        @else
-        <h1 style="font-size: 1.5rem; font-weight: bold; color: #023E8A;">Vehicle Management</h1>
-        @endif
-    </div>
 
     <!-- Blue Header -->
     <div style="background: #0077B6; color: white; font-weight: bold; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-        Manage Vehicles
+        <h1 style="font-size: 1.2rem; font-weight: bold; color: #ffffff;">
+        Vehicle Information - {{ $vehicle->serial_number }}
+        </h1>
     </div>
 
     <!-- Success or Error Messages -->
