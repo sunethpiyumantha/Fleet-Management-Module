@@ -7,12 +7,6 @@
 <div style="width: 100%; padding: 8px; font-family: Arial, sans-serif; background: white;">
 
 
-
-    <!-- Blue Header -->
-    <div style="background: #0077B6; color: white; font-weight: bold; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-        <h1 style="font-size: 1.2rem; font-weight: bold; color: #ffffff;">
-        Vehicle Information - {{ $vehicle->serial_number }}
-        </h1>
     <!-- Serial Number Display at the Top -->
     @if(isset($vehicle))
     <div style="background: #0077B6; color: white; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">
