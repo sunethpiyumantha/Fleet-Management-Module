@@ -1,9 +1,11 @@
+```blade
 @extends('layouts.app')
 
-@section('title', 'Vehicle Management')
+@section('title', 'Vehicle Basic Information - ' . ($vehicle->serial_number ?? 'New Vehicle'))
 
 @section('content')
 <div style="width: 100%; padding: 8px; font-family: Arial, sans-serif; background: white;">
+
 
 
     <!-- Blue Header -->
@@ -11,7 +13,21 @@
         <h1 style="font-size: 1.2rem; font-weight: bold; color: #ffffff;">
         Vehicle Information - {{ $vehicle->serial_number }}
         </h1>
+    <!-- Serial Number Display at the Top -->
+    @if(isset($vehicle))
+    <div style="background: #0077B6; color: white; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">
+        <h1 style="font-size: 1.875rem; font-weight: bold; margin: 0;">
+            Vehicle Information - {{ $vehicle->serial_number }}
+        </h1>
+        <p style="margin: 0.5rem 0 0 0; font-size: 1rem; opacity: 0.9;">
+            {{ ucfirst(str_replace('_', ' ', $vehicle->request_type)) }} Request
+        </p>
     </div>
+    @else
+    <div style="background: #0077B6; color: white; font-weight: bold; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">
+        Manage Vehicles
+    </div>
+    @endif
 
     <!-- Success or Error Messages -->
     @if (session('success'))
@@ -114,11 +130,12 @@
     </style>
 
     <!-- Form -->
-    <form style="margin-bottom: 20px;" method="POST"  enctype="multipart/form-data">
+    <form style="margin-bottom: 20px;" method="POST" action="/vehicles/store" enctype="multipart/form-data">
         @csrf
+
+        <!-- Hidden field to store the serial number -->
         @if(isset($vehicle))
-            @method('PUT')
-            <input type="hidden" name="serial_number" value="{{ $vehicle->serial_number }}">
+        <input type="hidden" name="serial_number" value="{{ $vehicle->serial_number }}">
         @endif
 
         <!-- Tab 1: Vehicle Identification & Basic Details -->
@@ -394,12 +411,19 @@
         <!-- Submit Button -->
         <div style="width: 100%; display: flex; justify-content: center; margin-top: 15px;">
             <button type="submit" style="background-color: #00B4D8; color: white; font-weight: 600; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer;" onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
-                <i class="fa-solid fa-plus-circle" style="margin-right: 0.25rem;"></i> {{ isset($vehicle) ? 'Update' : 'Submit' }}
+                <i class="fa-solid fa-plus-circle" style="margin-right: 0.25rem;"></i> Submit
             </button>
         </div>
     </form>
 
-    
+    <!-- Back Button -->
+    @if(isset($vehicle))
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{{ route('vehicle.all.info') }}" style="background: #6b7280; color: white; padding: 0.75rem 1.5rem; border-radius: 5px; text-decoration: none; display: inline-block; font-weight: 600;">
+            ← Back to All Vehicles
+        </a>
+    </div>
+    @endif
 
     <!-- Search Bar -->
     <form method="GET" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
@@ -418,7 +442,6 @@
                 </tr>
             </thead>
             <tbody id="tableBody">
-                <!-- Populate dynamically via JavaScript or backend -->
             </tbody>
         </table>
     </div>
@@ -427,7 +450,7 @@
     <div id="pagination" style="margin-top: 15px; text-align: center;"></div>
 
     <!-- Image Modal -->
-    <div id="image Modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
+    <div id="imageModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
         <div style="background: #CAF0F8; padding: 1.5rem; border-radius: 5px; max-width: 90%; max-height: 90%; overflow: auto;">
             <h3 id="modalTitle" style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem; color: #023E8A;">Vehicle Images</h3>
             <div id="imageContainer" style="display: flex; flex-wrap: wrap; gap: 1rem;"></div>
@@ -453,6 +476,8 @@
                 selectedTab.style.display = 'block';
                 selectedTab.classList.add('active');
                 document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
+            } else {
+                console.error('Tab not found:', tabId);
             }
         }
 
@@ -612,3 +637,4 @@
     </script>
 </div>
 @endsection
+```
