@@ -17,7 +17,7 @@
 
     <!-- Page Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h5 style="font-weight: bold; margin: 0; color: #03045E;">Vehicle Type</h5>
+        
         <nav style="font-size: 14px;">
             <a href="{{ route('home') }}" style="text-decoration: none; color: #0077B6;">Home</a> /
             <span style="font-weight: bold; color:#023E8A;">Vehicle Type</span>
@@ -26,7 +26,9 @@
 
     <!-- Blue Header -->
     <div style="background: #0077B6; color: white; font-weight: bold; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-        Manage Vehicle Types
+        <h5 style="font-weight: bold; margin: 0; color: #ffffff;">
+        Vehicle Type
+        </h5>
     </div>
 
     <!-- Success or Error Messages -->
