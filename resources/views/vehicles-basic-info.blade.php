@@ -1,67 +1,42 @@
-```blade
 @extends('layouts.app')
 
 @section('title', 'Vehicle Basic Information - ' . ($vehicle->serial_number ?? 'New Vehicle'))
 
 @section('content')
 <div style="width: 100%; padding: 8px; font-family: Arial, sans-serif; background: white;">
-
-
-    <!-- Serial Number Display at the Top -->
     @if(isset($vehicle))
     <div style="background: #0077B6; color: white; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">
-        <h1 style="font-size: 1.875rem; font-weight: bold; margin: 0;">
-            Vehicle Information - {{ $vehicle->serial_number }}
-        </h1>
-        <p style="margin: 0.5rem 0 0 0; font-size: 1rem; opacity: 0.9;">
-            {{ ucfirst(str_replace('_', ' ', $vehicle->request_type)) }} Request
-        </p>
+        <h1 style="font-size: 1.875rem; font-weight: bold; margin: 0;">Vehicle Information - {{ $vehicle->serial_number }}</h1>
+        <p style="margin: 0.5rem 0 0 0; font-size: 1rem; opacity: 0.9;">{{ ucfirst(str_replace('_', ' ', $vehicle->request_type)) }} Request</p>
     </div>
     @else
-    <div style="background: #0077B6; color: white; font-weight: bold; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">
-        Manage Vehicles
+    <div style="background: #0077B6; color: white; font-weight: bold; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">Manage Vehicles</div>
+    @endif
+
+    @if(session('success'))
+    <div style="background-color: #ADE8F4; color: #023E8A; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+        {{ session('success') }}
     </div>
     @endif
 
-    <!-- Success or Error Messages -->
-    @if (session('success'))
-        <div style="background-color: #ADE8F4; color: #023E8A; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
-            {{ session('success') }}
-        </div>
+    @if($errors->any())
+    <div style="background-color: #CAF0F8; color: #03045E; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+        <ul style="margin: 0; padding-left: 1rem;">
+            @foreach($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
     @endif
 
-    @if ($errors->any())
-        <div style="background-color: #CAF0F8; color: #03045E; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
-            <ul style="margin: 0; padding-left: 1rem;">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <!-- Quick Info Bar -->
     @if(isset($vehicle))
     <div style="display: flex; flex-wrap: wrap; gap: 1rem; background: #CAF0F8; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
-        <div style="flex: 1; min-width: 200px;">
-            <strong>Category:</strong> {{ $vehicle->category->category ?? 'N/A' }}
-        </div>
-        <div style="flex: 1; min-width: 200px;">
-            <strong>Sub Category:</strong> {{ $vehicle->subCategory->sub_category ?? 'N/A' }}
-        </div>
-        <div style="flex: 1; min-width: 200px;">
-            <strong>Status:</strong> 
-            <span style="padding: 0.25rem 0.5rem; border-radius: 0.25rem; 
-                @if($vehicle->status === 'approved') background-color: #10b981; color: white;
-                @elseif($vehicle->status === 'rejected') background-color: #ef4444; color: white;
-                @else background-color: #f59e0b; color: white; @endif">
-                {{ ucfirst($vehicle->status) }}
-            </span>
-        </div>
+        <div style="flex: 1; min-width: 200px;"><strong>Category:</strong> {{ $vehicle->category->category ?? 'N/A' }}</div>
+        <div style="flex: 1; min-width: 200px;"><strong>Sub Category:</strong> {{ $vehicle->subCategory->sub_category ?? 'N/A' }}</div>
+        <div style="flex: 1; min-width: 200px;"><strong>Status:</strong> <span style="padding: 0.25rem 0.5rem; border-radius: 0.25rem; @if($vehicle->status === 'approved') background-color: #10b981; color: white; @elseif($vehicle->status === 'rejected') background-color: #ef4444; color: white; @else background-color: #f59e0b; color: white; @endif">{{ ucfirst($vehicle->status) }}</span></div>
     </div>
     @endif
 
-    <!-- Modern Tabs Navigation -->
     <div class="tab-bar">
         <button type="button" class="tab-button active" onclick="openTab('tab1')">Vehicle Identification</button>
         <button type="button" class="tab-button" onclick="openTab('tab2')">Technical Specifications</button>
@@ -69,70 +44,24 @@
         <button type="button" class="tab-button" onclick="openTab('tab4')">Operational & Workshop</button>
     </div>
 
-    <!-- CSS for Tabs and Form -->
     <style>
-        .tab-bar {
-            display: flex;
-            gap: 0.75rem;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            background: #CAF0F8;
-            padding: 0.25rem;
-            border-radius: 5px;
-        }
-        .tab-button {
-            background: #90E0EF;
-            color: #03045E;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .tab-button.active {
-            background: #0077B6;
-            color: white;
-        }
-        .tab-button:hover {
-            background: #00B4D8;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block !important;
-        }
-        button:disabled {
-            background: #d1d5db !important;
-            cursor: not-allowed !important;
-        }
-        @media (max-width: 48rem) {
-            .tab-button {
-                width: 100%;
-                font-size: 0.9rem;
-                padding: 0.5rem 1rem;
-            }
-        }
-        #imageContainer img {
-            width: 100%;
-            height: auto;
-            max-width: 200px;
-            max-height: 200px;
-            object-fit: contain;
-            border-radius: 5px;
-        }
+        .tab-bar { display: flex; gap: 0.75rem; justify-content: center; margin-bottom: 1.5rem; background: #CAF0F8; padding: 0.25rem; border-radius: 5px; }
+        .tab-button { background: #90E0EF; color: #03045E; padding: 0.75rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; }
+        .tab-button.active { background: #0077B6; color: white; }
+        .tab-button:hover { background: #00B4D8; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block !important; }
+        button:disabled { background: #d1d5db !important; cursor: not-allowed !important; }
+        @media (max-width: 48rem) { .tab-button { width: 100%; font-size: 0.9rem; padding: 0.5rem 1rem; } }
+        #imageContainer img { width: 100%; height: auto; max-width: 200px; max-height: 200px; object-fit: contain; border-radius: 5px; }
     </style>
 
-    <!-- Form -->
-    <form style="margin-bottom: 20px;" method="POST" action="/vehicles/store" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('vehicles.store') }}" enctype="multipart/form-data">
         @csrf
-
-        <!-- Hidden field to store the serial number -->
         @if(isset($vehicle))
         <input type="hidden" name="serial_number" value="{{ $vehicle->serial_number }}">
         @endif
 
-        <!-- Tab 1: Vehicle Identification & Basic Details -->
         <div id="tab1" class="tab-content active">
             <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
                 <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
@@ -230,7 +159,6 @@
             </div>
         </div>
 
-        <!-- Tab 2: Technical Specifications -->
         <div id="tab2" class="tab-content">
             <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
                 <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
@@ -282,7 +210,6 @@
             </div>
         </div>
 
-        <!-- Tab 3: Administrative & Legal Information -->
         <div id="tab3" class="tab-content">
             <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
                 <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
@@ -336,7 +263,6 @@
             </div>
         </div>
 
-        <!-- Tab 4: Operational, Workshop & Miscellaneous Information -->
         <div id="tab4" class="tab-content">
             <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
                 <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
@@ -402,7 +328,6 @@
             </div>
         </div>
 
-        <!-- Submit Button -->
         <div style="width: 100%; display: flex; justify-content: center; margin-top: 15px;">
             <button type="submit" style="background-color: #00B4D8; color: white; font-weight: 600; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer;" onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
                 <i class="fa-solid fa-plus-circle" style="margin-right: 0.25rem;"></i> Submit
@@ -410,22 +335,17 @@
         </div>
     </form>
 
-    <!-- Back Button -->
     @if(isset($vehicle))
     <div style="text-align: center; margin-top: 2rem;">
-        <a href="{{ route('vehicle.all.info') }}" style="background: #6b7280; color: white; padding: 0.75rem 1.5rem; border-radius: 5px; text-decoration: none; display: inline-block; font-weight: 600;">
-            ← Back to All Vehicles
-        </a>
+        <a href="{{ route('vehicles.create') }}" style="background: #6b7280; color: white; padding: 0.75rem 1.5rem; border-radius: 5px; text-decoration: none; display: inline-block; font-weight: 600;">← Back to All Vehicles</a>
     </div>
     @endif
 
-    <!-- Search Bar -->
     <form method="GET" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
         <input type="text" name="search" id="searchInput" placeholder="Search Vehicles..." value="{{ request('search') }}" style="flex: 1; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
         <button type="submit" style="background-color: #0096C7; color: white; border: none; border-radius: 5px; padding: 8px 15px; cursor: pointer;" onmouseover="this.style.backgroundColor='#023E8A'" onmouseout="this.style.backgroundColor='#0096C7'">🔍</button>
     </form>
 
-    <!-- Vehicles Table -->
     <div style="overflow-x: auto;">
         <table id="vehicleTable" style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; border: 1px solid #90E0EF;">
             <thead style="background: #023E8A; color: white; text-align: left;">
@@ -435,15 +355,12 @@
                     <th style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">Actions</th>
                 </tr>
             </thead>
-            <tbody id="tableBody">
-            </tbody>
+            <tbody id="tableBody"></tbody>
         </table>
     </div>
 
-    <!-- Pagination -->
     <div id="pagination" style="margin-top: 15px; text-align: center;"></div>
 
-    <!-- Image Modal -->
     <div id="imageModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
         <div style="background: #CAF0F8; padding: 1.5rem; border-radius: 5px; max-width: 90%; max-height: 90%; overflow: auto;">
             <h3 id="modalTitle" style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem; color: #023E8A;">Vehicle Images</h3>
@@ -452,115 +369,131 @@
         </div>
     </div>
 
-    <!-- JavaScript -->
     <script>
-        // Tab Switching
         function openTab(tabId) {
             const tabContents = document.querySelectorAll('.tab-content');
             const tabButtons = document.querySelectorAll('.tab-button');
-
-            tabContents.forEach(tab => {
-                tab.style.display = 'none';
-                tab.classList.remove('active');
-            });
+            tabContents.forEach(tab => { tab.style.display = 'none'; tab.classList.remove('active'); });
             tabButtons.forEach(button => button.classList.remove('active'));
-
             const selectedTab = document.getElementById(tabId);
             if (selectedTab) {
                 selectedTab.style.display = 'block';
                 selectedTab.classList.add('active');
                 document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
-            } else {
-                console.error('Tab not found:', tabId);
             }
         }
 
-        // Sub-category fetching
-        document.getElementById('vehicle_category').addEventListener('change', function() {
-            const catId = this.value;
-            const subCatSelect = document.getElementById('vehicle_sub_category');
-            subCatSelect.innerHTML = '<option value="" disabled selected>Loading...</option>';
-
-            if (!catId) {
-                subCatSelect.innerHTML = '<option value="" disabled selected>Select Sub-Category</option>';
-                return;
+        function populateSelect(selectId, data, selectedValue = null) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="" disabled selected>Loading...</option>';
+            if (data.length === 0) {
+                select.innerHTML = '<option value="" disabled selected>No options available</option>';
+            } else {
+                select.innerHTML = '<option value="" disabled selected>Select</option>';
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = item.text;
+                    select.appendChild(option);
+                });
+                if (selectedValue) select.value = selectedValue;
             }
+        }
 
-            fetch(`/get-sub-categories/${catId}`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            })
-            .then(data => {
-                subCatSelect.innerHTML = '<option value="" disabled selected>Select Sub-Category</option>';
-                if (data.length === 0) {
-                    subCatSelect.innerHTML = '<option value="" disabled selected>No sub-categories available</option>';
-                } else {
-                    data.forEach(subCat => {
-                        const option = document.createElement('option');
-                        option.value = subCat.id;
-                        option.textContent = subCat.sub_category;
-                        subCatSelect.appendChild(option);
-                    });
-                }
-            })
-            .catch(error => {
+        async function populateDropdowns() {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            try {
+                const vtRes = await fetch('/get-vehicle-types', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
+                populateSelect('vehicle_type', await vtRes.json(), '{{ $vehicle->vehicle_type ?? '' }}');
+
+                const atRes = await fetch('/get-allocation-types', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
+                populateSelect('vehicle_allocation_type', await atRes.json(), '{{ $vehicle->vehicle_allocation_type ?? '' }}');
+
+                const makeRes = await fetch('/get-makes', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
+                populateSelect('vehicle_make', await makeRes.json(), '{{ $vehicle->vehicle_make ?? '' }}');
+
+                const catRes = await fetch('/get-categories', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
+                populateSelect('vehicle_category', await catRes.json(), '{{ $vehicle->vehicle_category ?? '' }}');
+
+                const colorRes = await fetch('/get-colors', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
+                populateSelect('color', await colorRes.json(), '{{ $vehicle->color ?? '' }}');
+
+                const statusRes = await fetch('/get-statuses', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
+                populateSelect('status', await statusRes.json(), '{{ $vehicle->status ?? '' }}');
+
+                const locRes = await fetch('/get-locations', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
+                const locData = await locRes.json();
+                populateSelect('t5_location', locData, '{{ $vehicle->t5_location ?? '' }}');
+                populateSelect('part_x_location', locData, '{{ $vehicle->part_x_location ?? '' }}');
+
+                const tireRes = await fetch('/get-tire-sizes', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
+                const tireData = await tireRes.json();
+                populateSelect('front_tire_size', tireData, '{{ $vehicle->front_tire_size ?? '' }}');
+                populateSelect('rear_tire_size', tireData, '{{ $vehicle->rear_tire_size ?? '' }}');
+
+                const ecRes = await fetch('/get-engine-capacities', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
+                populateSelect('engine_capacity', await ecRes.json(), '{{ $vehicle->engine_capacity ?? '' }}');
+
+                const ftRes = await fetch('/get-fuel-types', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
+                populateSelect('fuel_type', await ftRes.json(), '{{ $vehicle->fuel_type ?? '' }}');
+
+                const wsRes = await fetch('/get-workshops', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
+                const wsData = await wsRes.json();
+                populateSelect('workshop', wsData, '{{ $vehicle->workshop ?? '' }}');
+                populateSelect('admitted_workshop', wsData, '{{ $vehicle->admitted_workshop ?? '' }}');
+
+                const driverRes = await fetch('/get-drivers', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
+                populateSelect('driver', await driverRes.json(), '{{ $vehicle->driver ?? '' }}');
+
+                const faultRes = await fetch('/get-faults', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
+                populateSelect('fault', await faultRes.json(), '{{ $vehicle->fault ?? '' }}');
+
+                if ('{{ $vehicle->vehicle_make ?? '' }}') fetchModels('{{ $vehicle->vehicle_make ?? '' }}', '{{ $vehicle->vehicle_model ?? '' }}');
+                if ('{{ $vehicle->vehicle_category ?? '' }}') fetchSubCategories('{{ $vehicle->vehicle_category ?? '' }}', '{{ $vehicle->vehicle_sub_category ?? '' }}');
+            } catch (error) {
+                console.error('Error populating dropdowns:', error);
+            }
+        }
+
+        async function fetchModels(makeId, selectedValue = null) {
+            const select = document.getElementById('vehicle_model');
+            select.innerHTML = '<option value="" disabled selected>Loading...</option>';
+            if (!makeId) return;
+            try {
+                const res = await fetch(`/get-models/${makeId}`, { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') } });
+                populateSelect('vehicle_model', await res.json(), selectedValue);
+            } catch (error) {
+                console.error('Error fetching models:', error);
+                select.innerHTML = '<option value="" disabled selected>Error loading models</option>';
+            }
+        }
+
+        async function fetchSubCategories(catId, selectedValue = null) {
+            const select = document.getElementById('vehicle_sub_category');
+            select.innerHTML = '<option value="" disabled selected>Loading...</option>';
+            if (!catId) return;
+            try {
+                const res = await fetch(`/get-sub-categories/${catId}`, { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') } });
+                populateSelect('vehicle_sub_category', await res.json(), selectedValue);
+            } catch (error) {
                 console.error('Error fetching sub-categories:', error);
-                subCatSelect.innerHTML = '<option value="" disabled selected>Error loading sub-categories</option>';
-            });
-        });
+                select.innerHTML = '<option value="" disabled selected>Error loading sub-categories</option>';
+            }
+        }
 
-        // Pre-fill form with vehicle data if available
-        document.addEventListener('DOMContentLoaded', function() {
-            @if(isset($vehicle))
-                document.getElementById('vehicle_type').value = '{{ $vehicle->vehicle_type ?? '' }}';
-                document.getElementById('vehicle_allocation_type').value = '{{ $vehicle->vehicle_allocation_type ?? '' }}';
-                document.getElementById('vehicle_make').value = '{{ $vehicle->vehicle_make ?? '' }}';
-                document.getElementById('vehicle_model').value = '{{ $vehicle->vehicle_model ?? '' }}';
-                document.getElementById('vehicle_category').value = '{{ $vehicle->vehicle_category ?? '' }}';
-                document.getElementById('vehicle_sub_category').value = '{{ $vehicle->vehicle_sub_category ?? '' }}';
-                document.getElementById('color').value = '{{ $vehicle->color ?? '' }}';
-                document.getElementById('status').value = '{{ $vehicle->status ?? '' }}';
-                document.getElementById('t5_location').value = '{{ $vehicle->t5_location ?? '' }}';
-                document.getElementById('front_tire_size').value = '{{ $vehicle->front_tire_size ?? '' }}';
-                document.getElementById('rear_tire_size').value = '{{ $vehicle->rear_tire_size ?? '' }}';
-                document.getElementById('engine_capacity').value = '{{ $vehicle->engine_capacity ?? '' }}';
-                document.getElementById('fuel_type').value = '{{ $vehicle->fuel_type ?? '' }}';
-                document.getElementById('part_x_location').value = '{{ $vehicle->part_x_location ?? '' }}';
-                document.getElementById('workshop').value = '{{ $vehicle->workshop ?? '' }}';
-                document.getElementById('admitted_workshop').value = '{{ $vehicle->admitted_workshop ?? '' }}';
-                document.getElementById('driver').value = '{{ $vehicle->driver ?? '' }}';
-                document.getElementById('fault').value = '{{ $vehicle->fault ?? '' }}';
-            @endif
-        });
+        document.getElementById('vehicle_make').addEventListener('change', function() { fetchModels(this.value); });
+        document.getElementById('vehicle_category').addEventListener('change', function() { fetchSubCategories(this.value); });
 
-        // Image Modal
+        document.addEventListener('DOMContentLoaded', populateDropdowns);
+
         function openImageModal(vehicleArmyNo, images) {
             const modal = document.getElementById('imageModal');
             const title = document.getElementById('modalTitle');
             const container = document.getElementById('imageContainer');
-
             title.textContent = `Vehicle Images for ${vehicleArmyNo}`;
             container.innerHTML = '';
-
-            if (images.length === 0) {
-                container.innerHTML = '<p>No images available.</p>';
-            } else {
-                images.forEach(src => {
-                    const img = document.createElement('img');
-                    img.src = src;
-                    img.style.maxWidth = '200px';
-                    img.style.maxHeight = '200px';
-                    img.style.borderRadius = '5px';
-                    container.appendChild(img);
-                });
-            }
-
+            if (images.length === 0) container.innerHTML = '<p>No images available.</p>';
+            else images.forEach(src => { const img = document.createElement('img'); img.src = src; img.style.maxWidth = '200px'; img.style.maxHeight = '200px'; img.style.borderRadius = '5px'; container.appendChild(img); });
             modal.style.display = 'flex';
         }
 
@@ -568,53 +501,37 @@
             document.getElementById('imageModal').style.display = 'none';
         }
 
-        // Table Sorting + Pagination
         const rowsPerPage = 5;
         let currentPage = 1;
         let sortAsc = true;
-        let tableRows = Array.from(document.querySelectorAll("#vehicleTable tbody tr"));
+        let tableRows = [];
 
         function renderTable() {
-            const search = document.getElementById("searchInput").value.toLowerCase();
-            const filtered = tableRows.filter(row =>
-                row.cells[0].innerText.toLowerCase().includes(search) ||
-                row.cells[1].innerText.toLowerCase().includes(search)
-            );
-
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = tableRows.filter(row => row.cells[0].innerText.toLowerCase().includes(search) || row.cells[1].innerText.toLowerCase().includes(search));
             const start = (currentPage - 1) * rowsPerPage;
             const paginated = filtered.slice(start, start + rowsPerPage);
-
-            const tbody = document.getElementById("tableBody");
-            tbody.innerHTML = "";
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
             paginated.forEach(row => tbody.appendChild(row.cloneNode(true)));
-
             renderPagination(filtered.length);
         }
 
         function renderPagination(totalRows) {
             const totalPages = Math.ceil(totalRows / rowsPerPage);
-            const container = document.getElementById("pagination");
-            container.innerHTML = "";
-
+            const container = document.getElementById('pagination');
+            container.innerHTML = '';
             for (let i = 1; i <= totalPages; i++) {
-                const btn = document.createElement("button");
+                const btn = document.createElement('button');
                 btn.textContent = i;
-                btn.style = "margin: 0 4px; padding: 5px 10px; background: #00B4D8; color: white; border: none; border-radius: 3px; cursor: pointer;";
-                if (i === currentPage) {
-                    btn.style.backgroundColor = "#023E8A";
-                }
-                btn.addEventListener("click", () => {
-                    currentPage = i;
-                    renderTable();
-                });
+                btn.style = 'margin: 0 4px; padding: 5px 10px; background: #00B4D8; color: white; border: none; border-radius: 3px; cursor: pointer;';
+                if (i === currentPage) btn.style.backgroundColor = '#023E8A';
+                btn.addEventListener('click', () => { currentPage = i; renderTable(); });
                 container.appendChild(btn);
             }
         }
 
-        document.getElementById("searchInput").addEventListener("input", () => {
-            currentPage = 1;
-            renderTable();
-        });
+        document.getElementById('searchInput').addEventListener('input', () => { currentPage = 1; renderTable(); });
 
         function sortTable(colIndex) {
             sortAsc = !sortAsc;
@@ -626,9 +543,27 @@
             renderTable();
         }
 
-        // Initial Render
-        renderTable();
+        // Fetch and populate table (placeholder, replace with actual data fetch)
+        async function loadVehicles() {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            try {
+                const res = await fetch('/vehicles', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } }); // Update endpoint
+                tableRows = (await res.json()).map(vehicle => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td style="border: 1px solid #90E0EF; padding: 8px;">${vehicle.vehicle_army_no}</td>
+                                    <td style="border: 1px solid #90E0EF; padding: 8px;">${vehicle.vehicle_type}</td>
+                                    <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">
+                                        <a href="{{ route('vehicles.edit', ':serial') }}".replace(':serial', vehicle.serial_number) style="color: #00B4D8; text-decoration: none;">Edit</a>
+                                    </td>`;
+                    return row;
+                });
+                renderTable();
+            } catch (error) {
+                console.error('Error loading vehicles:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadVehicles);
     </script>
 </div>
 @endsection
-```
