@@ -386,23 +386,26 @@
         function populateSelect(selectId, data, selectedValue = null) {
             const select = document.getElementById(selectId);
             select.innerHTML = '<option value="" disabled selected>Loading...</option>';
-            if (data.length === 0) {
+            if (!data || data.length === 0) {
                 select.innerHTML = '<option value="" disabled selected>No options available</option>';
+                console.log(`No data for ${selectId}:`, data);
             } else {
                 select.innerHTML = '<option value="" disabled selected>Select</option>';
                 data.forEach(item => {
                     const option = document.createElement('option');
                     option.value = item.id;
-                    option.textContent = item.text;
+                    option.textContent = item.text || item.rear_text || item[Object.keys(item).find(k => k !== 'id')] || 'N/A';
                     select.appendChild(option);
                 });
                 if (selectedValue) select.value = selectedValue;
+                console.log(`Populated ${selectId} with data:`, data);
             }
         }
 
         async function populateDropdowns() {
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             try {
+                // Independent dropdowns
                 const vtRes = await fetch('/get-vehicle-types', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
                 populateSelect('vehicle_type', await vtRes.json(), '{{ $vehicle->vehicle_type ?? '' }}');
 
@@ -428,8 +431,8 @@
 
                 const tireRes = await fetch('/get-tire-sizes', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
                 const tireData = await tireRes.json();
-                populateSelect('front_tire_size', tireData, '{{ $vehicle->front_tire_size ?? '' }}');
-                populateSelect('rear_tire_size', tireData, '{{ $vehicle->rear_tire_size ?? '' }}');
+                populateSelect('front_tire_size', tireData.map(item => ({ id: item.id, text: item.text })), '{{ $vehicle->front_tire_size ?? '' }}');
+                populateSelect('rear_tire_size', tireData.map(item => ({ id: item.id, text: item.rear_text || item.text })), '{{ $vehicle->rear_tire_size ?? '' }}');
 
                 const ecRes = await fetch('/get-engine-capacities', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
                 populateSelect('engine_capacity', await ecRes.json(), '{{ $vehicle->engine_capacity ?? '' }}');
@@ -438,9 +441,8 @@
                 populateSelect('fuel_type', await ftRes.json(), '{{ $vehicle->fuel_type ?? '' }}');
 
                 const wsRes = await fetch('/get-workshops', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
-                const wsData = await wsRes.json();
-                populateSelect('workshop', wsData, '{{ $vehicle->workshop ?? '' }}');
-                populateSelect('admitted_workshop', wsData, '{{ $vehicle->admitted_workshop ?? '' }}');
+                populateSelect('workshop', await wsRes.json(), '{{ $vehicle->workshop ?? '' }}');
+                populateSelect('admitted_workshop', await wsRes.json(), '{{ $vehicle->admitted_workshop ?? '' }}');
 
                 const driverRes = await fetch('/get-drivers', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
                 populateSelect('driver', await driverRes.json(), '{{ $vehicle->driver ?? '' }}');
@@ -448,8 +450,12 @@
                 const faultRes = await fetch('/get-faults', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
                 populateSelect('fault', await faultRes.json(), '{{ $vehicle->fault ?? '' }}');
 
-                if ('{{ $vehicle->vehicle_make ?? '' }}') fetchModels('{{ $vehicle->vehicle_make ?? '' }}', '{{ $vehicle->vehicle_model ?? '' }}');
-                if ('{{ $vehicle->vehicle_category ?? '' }}') fetchSubCategories('{{ $vehicle->vehicle_category ?? '' }}', '{{ $vehicle->vehicle_sub_category ?? '' }}');
+                // Trigger dependent dropdowns with initial values
+                const initialMakeId = '{{ $vehicle->vehicle_make ?? '' }}';
+                if (initialMakeId) fetchModels(initialMakeId, '{{ $vehicle->vehicle_model ?? '' }}');
+
+                const initialCatId = '{{ $vehicle->vehicle_category ?? '' }}';
+                if (initialCatId) fetchSubCategories(initialCatId, '{{ $vehicle->vehicle_sub_category ?? '' }}');
             } catch (error) {
                 console.error('Error populating dropdowns:', error);
             }
@@ -458,10 +464,16 @@
         async function fetchModels(makeId, selectedValue = null) {
             const select = document.getElementById('vehicle_model');
             select.innerHTML = '<option value="" disabled selected>Loading...</option>';
-            if (!makeId) return;
+            if (!makeId) {
+                select.innerHTML = '<option value="" disabled selected>Select a Make first</option>';
+                return;
+            }
             try {
                 const res = await fetch(`/get-models/${makeId}`, { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') } });
-                populateSelect('vehicle_model', await res.json(), selectedValue);
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                const data = await res.json();
+                console.log(`Fetched Models for Make ID ${makeId}:`, data);
+                populateSelect('vehicle_model', data, selectedValue);
             } catch (error) {
                 console.error('Error fetching models:', error);
                 select.innerHTML = '<option value="" disabled selected>Error loading models</option>';
@@ -471,10 +483,16 @@
         async function fetchSubCategories(catId, selectedValue = null) {
             const select = document.getElementById('vehicle_sub_category');
             select.innerHTML = '<option value="" disabled selected>Loading...</option>';
-            if (!catId) return;
+            if (!catId) {
+                select.innerHTML = '<option value="" disabled selected>Select a Category first</option>';
+                return;
+            }
             try {
                 const res = await fetch(`/get-sub-categories/${catId}`, { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') } });
-                populateSelect('vehicle_sub_category', await res.json(), selectedValue);
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                const data = await res.json();
+                console.log(`Fetched SubCategories for Category ID ${catId}:`, data);
+                populateSelect('vehicle_sub_category', data, selectedValue);
             } catch (error) {
                 console.error('Error fetching sub-categories:', error);
                 select.innerHTML = '<option value="" disabled selected>Error loading sub-categories</option>';
@@ -543,11 +561,10 @@
             renderTable();
         }
 
-        // Fetch and populate table (placeholder, replace with actual data fetch)
         async function loadVehicles() {
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             try {
-                const res = await fetch('/vehicles', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } }); // Update endpoint
+                const res = await fetch('/vehicles', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
                 tableRows = (await res.json()).map(vehicle => {
                     const row = document.createElement('tr');
                     row.innerHTML = `<td style="border: 1px solid #90E0EF; padding: 8px;">${vehicle.vehicle_army_no}</td>

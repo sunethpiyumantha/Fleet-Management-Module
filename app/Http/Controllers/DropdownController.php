@@ -4,18 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\VehicleType;
-use App\Models\AllocationType;
-use App\Models\Make;
-use App\Models\Model;
-use App\Models\Category;
-use App\Models\SubCategory;
-use App\Models\Color;
-use App\Models\Status;
-use App\Models\Location;
-use App\Models\TireSize;
-use App\Models\EngineCapacity;
+use App\Models\VehicleAllocationType;
+use App\Models\VehicleMake;
+use App\Models\VehicleModel;
+use App\Models\VehicleCategory;
+use App\Models\VehicleSubCategory;
+use App\Models\VehicleColor;
+use App\Models\VehicleTireSize;
+use App\Models\VehicleEngineCapacity;
 use App\Models\FuelType;
 use App\Models\Workshop;
+use App\Models\Status;
+use App\Models\Location;
 use App\Models\Driver;
 use App\Models\Fault;
 
@@ -23,76 +23,106 @@ class DropdownController extends Controller
 {
     public function getVehicleTypes()
     {
-        return VehicleType::all(['id', 'type as text']);
+        $data = VehicleType::whereNull('deleted_at')->get(['id', 'type as text']);
+        \Log::info('Vehicle Types Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        return $data;
     }
 
     public function getAllocationTypes()
     {
-        return AllocationType::all(['id', 'name as text']);
+        $data = VehicleAllocationType::whereNull('deleted_at')->get(['id', 'type as text']);
+        \Log::info('Allocation Types Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        return $data;
     }
 
     public function getMakes()
     {
-        return Make::all(['id', 'name as text']);
+        $data = VehicleMake::whereNull('deleted_at')->get(['id', 'make as text']);
+        \Log::info('Makes Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        return $data;
     }
 
     public function getModels($makeId)
     {
-        return Model::where('make_id', $makeId)->get(['id', 'name as text']);
+        $data = VehicleModel::where('make_id', $makeId)->whereNull('deleted_at')->get(['id', 'model as text']);
+        \Log::info('Models Query Result for Make ID ' . $makeId . ': Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        return $data;
     }
 
     public function getCategories()
     {
-        return Category::all(['id', 'category as text']);
+        $data = VehicleCategory::whereNull('deleted_at')->get(['id', 'category as text']);
+        \Log::info('Categories Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        return $data;
     }
 
     public function getSubCategories($categoryId)
     {
-        return SubCategory::where('category_id', $categoryId)->get(['id', 'sub_category as text']);
+        $data = VehicleSubCategory::where('cat_id', $categoryId)->whereNull('deleted_at')->get(['id', 'sub_category as text']);
+        \Log::info('SubCategories Query Result for Category ID ' . $categoryId . ': Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        return $data;
     }
 
     public function getColors()
     {
-        return Color::all(['id', 'name as text']);
-    }
-
-    public function getStatuses()
-    {
-        return Status::all(['id', 'name as text']);
-    }
-
-    public function getLocations()
-    {
-        return Location::all(['id', 'name as text']);
+        $data = VehicleColor::whereNull('deleted_at')->get(['id', 'color as text']);
+        \Log::info('Colors Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        return $data;
     }
 
     public function getTireSizes()
     {
-        return TireSize::all(['id', 'name as text']);
+        $data = VehicleTireSize::whereNull('deleted_at')->get(['id', 'front_tire_size as text', 'rear_tire_size as rear_text']);
+        \Log::info('Tire Sizes Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        return $data;
     }
 
     public function getEngineCapacities()
     {
-        return EngineCapacity::all(['id', 'name as text']);
+        $data = VehicleEngineCapacity::whereNull('deleted_at')->get(['id', 'engine_capacity as text']);
+        \Log::info('Engine Capacities Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        return $data;
     }
 
     public function getFuelTypes()
     {
-        return FuelType::all(['id', 'name as text']);
+        $data = FuelType::whereNull('deleted_at')->get(['id', 'fuel_type as text']);
+        \Log::info('Fuel Types Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        return $data;
     }
 
     public function getWorkshops()
     {
-        return Workshop::all(['id', 'name as text']);
+        $data = Workshop::whereNull('deleted_at')->get(['id', 'workshop_type as text']);
+        \Log::info('Workshops Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        return $data;
+    }
+
+    public function getStatuses()
+    {
+        $data = Status::whereNull('deleted_at')->get(['id', 'name as text']);
+        \Log::info('Statuses Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        return $data;
+    }
+
+    public function getLocations()
+    {
+        $data = Location::whereNull('deleted_at')->get(['id', 'name as text']);
+        \Log::info('Locations Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        return $data;
     }
 
     public function getDrivers()
     {
-        return Driver::all(['id', 'name as text']);
+        $data = Driver::whereNull('deleted_at')->get(['id', 'name as text']);
+        \Log::info('Drivers Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        return $data;
     }
 
     public function getFaults()
     {
-        return Fault::all(['id', 'name as text']);
+        $data = Fault::whereNull('deleted_at')->get(['id', 'name as text']);
+        \Log::info('Faults Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        return $data;
     }
 }

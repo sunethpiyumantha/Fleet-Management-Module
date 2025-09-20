@@ -176,25 +176,32 @@ Route::get('/all-vehicle-info', [VehicleRequestController::class, 'allVehicleInf
 
 });
 
+
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\DropdownController;
 
-Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');
-Route::get('/vehicles/{serialNumber}/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
-Route::post('/vehicles/store', [VehicleController::class, 'store'])->name('vehicles.store');
+// Vehicle management routes
+Route::middleware(['web'])->group(function () {
+    Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');
+    Route::get('/vehicles/{serialNumber}/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
+    Route::post('/vehicles/store', [VehicleController::class, 'store'])->name('vehicles.store');
+});
 
-Route::get('/get-vehicle-types', [DropdownController::class, 'getVehicleTypes']);
-Route::get('/get-allocation-types', [DropdownController::class, 'getAllocationTypes']);
-Route::get('/get-makes', [DropdownController::class, 'getMakes']);
-Route::get('/get-models/{makeId}', [DropdownController::class, 'getModels']);
-Route::get('/get-categories', [DropdownController::class, 'getCategories']);
-Route::get('/get-sub-categories/{categoryId}', [DropdownController::class, 'getSubCategories']);
-Route::get('/get-colors', [DropdownController::class, 'getColors']);
-Route::get('/get-statuses', [DropdownController::class, 'getStatuses']);
-Route::get('/get-locations', [DropdownController::class, 'getLocations']);
-Route::get('/get-tire-sizes', [DropdownController::class, 'getTireSizes']);
-Route::get('/get-engine-capacities', [DropdownController::class, 'getEngineCapacities']);
-Route::get('/get-fuel-types', [DropdownController::class, 'getFuelTypes']);
-Route::get('/get-workshops', [DropdownController::class, 'getWorkshops']);
-Route::get('/get-drivers', [DropdownController::class, 'getDrivers']);
-Route::get('/get-faults', [DropdownController::class, 'getFaults']);
+// Dropdown data API routes
+Route::prefix('api')->middleware(['web'])->group(function () {
+    Route::get('/get-vehicle-types', [DropdownController::class, 'getVehicleTypes'])->name('dropdown.vehicle-types');
+    Route::get('/get-allocation-types', [DropdownController::class, 'getAllocationTypes'])->name('dropdown.allocation-types');
+    Route::get('/get-makes', [DropdownController::class, 'getMakes'])->name('dropdown.makes');
+    Route::get('/get-models/{makeId}', [DropdownController::class, 'getModels'])->name('dropdown.models');
+    Route::get('/get-categories', [DropdownController::class, 'getCategories'])->name('dropdown.categories');
+    Route::get('/get-sub-categories/{categoryId}', [DropdownController::class, 'getSubCategories'])->name('dropdown.sub-categories');
+    Route::get('/get-colors', [DropdownController::class, 'getColors'])->name('dropdown.colors');
+    Route::get('/get-statuses', [DropdownController::class, 'getStatuses'])->name('dropdown.statuses');
+    Route::get('/get-locations', [DropdownController::class, 'getLocations'])->name('dropdown.locations');
+    Route::get('/get-tire-sizes', [DropdownController::class, 'getTireSizes'])->name('dropdown.tire-sizes');
+    Route::get('/get-engine-capacities', [DropdownController::class, 'getEngineCapacities'])->name('dropdown.engine-capacities');
+    Route::get('/get-fuel-types', [DropdownController::class, 'getFuelTypes'])->name('dropdown.fuel-types');
+    Route::get('/get-workshops', [DropdownController::class, 'getWorkshops'])->name('dropdown.workshops');
+    Route::get('/get-drivers', [DropdownController::class, 'getDrivers'])->name('dropdown.drivers');
+    Route::get('/get-faults', [DropdownController::class, 'getFaults'])->name('dropdown.faults');
+});
