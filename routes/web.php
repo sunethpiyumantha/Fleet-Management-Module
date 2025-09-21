@@ -175,3 +175,31 @@ Route::get('/vehicle-basic-info/{serial_number}', [VehicleRequestController::cla
 Route::get('/all-vehicle-info', [VehicleRequestController::class, 'allVehicleInfo'])->name('vehicle.all.info');
 
 });
+
+
+use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\DropdownController;
+
+// Vehicle management routes
+Route::middleware(['web'])->group(function () {
+    Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');
+    Route::get('/vehicles/{serialNumber}/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
+    Route::post('/vehicles/store', [VehicleController::class, 'store'])->name('vehicles.store');
+});
+
+// Dropdown data API routes
+Route::get('/get-vehicle-types', [DropdownController::class, 'getVehicleTypes']);
+Route::get('/get-allocation-types', [DropdownController::class, 'getAllocationTypes']);
+Route::get('/get-makes', [DropdownController::class, 'getMakes']);
+Route::get('/get-models/{makeId}', [DropdownController::class, 'getModels']);
+Route::get('/get-categories', [DropdownController::class, 'getCategories']);
+Route::get('/get-sub-categories/{categoryId}', [DropdownController::class, 'getSubCategories']);
+Route::get('/get-colors', [DropdownController::class, 'getColors']);
+Route::get('/get-tire-sizes', [DropdownController::class, 'getTireSizes']);
+Route::get('/get-engine-capacities', [DropdownController::class, 'getEngineCapacities']);
+Route::get('/get-fuel-types', [DropdownController::class, 'getFuelTypes']);
+Route::get('/get-workshops', [DropdownController::class, 'getWorkshops']);
+Route::get('/get-statuses', [DropdownController::class, 'getStatuses']);
+Route::get('/get-locations', [DropdownController::class, 'getLocations']);
+Route::get('/get-drivers', [DropdownController::class, 'getDrivers']);
+Route::get('/get-faults', [DropdownController::class, 'getFaults']);
