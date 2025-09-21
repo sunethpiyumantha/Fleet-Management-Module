@@ -385,10 +385,14 @@
 
         function populateSelect(selectId, data, selectedValue = null) {
             const select = document.getElementById(selectId);
+            if (!select) {
+                console.error(`Element with ID ${selectId} not found`);
+                return;
+            }
             select.innerHTML = '<option value="" disabled selected>Loading...</option>';
             if (!data || data.length === 0) {
                 select.innerHTML = '<option value="" disabled selected>No options available</option>';
-                console.log(`No data for ${selectId}:`, data);
+                console.warn(`No data for ${selectId}:`, data);
             } else {
                 select.innerHTML = '<option value="" disabled selected>Select</option>';
                 data.forEach(item => {
@@ -397,112 +401,124 @@
                     option.textContent = item.text || item.rear_text || item[Object.keys(item).find(k => k !== 'id')] || 'N/A';
                     select.appendChild(option);
                 });
-                if (selectedValue) select.value = selectedValue;
-                console.log(`Populated ${selectId} with data:`, data);
+                if (selectedValue) {
+                    select.value = selectedValue;
+                    if (select.value !== selectedValue) {
+                        console.warn(`Selected value ${selectedValue} not found in ${selectId} options`);
+                    }
+                }
+                console.log(`Populated ${selectId} with ${data.length} options:`, data, 'Selected:', selectedValue);
             }
         }
 
-        async function populateDropdowns() {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        async function fetchData(url) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if (!csrfToken) {
+                console.error('CSRF token not found');
+                return [];
+            }
             try {
-                // Independent dropdowns
-                const vtRes = await fetch('/get-vehicle-types', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
-                populateSelect('vehicle_type', await vtRes.json(), '{{ $vehicle->vehicle_type ?? '' }}');
-
-                const atRes = await fetch('/get-allocation-types', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
-                populateSelect('vehicle_allocation_type', await atRes.json(), '{{ $vehicle->vehicle_allocation_type ?? '' }}');
-
-                const makeRes = await fetch('/get-makes', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
-                populateSelect('vehicle_make', await makeRes.json(), '{{ $vehicle->vehicle_make ?? '' }}');
-
-                const catRes = await fetch('/get-categories', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
-                populateSelect('vehicle_category', await catRes.json(), '{{ $vehicle->vehicle_category ?? '' }}');
-
-                const colorRes = await fetch('/get-colors', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
-                populateSelect('color', await colorRes.json(), '{{ $vehicle->color ?? '' }}');
-
-                const statusRes = await fetch('/get-statuses', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
-                populateSelect('status', await statusRes.json(), '{{ $vehicle->status ?? '' }}');
-
-                const locRes = await fetch('/get-locations', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
-                const locData = await locRes.json();
-                populateSelect('t5_location', locData, '{{ $vehicle->t5_location ?? '' }}');
-                populateSelect('part_x_location', locData, '{{ $vehicle->part_x_location ?? '' }}');
-
-                const tireRes = await fetch('/get-tire-sizes', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
-                const tireData = await tireRes.json();
-                populateSelect('front_tire_size', tireData.map(item => ({ id: item.id, text: item.text })), '{{ $vehicle->front_tire_size ?? '' }}');
-                populateSelect('rear_tire_size', tireData.map(item => ({ id: item.id, text: item.rear_text || item.text })), '{{ $vehicle->rear_tire_size ?? '' }}');
-
-                const ecRes = await fetch('/get-engine-capacities', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
-                populateSelect('engine_capacity', await ecRes.json(), '{{ $vehicle->engine_capacity ?? '' }}');
-
-                const ftRes = await fetch('/get-fuel-types', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
-                populateSelect('fuel_type', await ftRes.json(), '{{ $vehicle->fuel_type ?? '' }}');
-
-                const wsRes = await fetch('/get-workshops', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
-                populateSelect('workshop', await wsRes.json(), '{{ $vehicle->workshop ?? '' }}');
-                populateSelect('admitted_workshop', await wsRes.json(), '{{ $vehicle->admitted_workshop ?? '' }}');
-
-                const driverRes = await fetch('/get-drivers', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
-                populateSelect('driver', await driverRes.json(), '{{ $vehicle->driver ?? '' }}');
-
-                const faultRes = await fetch('/get-faults', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
-                populateSelect('fault', await faultRes.json(), '{{ $vehicle->fault ?? '' }}');
-
-                // Trigger dependent dropdowns with initial values
-                const initialMakeId = '{{ $vehicle->vehicle_make ?? '' }}';
-                if (initialMakeId) fetchModels(initialMakeId, '{{ $vehicle->vehicle_model ?? '' }}');
-
-                const initialCatId = '{{ $vehicle->vehicle_category ?? '' }}';
-                if (initialCatId) fetchSubCategories(initialCatId, '{{ $vehicle->vehicle_sub_category ?? '' }}');
+                const response = await fetch(url, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log(`Fetched data from ${url}:`, data);
+                return data;
             } catch (error) {
-                console.error('Error populating dropdowns:', error);
+                console.error(`Error fetching ${url}:`, error);
+                return [];
             }
         }
 
         async function fetchModels(makeId, selectedValue = null) {
             const select = document.getElementById('vehicle_model');
+            if (!select) {
+                console.error('Element with ID vehicle_model not found');
+                return;
+            }
             select.innerHTML = '<option value="" disabled selected>Loading...</option>';
             if (!makeId) {
                 select.innerHTML = '<option value="" disabled selected>Select a Make first</option>';
                 return;
             }
-            try {
-                const res = await fetch(`/get-models/${makeId}`, { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') } });
-                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-                const data = await res.json();
-                console.log(`Fetched Models for Make ID ${makeId}:`, data);
-                populateSelect('vehicle_model', data, selectedValue);
-            } catch (error) {
-                console.error('Error fetching models:', error);
-                select.innerHTML = '<option value="" disabled selected>Error loading models</option>';
-            }
+            const data = await fetchData(`/get-models/${makeId}`);
+            populateSelect('vehicle_model', data, selectedValue);
         }
 
         async function fetchSubCategories(catId, selectedValue = null) {
             const select = document.getElementById('vehicle_sub_category');
+            if (!select) {
+                console.error('Element with ID vehicle_sub_category not found');
+                return;
+            }
             select.innerHTML = '<option value="" disabled selected>Loading...</option>';
             if (!catId) {
                 select.innerHTML = '<option value="" disabled selected>Select a Category first</option>';
                 return;
             }
+            const data = await fetchData(`/get-sub-categories/${catId}`);
+            populateSelect('vehicle_sub_category', data, selectedValue);
+        }
+
+        async function populateDropdowns() {
+            console.log('Starting populateDropdowns');
             try {
-                const res = await fetch(`/get-sub-categories/${catId}`, { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') } });
-                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-                const data = await res.json();
-                console.log(`Fetched SubCategories for Category ID ${catId}:`, data);
-                populateSelect('vehicle_sub_category', data, selectedValue);
+                // Independent dropdowns
+                populateSelect('vehicle_type', await fetchData('/get-vehicle-types'), '{{ $vehicle->vehicle_type ?? '' }}');
+                populateSelect('vehicle_allocation_type', await fetchData('/get-allocation-types'), '{{ $vehicle->vehicle_allocation_type ?? '' }}');
+                populateSelect('vehicle_make', await fetchData('/get-makes'), '{{ $vehicle->vehicle_make ?? '' }}');
+                populateSelect('vehicle_category', await fetchData('/get-categories'), '{{ $vehicle->vehicle_category ?? '' }}');
+                populateSelect('color', await fetchData('/get-colors'), '{{ $vehicle->color ?? '' }}');
+                populateSelect('status', await fetchData('/get-statuses'), '{{ $vehicle->status ?? '' }}');
+                const locData = await fetchData('/get-locations');
+                populateSelect('t5_location', locData, '{{ $vehicle->t5_location ?? '' }}');
+                populateSelect('part_x_location', locData, '{{ $vehicle->part_x_location ?? '' }}');
+                const tireData = await fetchData('/get-tire-sizes');
+                populateSelect('front_tire_size', tireData.map(item => ({ id: item.id, text: item.text })), '{{ $vehicle->front_tire_size ?? '' }}');
+                populateSelect('rear_tire_size', tireData.map(item => ({ id: item.id, text: item.rear_text || item.text })), '{{ $vehicle->rear_tire_size ?? '' }}');
+                populateSelect('engine_capacity', await fetchData('/get-engine-capacities'), '{{ $vehicle->engine_capacity ?? '' }}');
+                populateSelect('fuel_type', await fetchData('/get-fuel-types'), '{{ $vehicle->fuel_type ?? '' }}');
+                const wsData = await fetchData('/get-workshops');
+                populateSelect('workshop', wsData, '{{ $vehicle->workshop ?? '' }}');
+                populateSelect('admitted_workshop', wsData, '{{ $vehicle->admitted_workshop ?? '' }}');
+                populateSelect('driver', await fetchData('/get-drivers'), '{{ $vehicle->driver ?? '' }}');
+                populateSelect('fault', await fetchData('/get-faults'), '{{ $vehicle->fault ?? '' }}');
+
+                // Trigger dependent dropdowns
+                const initialMakeId = '{{ $vehicle->vehicle_make ?? '' }}';
+                if (initialMakeId) {
+                    console.log('Fetching models for make:', initialMakeId);
+                    await fetchModels(initialMakeId, '{{ $vehicle->vehicle_model ?? '' }}');
+                }
+                const initialCatId = '{{ $vehicle->vehicle_category ?? '' }}';
+                if (initialCatId) {
+                    console.log('Fetching sub-categories for category:', initialCatId);
+                    await fetchSubCategories(initialCatId, '{{ $vehicle->vehicle_sub_category ?? '' }}');
+                }
             } catch (error) {
-                console.error('Error fetching sub-categories:', error);
-                select.innerHTML = '<option value="" disabled selected>Error loading sub-categories</option>';
+                console.error('Error in populateDropdowns:', error);
             }
         }
 
-        document.getElementById('vehicle_make').addEventListener('change', function() { fetchModels(this.value); });
-        document.getElementById('vehicle_category').addEventListener('change', function() { fetchSubCategories(this.value); });
+        document.getElementById('vehicle_make')?.addEventListener('change', function() {
+            console.log('Make changed:', this.value);
+            fetchModels(this.value);
+        });
+        document.getElementById('vehicle_category')?.addEventListener('change', function() {
+            console.log('Category changed:', this.value);
+            fetchSubCategories(this.value);
+        });
 
-        document.addEventListener('DOMContentLoaded', populateDropdowns);
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing dropdowns');
+            populateDropdowns();
+        });
 
         function openImageModal(vehicleArmyNo, images) {
             const modal = document.getElementById('imageModal');
@@ -511,7 +527,14 @@
             title.textContent = `Vehicle Images for ${vehicleArmyNo}`;
             container.innerHTML = '';
             if (images.length === 0) container.innerHTML = '<p>No images available.</p>';
-            else images.forEach(src => { const img = document.createElement('img'); img.src = src; img.style.maxWidth = '200px'; img.style.maxHeight = '200px'; img.style.borderRadius = '5px'; container.appendChild(img); });
+            else images.forEach(src => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.style.maxWidth = '200px';
+                img.style.maxHeight = '200px';
+                img.style.borderRadius = '5px';
+                container.appendChild(img);
+            });
             modal.style.display = 'flex';
         }
 
@@ -562,9 +585,16 @@
         }
 
         async function loadVehicles() {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if (!csrfToken) {
+                console.error('CSRF token not found for vehicles');
+                return;
+            }
             try {
-                const res = await fetch('/vehicles', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
+                const res = await fetch('/vehicles', {
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }
+                });
+                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
                 tableRows = (await res.json()).map(vehicle => {
                     const row = document.createElement('tr');
                     row.innerHTML = `<td style="border: 1px solid #90E0EF; padding: 8px;">${vehicle.vehicle_army_no}</td>
@@ -580,7 +610,10 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadVehicles);
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, loading vehicles');
+            loadVehicles();
+        });
     </script>
 </div>
 @endsection
