@@ -147,9 +147,7 @@
                     </div>
                     <div style="flex: 1; min-width: 220px;">
                         <label for="t5_location" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">T5 Location (Estb)</label>
-                        <select id="t5_location" name="t5_location" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
-                            <option value="" disabled selected>Select Location</option>
-                        </select>
+                        <input type="text" id="t5_location" name="t5_location" value="{{ $vehicle->t5_location ?? '' }}" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
                     </div>
                     <div style="flex: 1; min-width: 220px;">
                         <label for="parking_place" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Parking Place</label>
@@ -229,9 +227,7 @@
                 <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
                     <div style="flex: 1; min-width: 220px;">
                         <label for="part_x_location" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Part X Location (Estb)</label>
-                        <select id="part_x_location" name="part_x_location" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
-                            <option value="" disabled selected>Select Location</option>
-                        </select>
+                        <input type="text" id="part_x_location" name="part_x_location" value="{{ $vehicle->part_x_location ?? '' }}" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
                     </div>
                     <div style="flex: 1; min-width: 220px;">
                         <label for="part_x_date" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Part X Date</label>
@@ -302,9 +298,7 @@
                 <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
                     <div style="flex: 1; min-width: 220px;">
                         <label for="fault" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Fault</label>
-                        <select id="fault" name="fault" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
-                            <option value="" disabled selected>Select Fault</option>
-                        </select>
+                        <input type="text" id="fault" name="fault" value="{{ $vehicle->fault ?? '' }}" required style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E;">
                     </div>
                     <div style="flex: 2; min-width: 220px;">
                         <label for="remarks" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Remarks</label>
@@ -472,19 +466,14 @@
                 populateSelect('vehicle_category', await fetchData('/get-categories'), '{{ $vehicle->vehicle_category ?? '' }}');
                 populateSelect('color', await fetchData('/get-colors'), '{{ $vehicle->color ?? '' }}');
                 populateSelect('status', await fetchData('/get-statuses'), '{{ $vehicle->status ?? '' }}');
-                const locData = await fetchData('/get-locations');
-                populateSelect('t5_location', locData, '{{ $vehicle->t5_location ?? '' }}');
-                populateSelect('part_x_location', locData, '{{ $vehicle->part_x_location ?? '' }}');
                 const tireData = await fetchData('/get-tire-sizes');
                 populateSelect('front_tire_size', tireData.map(item => ({ id: item.id, text: item.text })), '{{ $vehicle->front_tire_size ?? '' }}');
                 populateSelect('rear_tire_size', tireData.map(item => ({ id: item.id, text: item.rear_text || item.text })), '{{ $vehicle->rear_tire_size ?? '' }}');
                 populateSelect('engine_capacity', await fetchData('/get-engine-capacities'), '{{ $vehicle->engine_capacity ?? '' }}');
                 populateSelect('fuel_type', await fetchData('/get-fuel-types'), '{{ $vehicle->fuel_type ?? '' }}');
-                const wsData = await fetchData('/get-workshops');
-                populateSelect('workshop', wsData, '{{ $vehicle->workshop ?? '' }}');
-                populateSelect('admitted_workshop', wsData, '{{ $vehicle->admitted_workshop ?? '' }}');
+                populateSelect('workshop', await fetchData('/get-workshops'), '{{ $vehicle->workshop ?? '' }}');
+                populateSelect('admitted_workshop', await fetchData('/get-workshops'), '{{ $vehicle->admitted_workshop ?? '' }}');
                 populateSelect('driver', await fetchData('/get-drivers'), '{{ $vehicle->driver ?? '' }}');
-                populateSelect('fault', await fetchData('/get-faults'), '{{ $vehicle->fault ?? '' }}');
 
                 // Load models directly
                 await fetchModels('{{ $vehicle->vehicle_model ?? '' }}');
