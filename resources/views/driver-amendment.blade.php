@@ -1,67 +1,92 @@
+```blade
 @extends('layouts.app')
 
 @section('title', 'Driver Amendment Form')
 
 @section('content')
-<!-- Main container -->
-<div style="max-width: 80rem; margin: 0 auto; padding: 2.5rem 1.5rem; font-family: Arial, sans-serif;">
-    <div style="background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%); border: 2px solid #f97316; border-radius: 1.5rem; box-shadow: 0 12px 20px -5px rgba(0,0,0,0.15), 0 6px 8px -4px rgba(0,0,0,0.1); padding: 2rem;">
-        <h2 style="font-size: 2rem; font-weight: 700; color: #ea580c; text-align: center; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 1px;">
-            Driver Amendment Form
-        </h2>
+<style>
+    body {
+        background-color: white !important;
+    }
+</style>
 
-        <!-- Driver Amendment Form -->
-        <form style="display: flex; flex-direction: column; gap: 1.5rem;">
-            <!-- Driver Type Selection -->
-            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                <label style="font-size: 1rem; font-weight: 600; color: #374151;">Driver Type</label>
-                <select id="driverType" onchange="toggleFields()" style="padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; width: 300px;">
-                    <option value="army">Army Driver</option>
-                    <option value="civil">Civil Driver</option>
-                </select>
-            </div>
+<div style="width: 100%; padding: 8px; font-family: Arial, sans-serif; background-color: white;">
 
-            <!-- Army Driver Fields -->
-            <div id="armyFields" style="display: flex; flex-direction: column; gap: 1rem;">
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <label style="font-size: 1rem; font-weight: 600; color: #374151;">Army Driving License Certified Copy</label>
-                    <input type="file" accept=".pdf,.jpg,.png" style="padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <label style="font-size: 1rem; font-weight: 600; color: #374151;">Civil Driving License Certified Copy</label>
-                    <input type="file" accept=".pdf,.jpg,.png" style="padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <label style="font-size: 1rem; font-weight: 600; color: #374151;">Army ID Certified Copy</label>
-                    <input type="file" accept=".pdf,.jpg,.png" style="padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem;">
-                </div>
-            </div>
-
-            <!-- Civil Driver Fields -->
-            <div id="civilFields" style="display: none; flex-direction: column; gap: 1rem;">
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <label style="font-size: 1rem; font-weight: 600; color: #374151;">Certified Copy of Civil Driving License</label>
-                    <input type="file" accept=".pdf,.jpg,.png" style="padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <label style="font-size: 1rem; font-weight: 600; color: #374151;">Certified Copy of NIC</label>
-                    <input type="file" accept=".pdf,.jpg,.png" style="padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <label style="font-size: 1rem; font-weight: 600; color: #374151;">Original Copy of Driver Grama Sewa Certificate</label>
-                    <input type="file" accept=".pdf,.jpg,.png" style="padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem;">
-                </div>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 0.375rem; border: none; font-size: 1rem; font-weight: 600; transition: all 0.3s ease, transform 0.2s ease; width: fit-content; align-self: center;"
-                    onmouseover="this.style.background='linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='scale(1.05)'"
-                    onmouseout="this.style.background='linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='scale(1)'">
-                Submit
-            </button>
-        </form>
+    <!-- Page Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <nav style="font-size: 14px;">
+            <a href="{{ route('home') }}" style="text-decoration: none; color: #0077B6;">Home</a> /
+            <span style="font-weight: bold; color:#023E8A;">Driver Amendment Form</span>
+        </nav>
     </div>
-</div>
+
+    <!-- Blue Header -->
+    <div style="background: #0077B6; color: white; font-weight: bold; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+        <h5 style="font-weight: bold; margin: 0; color: #ffffff;">
+            Driver Amendment Form
+        </h5>
+    </div>
+
+    <!-- Driver Amendment Form -->
+    <form style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+        <!-- Driver Type Selection -->
+        <div style="flex: 1; min-width: 220px;">
+            <label for="driverType" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Driver Type</label>
+            <select id="driverType" onchange="toggleFields()"
+                    style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                <option value="army">Army Driver</option>
+                <option value="civil">Civil Driver</option>
+            </select>
+        </div>
+
+        <!-- Army Driver Fields -->
+        <div id="armyFields" style="display: flex; flex-wrap: wrap; gap: 15px; width: 100%;">
+            <div style="flex: 1; min-width: 220px;">
+                <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Army Driving License Certified Copy</label>
+                <input type="file" accept=".pdf,.jpg,.png"
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+            </div>
+            <div style="flex: 1; min-width: 220px;">
+                <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Civil Driving License Certified Copy</label>
+                <input type="file" accept=".pdf,.jpg,.png"
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+            </div>
+            <div style="flex: 1; min-width: 220px;">
+                <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Army ID Certified Copy</label>
+                <input type="file" accept=".pdf,.jpg,.png"
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+            </div>
+        </div>
+
+        <!-- Civil Driver Fields -->
+        <div id="civilFields" style="display: none; flex-wrap: wrap; gap: 15px; width: 100%;">
+            <div style="flex: 1; min-width: 220px;">
+                <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Certified Copy of Civil Driving License</label>
+                <input type="file" accept=".pdf,.jpg,.png"
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+            </div>
+            <div style="flex: 1; min-width: 220px;">
+                <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Certified Copy of NIC</label>
+                <input type="file" accept=".pdf,.jpg,.png"
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+            </div>
+            <div style="flex: 1; min-width: 220px;">
+                <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Original Copy of Driver Grama Sewa Certificate</label>
+                <input type="file" accept=".pdf,.jpg,.png"
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end;">
+            <button type="submit"
+                    style="width: 100%; background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer;"
+                    onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
+                + Submit
+            </button>
+        </div>
+    </div>
+</form>
 
 <script>
 function toggleFields() {
@@ -78,17 +103,5 @@ function toggleFields() {
     }
 }
 </script>
-
-<style>
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-</style>
 @endsection
+```
