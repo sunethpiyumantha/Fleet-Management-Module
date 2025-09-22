@@ -491,6 +491,12 @@
                                                 </a>
                                         </li>
                                         <li>
+                                            <a href="/request-vehicle-2">
+                                                <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
+                                                    Vehicle Request 2 
+                                                </a>
+                                        </li>
+                                        <li>
                                             <a href="{{ route('vehicle.request.all') }}">
                                                 <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                 All Requests
