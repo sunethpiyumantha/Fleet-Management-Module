@@ -17,7 +17,6 @@
 
     <!-- Page Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        
         <nav style="font-size: 14px;">
             <a href="{{ route('home') }}" style="text-decoration: none; color: #0077B6;">Home</a> /
             <span style="font-weight: bold; color:#023E8A;">Vehicle Type</span>
@@ -81,13 +80,15 @@
         <table id="vehicleTable" style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; border: 1px solid #90E0EF;">
             <thead style="background: #023E8A; color: white; text-align: left;">
                 <tr>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(0)">Vehicle Type ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; width: 50px;">#</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(1)">Vehicle Type ▲▼</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">Actions</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
-                @foreach ($types as $type)
+                @foreach ($types as $index => $type)
                     <tr style="background-color:white; color:#03045E;">
+                        <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">{{ $index + 1 }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $type->type }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">
                             <!-- Update -->
@@ -127,7 +128,7 @@
     function renderTable() {
         const search = document.getElementById("searchInput").value.toLowerCase();
         const filtered = tableRows.filter(row =>
-            row.cells[0].innerText.toLowerCase().includes(search)
+            row.cells[1].innerText.toLowerCase().includes(search) // now vehicle type is column[1]
         );
 
         const start = (currentPage - 1) * rowsPerPage;
@@ -135,7 +136,11 @@
 
         const tbody = document.getElementById("tableBody");
         tbody.innerHTML = "";
-        paginated.forEach(row => tbody.appendChild(row.cloneNode(true)));
+        paginated.forEach((row, index) => {
+            let clone = row.cloneNode(true);
+            clone.cells[0].innerText = start + index + 1; // update numbering
+            tbody.appendChild(clone);
+        });
 
         renderPagination(filtered.length);
     }
