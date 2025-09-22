@@ -2,36 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
-    public function __construct()
-    {
-        // Apply auth middleware to protect all methods
-        $this->middleware('auth');
-    }
-
     public function index(Request $request)
     {
-        Log::debug('UserController::index called', ['search' => $request->query('search')]);
-
         $search = $request->query('search');
+        $query = User::with(['role'])->withTrashed(); // Include soft-deleted users and their roles
 
-        $users = User::with('role')
-            ->whereNull('deleted_at')
-            ->when($search, function ($query, $search) {
-                return $query->where('name', 'like', "%{$search}%")
-                            ->orWhere('username', 'like', "%{$search}%");
-            })
-            ->orderBy('name')
-            ->paginate(10);
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('username', 'LIKE', "%{$search}%")
+                  ->orWhereHas('role', function ($q) use ($search) {
+                      $q->where('name', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
 
-        $roles = Role::whereNull('deleted_at')->orderBy('name')->get();
+        $users = $query->orderBy('name')->get(); // Fetch all users
+        $roles = Role::all();
 
         return view('user-creation', compact('users', 'roles'));
     }
@@ -41,39 +36,31 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users,username',
-            'password' => 'required|string|min:8|confirmed', // Enforce stronger password and confirmation
+            'password' => 'required|string|min:8|confirmed',
             'user_role' => 'required|exists:roles,id',
+        ], [
+            'password.confirmed' => 'The password field confirmation does not match.',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        try {
-            User::create([
-                'name' => trim($request->name), // Trim input
-                'username' => trim($request->username),
-                'password' => bcrypt($request->password),
-                'role_id' => $request->user_role,
-            ]);
+        User::create([
+            'name' => $request->name,
+            'username' => $request->username,
+            'password' => Hash::make($request->password),
+            'role_id' => $request->user_role,
+        ]);
 
-            return redirect()->route('users.index')->with('success', 'User created successfully.');
-        } catch (\Exception $e) {
-            Log::error('Failed to create user', ['error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Failed to create user. Please try again.')->withInput();
-        }
+        return redirect()->back()->with('success', 'User created successfully!');
     }
 
     public function edit($id)
     {
-        try {
-            $user = User::withTrashed()->findOrFail($id);
-            $roles = Role::whereNull('deleted_at')->orderBy('name')->get();
-            return view('user-edit', compact('user', 'roles'));
-        } catch (\Exception $e) {
-            Log::error('Failed to fetch user for edit', ['id' => $id, 'error' => $e->getMessage()]);
-            return redirect()->route('users.index')->with('error', 'User not found.');
-        }
+        $user = User::withTrashed()->findOrFail($id);
+        $roles = Role::all();
+        return view('user-edit', compact('user', 'roles')); // Assume an edit view exists
     }
 
     public function update(Request $request, $id)
@@ -81,7 +68,6 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users,username,' . $id,
-            'password' => 'nullable|string|min:8|confirmed', // Allow optional password with confirmation
             'user_role' => 'required|exists:roles,id',
         ]);
 
@@ -89,33 +75,31 @@ class UserController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        try {
-            $user = User::withTrashed()->findOrFail($id);
-            $user->name = trim($request->name);
-            $user->username = trim($request->username);
-            if ($request->filled('password')) {
-                $user->password = bcrypt($request->password);
-            }
-            $user->role_id = $request->user_role;
-            $user->save();
+        $user = User::withTrashed()->findOrFail($id);
+        $user->update([
+            'name' => $request->name,
+            'username' => $request->username,
+            'role_id' => $request->user_role,
+        ]);
 
-            return redirect()->route('users.index')->with('success', 'User updated successfully.');
-        } catch (\Exception $e) {
-            Log::error('Failed to update user', ['id' => $id, 'error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Failed to update user. Please try again.')->withInput();
-        }
+        return redirect()->route('users.index')->with('success', 'User updated successfully!');
     }
 
     public function destroy($id)
     {
-        try {
-            $user = User::findOrFail($id);
-            $user->delete();
+        $user = User::findOrFail($id);
+        $user->delete();
 
-            return redirect()->route('users.index')->with('success', 'User deleted successfully.');
-        } catch (\Exception $e) {
-            Log::error('Failed to delete user', ['id' => $id, 'error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Failed to delete user. Please try again.');
+        return redirect()->back()->with('success', 'User soft deleted successfully!');
+    }
+
+    public function restore($id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        if ($user->deleted_at) {
+            $user->restore();
+            return redirect()->back()->with('success', 'User restored successfully!');
         }
+        return redirect()->back()->with('error', 'User is not deleted.');
     }
 }

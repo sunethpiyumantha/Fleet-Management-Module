@@ -19,7 +19,7 @@ class RoleController extends Controller
             $query->where('name', 'LIKE', "%{$search}%");
         }
 
-        $roles = $query->orderBy('name')->paginate(10);
+        $roles = $query->orderBy('name')->get(); // Changed from paginate(10) to get() to fetch all records
 
         return view('user-roles', compact('roles'));
     }

@@ -14,7 +14,7 @@ use App\Models\VehicleTireSize;
 use App\Models\VehicleEngineCapacity;
 use App\Models\FuelType;
 use App\Models\Workshop;
-use App\Models\Status;
+use App\Models\VehicleStatus;
 use App\Models\Location;
 use App\Models\Driver;
 use App\Models\Fault;
@@ -100,8 +100,8 @@ class DropdownController extends Controller
 
     public function getStatuses()
     {
-        $data = Status::whereNull('deleted_at')->get(['id', 'name as text']);
-        \Log::info('Statuses Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        $data = VehicleStatus::whereNull('deleted_at')->get(['id', 'status as text']);
+        \Log::info('Vehicle Statuses Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
         return response()->json($data);
     }
 

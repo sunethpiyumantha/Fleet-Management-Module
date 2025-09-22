@@ -67,7 +67,6 @@
                         <th style="padding: 0.75rem; text-align: center;">Actions</th>
                     </tr>
                 </thead>
-                <!-- Inside the table body -->
                 <tbody id="tableBody">
                     @if (isset($roles) && $roles->isNotEmpty())
                         @foreach ($roles as $role)
@@ -111,33 +110,29 @@
                 </tbody>
             </table>
         </div>
-
-        <!-- Pagination -->
-        <div id="pagination" style="margin-top: 1rem; text-align: center;">
-            @if ($roles->hasPages())
-                {{ $roles->appends(['search' => request('search')])->links('pagination::tailwind') }}
-            @endif
-        </div>
     </div>
 </div>
 
 <script>
+    let sortAsc = true;
+
     function sortTable(colIndex) {
         const tbody = document.querySelector('#roleTable tbody');
         const rows = Array.from(tbody.querySelectorAll('tr'));
-        const isDeletedColumn = colIndex === 0; // Adjust if sorting by another column
+        sortAsc = colIndex === 0 ? !sortAsc : true;
 
         rows.sort((a, b) => {
             const aText = a.cells[colIndex].innerText.replace(/ \(Deleted\)/, '').toLowerCase();
             const bText = b.cells[colIndex].innerText.replace(/ \(Deleted\)/, '').toLowerCase();
-            return aText.localeCompare(bText);
+            return sortAsc ? aText.localeCompare(bText) : bText.localeCompare(aText);
         });
 
-        if (!isDeletedColumn) {
-            rows.reverse(); // Toggle sort direction for non-deleted column
-        }
-
+        tbody.innerHTML = '';
         rows.forEach(row => tbody.appendChild(row));
     }
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+        // Search is handled server-side via form submission
+    });
 </script>
 @endsection
