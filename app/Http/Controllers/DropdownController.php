@@ -42,10 +42,10 @@ class DropdownController extends Controller
         return response()->json($data);
     }
 
-    public function getModels($makeId)
+    public function getModels()
     {
-        $data = VehicleModel::where('make_id', $makeId)->whereNull('deleted_at')->get(['id', 'model as text']);
-        \Log::info('Models Query Result for Make ID ' . $makeId . ': Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
+        $data = VehicleModel::whereNull('deleted_at')->get(['id', 'model as text']);
+        \Log::info('Models Query Result: Count=' . $data->count() . ', Data=' . json_encode($data->toArray()));
         return response()->json($data);
     }
 

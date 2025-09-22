@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
-use App\Models\VehicleType;
 use App\Models\VehicleDeclaration;
 
 class VehicleModel extends Model
@@ -15,11 +14,6 @@ class VehicleModel extends Model
 
     protected $table = 'vehicle_models';
     protected $fillable = ['model', 'serial_number'];
-
-    public function vehicleType()
-    {
-        return $this->belongsTo(VehicleType::class);
-    }
 
     /**
      * Get the vehicle declarations for the vehicle model.
@@ -35,7 +29,7 @@ class VehicleModel extends Model
 
         static::creating(function ($model) {
             if (!$model->serial_number) {
-                $date = Carbon::now()->format('Ymd'); // e.g., 20250617
+                $date = Carbon::now()->format('Ymd'); // e.g., 20250922
                 $lastRecord = static::whereDate('created_at', Carbon::today())
                     ->latest('id')
                     ->lockForUpdate() // Prevents race conditions

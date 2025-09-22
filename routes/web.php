@@ -191,7 +191,7 @@ Route::middleware(['web'])->group(function () {
 Route::get('/get-vehicle-types', [DropdownController::class, 'getVehicleTypes']);
 Route::get('/get-allocation-types', [DropdownController::class, 'getAllocationTypes']);
 Route::get('/get-makes', [DropdownController::class, 'getMakes']);
-Route::get('/get-models/{makeId}', [DropdownController::class, 'getModels']);
+Route::get('/get-models', [DropdownController::class, 'getModels']);
 Route::get('/get-categories', [DropdownController::class, 'getCategories']);
 Route::get('/get-sub-categories/{categoryId}', [DropdownController::class, 'getSubCategories']);
 Route::get('/get-colors', [DropdownController::class, 'getColors']);
