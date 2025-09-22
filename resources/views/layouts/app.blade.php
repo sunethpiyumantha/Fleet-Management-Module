@@ -67,6 +67,13 @@
                     <h4 style="text-align: center; font-weight: bold;">Fleet Management Module</h4>
                 </div>
             </div>
+            <div style="display: inline-block; cursor: pointer; padding: 10px; font-size: 24px; position: relative;" title="Notifications">
+                    <i class="fas fa-bell"></i>
+            </div> 
+            <div style="display: inline-block; cursor: pointer; padding: 10px; font-size: 24px;" title="Logout">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+              
         </div>        
         <div class="ui-theme-settings">
             <!--<button type="button" id="TooltipDemo" class="btn-open-options btn btn-warning">
@@ -564,7 +571,7 @@
                                     <li>
                                         <a href="/all-vehicle-info">
                                             <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
-                                                All Vehicles Information
+                                                Army Vehicle Registration
                                         </a>
                                     </li>
 
