@@ -67,25 +67,25 @@
                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
                     </div>
                     <div style="flex: 1 1 250px;">
-                        <label for="image_01" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image 01</label>
+                        <label for="image_01" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Front View</label>
                         <input type="file" id="image_01" name="image_01" accept=".jpg,.png" required
                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
                     </div>
                 </div>
                 <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
                     <div style="flex: 1 1 250px;">
-                        <label for="image_02" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image 02</label>
+                        <label for="image_02" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Rear View</label>
                         <input type="file" id="image_02" name="image_02" accept=".jpg,.png" required
                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
                     </div>
                     <div style="flex: 1 1 250px;">
-                        <label for="image_03" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image 03</label>
+                        <label for="image_03" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Side View 1</label>
                         <input type="file" id="image_03" name="image_03" accept=".jpg,.png" required
                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
                     </div>
                     <div style="flex Dotenv
                     <div style="flex: 1 1 250px;">
-                        <label for="image_04" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Image 04</label>
+                        <label for="image_04" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Side View 2</label>
                         <input type="file" id="image_04" name="image_04" accept=".jpg,.png" required
                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
                     </div>
