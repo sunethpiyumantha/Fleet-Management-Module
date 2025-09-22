@@ -436,18 +436,14 @@
             }
         }
 
-        async function fetchModels(makeId, selectedValue = null) {
+        async function fetchModels(selectedValue = null) {
             const select = document.getElementById('vehicle_model');
             if (!select) {
                 console.error('Element with ID vehicle_model not found');
                 return;
             }
             select.innerHTML = '<option value="" disabled selected>Loading...</option>';
-            if (!makeId) {
-                select.innerHTML = '<option value="" disabled selected>Select a Make first</option>';
-                return;
-            }
-            const data = await fetchData(`/get-models/${makeId}`);
+            const data = await fetchData('/get-models');
             populateSelect('vehicle_model', data, selectedValue);
         }
 
@@ -490,12 +486,10 @@
                 populateSelect('driver', await fetchData('/get-drivers'), '{{ $vehicle->driver ?? '' }}');
                 populateSelect('fault', await fetchData('/get-faults'), '{{ $vehicle->fault ?? '' }}');
 
+                // Load models directly
+                await fetchModels('{{ $vehicle->vehicle_model ?? '' }}');
+
                 // Trigger dependent dropdowns
-                const initialMakeId = '{{ $vehicle->vehicle_make ?? '' }}';
-                if (initialMakeId) {
-                    console.log('Fetching models for make:', initialMakeId);
-                    await fetchModels(initialMakeId, '{{ $vehicle->vehicle_model ?? '' }}');
-                }
                 const initialCatId = '{{ $vehicle->vehicle_category ?? '' }}';
                 if (initialCatId) {
                     console.log('Fetching sub-categories for category:', initialCatId);
@@ -506,10 +500,6 @@
             }
         }
 
-        document.getElementById('vehicle_make')?.addEventListener('change', function() {
-            console.log('Make changed:', this.value);
-            fetchModels(this.value);
-        });
         document.getElementById('vehicle_category')?.addEventListener('change', function() {
             console.log('Category changed:', this.value);
             fetchSubCategories(this.value);
