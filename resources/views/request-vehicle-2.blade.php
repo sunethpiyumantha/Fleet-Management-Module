@@ -1,242 +1,287 @@
 @extends('layouts.app')
 
-@section('title', 'Vehicle Request Management')
+@section('title', 'Vehicle Request Management 2')
 
 @section('content')
-<style>
-    body {
-        background-color: white !important;
-    }
-    /* Optional: table row hover effect */
-    #vehicleTable tbody tr:hover {
-        background-color: #f1f1f1;
-    }
-</style>
+<div style="max-width: 64rem; margin: 0 auto; padding: 2.5rem 1.5rem;">
+    <div style="background-color: white; border: 1px solid #f97316; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 1.5rem;">
+        <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">Vehicle Request Management 2</h2>
 
-<div style="width: 100%; padding: 8px; font-family: Arial, sans-serif; background-color: white;">
-
-    <!-- Page Header -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <nav style="font-size: 14px;">
-            <a href="{{ route('home') }}" style="text-decoration: none; color: #0077B6;">Home</a> /
-            <span style="font-weight: bold; color:#023E8A;">Vehicle Requests</span>
-        </nav>
-    </div>
-
-    <!-- Blue Header -->
-    <div style="background: #0077B6; color: white; font-weight: bold; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-        <h5 style="font-weight: bold; margin: 0; color: #ffffff;">
-            Vehicle Request Management
-        </h5>
-    </div>
-
-    <!-- Success or Error Messages -->
-    @if (session('success'))
-        <div style="background-color: #ADE8F4; color: #023E8A; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+        <!-- Success Message -->
+        @if(session('success'))
+        <div style="background-color: #d1fae5; color: #065f46; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; display: block;">
             {{ session('success') }}
         </div>
-    @endif
+        @endif
 
-    @if ($errors->any())
-        <div style="background-color: #caf0f8; color: #03045E; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
-            <ul style="margin: 0; padding-left: 1rem;">
-                @foreach ($errors->all() as $error)
+        <!-- Error Messages -->
+        @if($errors->any())
+        <div style="background-color: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; display: block;">
+            <ul style="margin: 0; padding-left: 1rem; list-style-type: disc;">
+                @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
             </ul>
         </div>
-    @endif
+        @endif
 
-    <!-- Add Vehicle Request Form -->
-    <form action="" method="POST" style="margin-bottom: 20px;" enctype="multipart/form-data">
-        @csrf
-        <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
-            <div style="flex: 1; min-width: 220px;">
-                <label for="request_type" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Request Type</label>
-                <select id="request_type" name="request_type" required
-                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
-                    <option value="" disabled selected>Select Request Type</option>
-                    <option value="replacement">Vehicle replacement</option>
-                    <option value="new_approval">Taking over a vehicle based on a new approval</option>
-                </select>
+        <!-- Form -->
+        <form class="mb-8" method="POST" action="{{ route('vehicle-requests.approvals.store') }}" enctype="multipart/form-data">
+            @csrf
+            <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+                <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1 1 250px;">
+                        <label for="request_type" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Request Type</label>
+                        <select id="request_type" name="request_type" required
+                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
+                            <option value="" disabled {{ old('request_type') ? '' : 'selected' }}>Select Request Type</option>
+                            <option value="replacement" {{ old('request_type') == 'replacement' ? 'selected' : '' }}>Vehicle replacement</option>
+                            <option value="new_approval" {{ old('request_type') == 'new_approval' ? 'selected' : '' }}>Taking over a vehicle based on a new approval</option>
+                        </select>
+                        @error('request_type')
+                            <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div style="flex: 1 1 250px;">
+                        <label for="cat_id" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Category</label>
+                        <select id="cat_id" name="cat_id" required
+                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
+                            <option value="" disabled {{ old('cat_id') ? '' : 'selected' }}>Select Category</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ old('cat_id') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->category }} ({{ $category->serial_number }})
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('cat_id')
+                            <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div style="flex: 1 1 250px;">
+                        <label for="sub_cat_id" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Sub Category</label>
+                        <select id="sub_cat_id" name="sub_cat_id" required
+                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
+                            <option value="" disabled {{ old('sub_cat_id') ? '' : 'selected' }}>Select Sub-Category</option>
+                            @foreach($subCategories as $subCategory)
+                                <option value="{{ $subCategory->id }}" {{ old('sub_cat_id') == $subCategory->id ? 'selected' : '' }}>
+                                    {{ $subCategory->sub_category }} ({{ $subCategory->serial_number }})
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('sub_cat_id')
+                            <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 900px;">
+                    <div style="flex: 1 1 250px;">
+                        <label for="required_quantity" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Required Quantity</label>
+                        <input type="number" id="required_quantity" name="qty" min="1" value="{{ old('qty', 1) }}" required
+                               style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
+                        @error('qty')
+                            <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div style="flex: 1 1 250px;">
+                        <label for="vehicle_book" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Vehicle Letter</label>
+                        <input type="file" id="vehicle_book" name="vehicle_book" accept=".pdf,.doc,.docx,.jpg,.png" required
+                               style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
+                        @error('vehicle_book')
+                            <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div style="width: 100%; display: flex; justify-content: center;">
+                    <button type="submit"
+                            style="background-color: #f97316; color: white; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer;"
+                            onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'">
+                        <i class="fa-solid fa-plus-circle" style="margin-right: 0.25rem;"></i> Submit
+                    </button>
+                </div>
             </div>
-            <div style="flex: 1; min-width: 220px;">
-                <label for="cat_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Category</label>
-                <select id="cat_id" name="cat_id" required
-                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
-                    <option value="" disabled selected>Select Category</option>
-                    
-                </select>
-            </div>
-            <div style="flex: 1; min-width: 220px;">
-                <label for="sub_cat_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Sub Category</label>
-                <select id="sub_cat_id" name="sub_cat_id" required
-                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
-                    <option value="" disabled selected>Select Sub-Category</option>
-                </select>
-            </div>
-            <div style="flex: 1; min-width: 220px;">
-                <label for="required_quantity" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Required Quantity</label>
-                <input type="number" id="required_quantity" name="qty" min="1" required
-                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
-            </div>
-            <div style="flex: 1; min-width: 220px;">
-                <label for="vehicle_book" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Letter</label>
-                <input type="file" id="vehicle_book" name="vehicle_book" accept=".pdf,.doc,.docx,.jpg,.png" required
-                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
-            </div>
-            <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end;">
-                <button type="submit"
-                        style="width: 100%; background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer;"
-                        onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
-                    + Submit
+        </form>
+
+        <!-- Search Form -->
+        <form method="GET" action="{{ route('vehicle-requests.approvals.index') }}" style="margin-bottom: 1.5rem;">
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by Serial Number, Request Type, Category, Sub-Category, or Status"
+                       style="flex: 1; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; font-size: 0.875rem;">
+                <button type="submit" style="background-color: #f97316; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer;"
+                        onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'">
+                    Search
                 </button>
             </div>
-        </div>
-    </form>
+        </form>
 
-    <!-- Search Bar -->
-    <form method="GET" action="" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
-        <input type="text" name="search" id="searchInput" placeholder="Search by Serial Number, Request Type, Category, Sub-Category, or Status..."
-               value="{{ request('search') }}"
-               style="flex: 1; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
-        <button type="submit" style="background-color: #0096C7; color: white; border: none; border-radius: 5px; padding: 8px 15px; cursor: pointer;"
-                onmouseover="this.style.backgroundColor='#023E8A'" onmouseout="this.style.backgroundColor='#0096C7'">🔍</button>
-    </form>
-
-    <!-- Vehicle Requests Table -->
-    <div style="overflow-x: auto;">
-        <table id="vehicleTable" style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; border: 1px solid #90E0EF;">
-            <thead style="background: #023E8A; color: white; text-align: left;">
+        <!-- Table -->
+        <table id="vehicleTable" style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden;">
+            <thead style="background-color: #f97316; color: white;">
                 <tr>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">#</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(1)">Serial Number ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(2)">Request Type ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(3)">Vehicle Category ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(4)">Sub Category ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(5)">Quantity ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(6)">Status ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">Vehicle Letter</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">Actions</th>
+                    <th style="padding: 0.75rem; cursor: pointer;">Serial Number ▲▼</th>
+                    <th style="padding: 0.75rem; cursor: pointer;">Request Type ▲▼</th>
+                    <th style="padding: 0.75rem; cursor: pointer;">Vehicle Category ▲▼</th>
+                    <th style="padding: 0.75rem; cursor: pointer;">Sub Category ▲▼</th>
+                    <th style="padding: 0.75rem; cursor: pointer;">Quantity ▲▼</th>
+                    <th style="padding: 0.75rem; cursor: pointer;">Status ▲▼</th>
+                    <th style="padding: 0.75rem;">Vehicle Letter</th>
+                    <th style="padding: 0.75rem; text-align: center;">Actions</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
+                @forelse($approvals as $approval)
                 <tr>
-                    <td colspan="9" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No vehicle requests found.</td>
+                    <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $approval->serial_number }}</td>
+                    <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $approval->request_type_display }}</td>
+                    <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">
+                        {{ $approval->category ? $approval->category->category . ' (' . $approval->category->serial_number . ')' : 'N/A' }}
+                    </td>
+                    <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">
+                        {{ $approval->subCategory ? $approval->subCategory->sub_category . ' (' . $approval->subCategory->serial_number . ')' : 'N/A' }}
+                    </td>
+                    <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $approval->quantity }}</td>
+                    <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{!! $approval->status_badge !!}</td>
+                    <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6; text-align: center;">
+                        @if($approval->vehicle_letter)
+                            <button onclick="viewFile('{{ $approval->vehicle_letter }}', '{{ $approval->serial_number }}')" 
+                                    style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; cursor: pointer;">
+                                <i class="fa-solid fa-image"></i> View
+                            </button>
+                        @else
+                            <span style="color: #9ca3af; font-size: 0.75rem;">No file</span>
+                        @endif
+                    </td>
+                    <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
+                        <div style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
+                            <a href="{{ route('vehicle-requests.approvals.edit', $approval->id) }}" 
+                               style="background-color: #16a34a; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; font-size: 0.875rem; font-weight: 500; text-decoration: none; transition: background-color 0.2s ease, transform 0.1s ease; cursor: pointer;"
+                               onmouseover="this.style.backgroundColor='#13893b'; this.style.transform='scale(1.05)'"
+                               onmouseout="this.style.backgroundColor='#16a34a'; this.style.transform='scale(1)'">
+                                Update
+                            </a>
+                            <form action="{{ route('vehicle-requests.approvals.destroy', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this request?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" 
+                                        style="background-color: #dc2626; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; font-size: 0.875rem; font-weight: 500; transition: background-color 0.2s ease, transform 0.1s ease; cursor: pointer;"
+                                        onmouseover="this.style.backgroundColor='#b91c1c'; this.style.transform='scale(1.05)'"
+                                        onmouseout="this.style.backgroundColor='#dc2626'; this.style.transform='scale(1)'">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
                 </tr>
+                @empty
+                <tr>
+                    <td colspan="8" style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6; color: #6b7280;">No vehicle requests found.</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
-    </div>
 
-    <!-- Pagination -->
-    <div id="pagination" style="margin-top: 15px; text-align: center;"></div>
+        <!-- Pagination -->
+        @if($approvals->hasPages())
+        <div style="margin-top: 1rem;">
+            <nav style="display: flex; justify-content: center; gap: 0.5rem;">
+                {{ $approvals->appends(request()->query())->links() }}
+            </nav>
+        </div>
+        @endif
+    </div>
 </div>
 
 <!-- File Modal -->
 <div id="fileModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
-    <div style="background: white; padding: 24px; border-radius: 8px; max-width: 90%; max-height: 90%; overflow: auto;">
-        <h3 id="modalTitle" style="font-size: 20px; font-weight: bold; margin-bottom: 16px;">Vehicle File</h3>
-        <div id="fileContainer" style="display: flex; flex-wrap: wrap; gap: 16px;"></div>
-        <button onclick="closeFileModal()"
-                style="margin-top: 16px; background-color: #00B4D8; color: white; padding: 8px 16px; border-radius: 5px; border: none; cursor: pointer;"
-                onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
-            Close
-        </button>
+    <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; max-width: 90%; max-height: 90%; overflow: auto;">
+        <h3 id="modalTitle" style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Vehicle File</h3>
+        <div id="fileContainer" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+            <!-- File content will be loaded here -->
+        </div>
+        <div style="text-align: center; margin-top: 1rem;">
+            <button onclick="closeModal()" style="background-color: #f97316; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer;"
+                    onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'">
+                Close
+            </button>
+        </div>
     </div>
 </div>
 
-<!-- JS -->
 <script>
-    const rowsPerPage = 5;
-    let currentPage = 1;
-    let sortAsc = true;
-    let sortColumn = 1; // default: Serial Number
-    let tableRows = Array.from(document.querySelectorAll("#vehicleTable tbody tr"));
-
-    function renderTable() {
-        const search = document.getElementById("searchInput").value.toLowerCase();
-        const filtered = tableRows.filter(row =>
-            Array.from(row.cells).some(cell => cell.innerText.toLowerCase().includes(search))
-        );
-
-        const start = (currentPage - 1) * rowsPerPage;
-        const paginated = filtered.slice(start, start + rowsPerPage);
-
-        const tbody = document.getElementById("tableBody");
-        tbody.innerHTML = "";
-        paginated.forEach((row, index) => {
-            let clone = row.cloneNode(true);
-            clone.cells[0].innerText = start + index + 1; // Number column
-            tbody.appendChild(clone);
-        });
-
-        renderPagination(filtered.length);
+function viewFile(filePath, serialNumber) {
+    const modal = document.getElementById('fileModal');
+    const title = document.getElementById('modalTitle');
+    const container = document.getElementById('fileContainer');
+    
+    title.textContent = `Vehicle Letter - ${serialNumber}`;
+    
+    // Check file extension to determine how to display
+    const extension = filePath.split('.').pop().toLowerCase();
+    const isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(extension);
+    const isPdf = extension === 'pdf';
+    
+    if (isImage) {
+        container.innerHTML = `<img src="{{ asset('storage') }}/${filePath}" style="max-width: 100%; max-height: 70vh; border-radius: 0.25rem;" />`;
+    } else if (isPdf) {
+        container.innerHTML = `
+            <iframe src="{{ asset('storage') }}/${filePath}" 
+                    style="width: 100%; height: 70vh; border: none; border-radius: 0.25rem;" 
+                    frameborder="0"></iframe>
+        `;
+    } else {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 2rem;">
+                <i class="fa-solid fa-file" style="font-size: 3rem; color: #d1d5db; margin-bottom: 1rem;"></i>
+                <p style="color: #6b7280;">${filePath}</p>
+                <a href="{{ asset('storage') }}/${filePath}" target="_blank" 
+                   style="background-color: #f97316; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; display: inline-block; margin-top: 1rem;"
+                   onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'">
+                    Download File
+                </a>
+            </div>
+        `;
     }
+    
+    modal.style.display = 'flex';
+}
 
-    function renderPagination(totalRows) {
-        const totalPages = Math.ceil(totalRows / rowsPerPage);
-        const container = document.getElementById("pagination");
-        container.innerHTML = "";
+function closeModal() {
+    document.getElementById('fileModal').style.display = 'none';
+}
 
-        for (let i = 1; i <= totalPages; i++) {
-            const btn = document.createElement("button");
-            btn.textContent = i;
-            btn.style = "margin: 0 4px; padding: 5px 10px; background: #00B4D8; color: white; border: none; border-radius: 3px; cursor: pointer;";
-            if (i === currentPage) {
-                btn.style.backgroundColor = "#023E8A";
-            }
-            btn.addEventListener("click", () => {
-                currentPage = i;
-                renderTable();
-            });
-            container.appendChild(btn);
-        }
+// Close modal when clicking outside
+document.getElementById('fileModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModal();
     }
-
-    document.getElementById("searchInput").addEventListener("input", () => {
-        currentPage = 1;
-        renderTable();
-    });
-
-    function sortTable(colIndex) {
-        sortAsc = colIndex === sortColumn ? !sortAsc : true;
-        sortColumn = colIndex;
-        tableRows.sort((a, b) => {
-            const textA = a.cells[colIndex].innerText.toLowerCase();
-            const textB = b.cells[colIndex].innerText.toLowerCase();
-            return sortAsc ? textA.localeCompare(textB) : textB.localeCompare(textA);
-        });
-        renderTable();
-    }
-
-    function showFileModal(fileUrl) {
-        const modal = document.getElementById("fileModal");
-        const fileContainer = document.getElementById("fileContainer");
-        fileContainer.innerHTML = "";
-        
-        const extension = fileUrl.split('.').pop().toLowerCase();
-        if (['jpg', 'jpeg', 'png'].includes(extension)) {
-            const img = document.createElement("img");
-            img.src = fileUrl;
-            img.style = "max-width: 200px; max-height: 200px; border-radius: 4px;";
-            fileContainer.appendChild(img);
-        } else if (['pdf', 'doc', 'docx'].includes(extension)) {
-            const link = document.createElement("a");
-            link.href = fileUrl;
-            link.textContent = "Download Vehicle Letter";
-            link.style = "font-size: 14px; color: #0077B6; text-decoration: underline;";
-            link.setAttribute("download", "");
-            fileContainer.appendChild(link);
-        }
-        
-        modal.style.display = "flex";
-    }
-
-    function closeFileModal() {
-        document.getElementById("fileModal").style.display = "none";
-    }
-
-    // Initial Render
-    renderTable();
+});
 </script>
+
+<style>
+.badge {
+    padding: 0.25em 0.5em;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.bg-warning {
+    background-color: #f59e0b !important;
+}
+
+.bg-success {
+    background-color: #10b981 !important;
+}
+
+.bg-danger {
+    background-color: #ef4444 !important;
+}
+
+.bg-secondary {
+    background-color: #6b7280 !important;
+}
+
+.text-dark {
+    color: #000000 !important;
+}
+</style>
 @endsection
