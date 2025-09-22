@@ -1,186 +1,236 @@
 @extends('layouts.app')
+
 @section('title', 'User Creation')
+
 @section('content')
-<div style="max-width: 64rem; margin: 0 auto; padding: 2.5rem 1.5rem;">
-    <div style="background-color: white; border: 1px solid #f97316; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 1.5rem;">
-        <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">User Creation</h2>
+<style>
+    body {
+        background-color: white !important;
+    }
+    /* Optional: table row hover effect */
+    #userTable tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+</style>
 
-        <!-- Display Success or Error Messages -->
-        @if (session('success'))
-            <div style="background-color: #d1fae5; color: #065f46; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; display: block;">
-                {{ session('success') }}
-            </div>
-        @else
-            <div style="background-color: #d1fae5; color: #065f46; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; display: none;">
-                <!-- Placeholder for success message -->
-            </div>
-        @endif
-        @if ($errors->any())
-            <div style="background-color: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; display: block;">
-                <ul style="margin: 0; padding-left: 1rem;">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @else
-            <div style="background-color: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; display: none;">
-                <ul style="margin: 0; padding-left: 1rem;">
-                    <!-- Placeholder for error messages -->
-                </ul>
-            </div>
-        @endif
+<div style="width: 100%; padding: 8px; font-family: Arial, sans-serif; background-color: white;">
 
-        <!-- Form -->
-        <form action="{{ route('users.store') }}" method="POST" class="mb-8" style="margin-bottom: 2rem;">
-            @csrf
-            <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
-                <!-- First Line: Name and Username -->
-                <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 500px;">
-                    <div style="flex: 1 1 250px;">
-                        <label for="name" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Name</label>
-                        <input type="text" id="name" name="name" required
-                               style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;"
-                               value="{{ old('name') }}">
-                    </div>
-                    <div style="flex: 1 1 250px;">
-                        <label for="username" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Username</label>
-                        <input type="text" id="username" name="username" required
-                               style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;"
-                               value="{{ old('username') }}">
-                    </div>
-                </div>
-
-                <!-- Second Line: Password and Password Confirmation -->
-                <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 500px;">
-                    <div style="flex: 1 1 250px;">
-                        <label for="password" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Password</label>
-                        <input type="password" id="password" name="password" required
-                               style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                    </div>
-                    <div style="flex: 1 1 250px;">
-                        <label for="password_confirmation" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Confirm Password</label>
-                        <input type="password" id="password_confirmation" name="password_confirmation" required
-                               style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                    </div>
-                </div>
-
-                <!-- Third Line: User Role -->
-                <div style="display: flex; flex-wrap: nowrap; gap: 1rem; justify-content: center; width: 100%; max-width: 500px;">
-                    <div style="flex: 1 1 250px;">
-                        <label for="user_role" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">User Role</label>
-                        <select id="user_role" name="user_role" required
-                                style="width: 100%; height: 38px; border-radius: 0.5rem; border: 1px solid #d1d5db; color: #374151; padding: 0.5rem 0.75rem; outline: none; font-size: 0.875rem;">
-                            <option value="" disabled selected>Select Role</option>
-                            @foreach ($roles as $role)
-                                <option value="{{ $role->id }}">{{ $role->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Fourth Line: Submit Button -->
-                <div style="width: 100%; display: flex; justify-content: center;">
-                    <button type="submit"
-                            style="background-color: #f97316; color: white; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer;"
-                            onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'">
-                        <i class="fa-solid fa-plus-circle" style="margin-right: 0.25rem;"></i> Submit
-                    </button>
-                </div>
-            </div>
-        </form>
-
-        <!-- Search Bar -->
-        <form action="{{ route('users.index') }}" method="GET" style="margin-bottom: 1rem; display: flex; justify-content: flex-start; align-items: center; gap: 0.5rem;">
-            <input type="text" name="search" id="searchInput" placeholder="Search Users..."
-                   style="border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.5rem 0.75rem; width: 100%; max-width: 300px; outline: none;"
-                   value="{{ request('search') }}">
-            <button type="submit" title="Search Users"
-                style="background-color: #f97316; color: white; border: none; border-radius: 0.375rem; padding: 0.6rem 1rem; cursor: pointer; font-size: 1rem;">
-                🔍
-            </button>
-        </form>
-
-        <!-- Table -->
-        <div style="overflow-x: auto;">
-            <table id="userTable"
-                style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden;">
-                <thead style="background-color: #f97316; color: white; cursor: pointer;">
-                    <tr>
-                        <th style="padding: 0.75rem;" onclick="sortTable(0)">Name ▲▼</th>
-                        <th style="padding: 0.75rem;" onclick="sortTable(1)">Username ▲▼</th>
-                        <th style="padding: 0.75rem;" onclick="sortTable(2)">User Role ▲▼</th>
-                        <th style="padding: 0.75rem; text-align: center;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    @if (isset($users) && $users->isNotEmpty())
-                        @foreach ($users as $user)
-                            <tr>
-                                <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">
-                                    {{ $user->name }}
-                                    @if ($user->deleted_at)
-                                        <span style="color: #dc2626; font-size: 0.75rem;"> (Deleted)</span>
-                                    @endif
-                                </td>
-                                <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $user->username }}</td>
-                                <td style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6;">{{ $user->role->name }}</td>
-                                <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
-                                    <!-- Edit -->
-                                    <a href="{{ route('users.edit', $user->id) }}"
-                                       style="background-color: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; text-decoration: none; margin-right: 0.5rem;">
-                                        Edit
-                                    </a>
-                                    <!-- Delete -->
-                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" onclick="return confirm('Soft delete this user?')" style="background-color: #dc2626; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Delete</button>
-                                    </form>
-                                    @if ($user->deleted_at)
-                                        <!-- Restore -->
-                                        <form action="{{ route('users.restore', $user->id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit" style="background-color: #22c55e; color: white; padding: 0.25rem 0.75rem; border-radius: 0.375rem; border: none; margin-left: 0.5rem;">Restore</button>
-                                        </form>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    @else
-                        <tr>
-                            <td colspan="4" style="padding: 0.75rem; text-align: center;">No users found.</td>
-                        </tr>
-                    @endif
-                </tbody>
-            </table>
-        </div>
+    <!-- Page Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <nav style="font-size: 14px;">
+            <a href="{{ route('home') }}" style="text-decoration: none; color: #0077B6;">Home</a> /
+            <span style="font-weight: bold; color:#023E8A;">User Creation</span>
+        </nav>
     </div>
+
+    <!-- Blue Header -->
+    <div style="background: #0077B6; color: white; font-weight: bold; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+        <h5 style="font-weight: bold; margin: 0; color: #ffffff;">
+            User Creation
+        </h5>
+    </div>
+
+    <!-- Success or Error Messages -->
+    @if (session('success'))
+        <div style="background-color: #ADE8F4; color: #023E8A; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div style="background-color: #caf0f8; color: #03045E; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+            <ul style="margin: 0; padding-left: 1rem;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <!-- Add User Form -->
+    <form action="{{ route('users.store') }}" method="POST" style="margin-bottom: 20px;">
+        @csrf
+        <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+            <div style="flex: 1; min-width: 220px;">
+                <label for="name" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter Name" required value="{{ old('name') }}"
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+            </div>
+            <div style="flex: 1; min-width: 220px;">
+                <label for="username" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter Username" required value="{{ old('username') }}"
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+            </div>
+            <div style="flex: 1; min-width: 220px;">
+                <label for="password" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter Password" required
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+            </div>
+            <div style="flex: 1; min-width: 220px;">
+                <label for="password_confirmation" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Confirm Password</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirm Password" required
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+            </div>
+            <div style="flex: 1; min-width: 220px;">
+                <label for="user_role" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">User Role</label>
+                <select id="user_role" name="user_role" required
+                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                    <option value="" disabled selected>Select Role</option>
+                    @foreach ($roles as $role)
+                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end;">
+                <button type="submit"
+                        style="width: 100%; background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer;"
+                        onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
+                    + Add
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Search Bar -->
+    <form method="GET" action="{{ route('users.index') }}" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
+        <input type="text" name="search" id="searchInput" placeholder="Search Users..."
+               value="{{ request('search') }}"
+               style="flex: 1; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+        <button type="submit" style="background-color: #0096C7; color: white; border: none; border-radius: 5px; padding: 8px 15px; cursor: pointer;"
+                onmouseover="this.style.backgroundColor='#023E8A'" onmouseout="this.style.backgroundColor='#0096C7'">🔍</button>
+    </form>
+
+    <!-- Users Table -->
+    <div style="overflow-x: auto;">
+        <table id="userTable" style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; border: 1px solid #90E0EF;">
+            <thead style="background: #023E8A; color: white; text-align: left;">
+                <tr>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; width: 50px;">#</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(1)">Name ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(2)">Username ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(3)">User Role ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                @if (isset($users) && $users->isNotEmpty())
+                    @foreach ($users as $index => $user)
+                        <tr style="background-color:white; color:#03045E;">
+                            <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">{{ $index + 1 }}</td>
+                            <td style="border: 1px solid #90E0EF; padding: 8px;">
+                                {{ $user->name }}
+                                @if ($user->deleted_at)
+                                    <span style="color: #dc2626; font-size: 0.75rem;"> (Deleted)</span>
+                                @endif
+                            </td>
+                            <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $user->username }}</td>
+                            <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $user->role->name }}</td>
+                            <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">
+                                <!-- Edit -->
+                                <a href="{{ route('users.edit', $user->id) }}"
+                                   style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; margin-right: 5px;"
+                                   onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Edit</a>
+                                <!-- Delete -->
+                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" onclick="return confirm('Soft delete this user?')"
+                                            style="background-color: #dc2626; color: white; padding: 5px 10px; border-radius: 3px; border: none; margin-left: 5px;"
+                                            onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">Delete</button>
+                                </form>
+                                @if ($user->deleted_at)
+                                    <!-- Restore -->
+                                    <form action="{{ route('users.restore', $user->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit"
+                                                style="background-color: #00B4D8; color: white; padding: 5px 10px; border-radius: 3px; border: none; margin-left: 5px;"
+                                                onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">Restore</button>
+                                    </form>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                @else
+                    <tr style="background-color:white; color:#03045E;">
+                        <td colspan="5" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No users found.</td>
+                    </tr>
+                @endif
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination" style="margin-top: 15px; text-align: center;"></div>
 </div>
 
+<!-- Table Sorting + Pagination -->
 <script>
+    const rowsPerPage = 5;
+    let currentPage = 1;
     let sortAsc = true;
-    let sortColumn = -1;
+    let sortColumn = 1;
+    let tableRows = Array.from(document.querySelectorAll("#userTable tbody tr"));
 
-    function sortTable(colIndex) {
-        const tbody = document.querySelector('#userTable tbody');
-        const rows = Array.from(tbody.querySelectorAll('tr'));
-        sortAsc = (colIndex === sortColumn) ? !sortAsc : true;
-        sortColumn = colIndex;
+    function renderTable() {
+        const search = document.getElementById("searchInput").value.toLowerCase();
+        const filtered = tableRows.filter(row =>
+            row.cells[1].innerText.toLowerCase().includes(search) ||
+            row.cells[2].innerText.toLowerCase().includes(search) ||
+            row.cells[3].innerText.toLowerCase().includes(search)
+        );
 
-        rows.sort((a, b) => {
-            const aText = a.cells[colIndex].innerText.replace(/ \(Deleted\)/, '').toLowerCase();
-            const bText = b.cells[colIndex].innerText.replace(/ \(Deleted\)/, '').toLowerCase();
-            return sortAsc ? aText.localeCompare(bText) : bText.localeCompare(aText);
+        const start = (currentPage - 1) * rowsPerPage;
+        const paginated = filtered.slice(start, start + rowsPerPage);
+
+        const tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
+        paginated.forEach((row, index) => {
+            let clone = row.cloneNode(true);
+            clone.cells[0].innerText = start + index + 1;
+            tbody.appendChild(clone);
         });
 
-        tbody.innerHTML = '';
-        rows.forEach(row => tbody.appendChild(row));
+        renderPagination(filtered.length);
     }
 
-    document.getElementById('searchInput').addEventListener('input', function() {
-        // Search is handled server-side via form submission
+    function renderPagination(totalRows) {
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+        const container = document.getElementById("pagination");
+        container.innerHTML = "";
+
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            btn.style = "margin: 0 4px; padding: 5px 10px; background: #00B4D8; color: white; border: none; border-radius: 3px; cursor: pointer;";
+            if (i === currentPage) {
+                btn.style.backgroundColor = "#023E8A";
+            }
+            btn.addEventListener("click", () => {
+                currentPage = i;
+                renderTable();
+            });
+            container.appendChild(btn);
+        }
+    }
+
+    document.getElementById("searchInput").addEventListener("input", () => {
+        currentPage = 1;
+        renderTable();
     });
+
+    function sortTable(colIndex) {
+        sortAsc = colIndex === sortColumn ? !sortAsc : true;
+        sortColumn = colIndex;
+        tableRows.sort((a, b) => {
+            const textA = a.cells[colIndex].innerText.replace(/ \(Deleted\)/, '').toLowerCase();
+            const textB = b.cells[colIndex].innerText.replace(/ \(Deleted\)/, '').toLowerCase();
+            return sortAsc ? textA.localeCompare(textB) : textB.localeCompare(textA);
+        });
+        renderTable();
+    }
+
+    // Initial Render
+    renderTable();
 </script>
 @endsection
