@@ -125,73 +125,30 @@
                 </tbody>
             </table>
         </div>
-
-        <!-- Pagination -->
-        <div id="pagination" style="margin-top: 1rem; text-align: center;"></div>
     </div>
 </div>
 
 <script>
-    const rowsPerPage = 5;
-    let currentPage = 1;
     let sortAsc = true;
     let sortColumn = 0;
     let tableRows = Array.from(document.querySelectorAll("#vehicleSubCategoryTable tbody tr"));
 
-    function renderTable() {
-        const search = document.getElementById("searchInput").value.toLowerCase();
-        const filtered = tableRows.filter(row =>
-            row.cells[0].innerText.toLowerCase().includes(search) ||
-            row.cells[1].innerText.toLowerCase().includes(search)
-        );
-
-        const start = (currentPage - 1) * rowsPerPage;
-        const paginated = filtered.slice(start, start + rowsPerPage);
-
-        const tbody = document.getElementById("tableBody");
-        tbody.innerHTML = "";
-        paginated.forEach(row => tbody.appendChild(row.cloneNode(true)));
-
-        renderPagination(filtered.length);
-    }
-
-    function renderPagination(totalRows) {
-        const totalPages = Math.ceil(totalRows / rowsPerPage);
-        const container = document.getElementById("pagination");
-        container.innerHTML = "";
-
-        for (let i = 1; i <= totalPages; i++) {
-            const btn = document.createElement("button");
-            btn.textContent = i;
-            btn.style = "margin: 0 0.25rem; padding: 0.25rem 0.75rem; background: #f97316; color: white; border: none; border-radius: 0.375rem; cursor: pointer;";
-            if (i === currentPage) {
-                btn.style.backgroundColor = "#ea580c";
-            }
-            btn.addEventListener("click", () => {
-                currentPage = i;
-                renderTable();
-            });
-            container.appendChild(btn);
-        }
-    }
-
-    document.getElementById("searchInput").addEventListener("input", () => {
-        currentPage = 1;
-        renderTable();
-    });
-
     function sortTable(colIndex) {
         sortAsc = colIndex === sortColumn ? !sortAsc : true;
         sortColumn = colIndex;
+        const tbody = document.getElementById("tableBody");
         tableRows.sort((a, b) => {
             const textA = a.cells[colIndex].innerText.toLowerCase();
             const textB = b.cells[colIndex].innerText.toLowerCase();
-            return sortAsc ? textA.localeCompare(textB) : textB.localeCompare(textB);
+            return sortAsc ? textA.localeCompare(textB) : textB.localeCompare(textA);
         });
-        renderTable();
+        tbody.innerHTML = "";
+        tableRows.forEach(row => tbody.appendChild(row.cloneNode(true)));
     }
 
-    // Initial Render
-    renderTable();
+    // Search functionality
+    document.getElementById("searchInput").addEventListener("input", function() {
+        // Server-side search is handled by form submission
+    });
 </script>
 @endsection

@@ -14,7 +14,6 @@ class VehicleSubCategoryController extends Controller
         $search = $request->query('search');
         $sort = $request->query('sort', 'category');
         $order = $request->query('order', 'asc');
-        $perPage = $request->query('per_page', 10);
 
         $query = VehicleSubCategory::query()
             ->join('vehicle_categories', 'vehicle_sub_categories.cat_id', '=', 'vehicle_categories.id')
@@ -24,7 +23,7 @@ class VehicleSubCategoryController extends Controller
             ->when($sort == 'category', fn($q) => $q->orderBy('vehicle_categories.category', $order))
             ->when($sort != 'category', fn($q) => $q->orderBy('vehicle_sub_categories.sub_category', $order));
 
-        $subCategories = $query->paginate($perPage)->appends($request->query());
+        $subCategories = $query->get(); // Changed from paginate to get to fetch all records
         $categories = VehicleCategory::all();
 
         if ($request->expectsJson()) {
