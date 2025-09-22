@@ -186,6 +186,10 @@ Route::middleware(['web'])->group(function () {
     Route::get('/vehicles/{serialNumber}/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
     Route::post('/vehicles/store', [VehicleController::class, 'store'])->name('vehicles.store');
 });
+Route::get('/request-vehicle-2', function () {
+    return view('request-vehicle-2');
+})->name('request.vehicle.2');
+
 
 // Dropdown data API routes
 Route::get('/get-vehicle-types', [DropdownController::class, 'getVehicleTypes']);
