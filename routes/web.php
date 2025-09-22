@@ -21,6 +21,9 @@ use App\Http\Controllers\VehicleTechnicalDescriptionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\VehicleRequestApprovalController;
+use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\DropdownController;
 
 // Public routes
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('home');
@@ -36,6 +39,20 @@ Route::get('/welcome', function () {
 // Protected routes (require authentication)
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    // Vehicle Request Approvals Routes
+    Route::get('/request-vehicle-2', [VehicleRequestApprovalController::class, 'index'])
+        ->name('vehicle-requests.approvals.index');
+    Route::post('/request-vehicle-2', [VehicleRequestApprovalController::class, 'store'])
+        ->name('vehicle-requests.approvals.store');
+    Route::get('/request-vehicle-2/{vehicleRequestApproval}/edit', [VehicleRequestApprovalController::class, 'edit'])
+        ->name('vehicle-requests.approvals.edit');
+    Route::put('/request-vehicle-2/{vehicleRequestApproval}', [VehicleRequestApprovalController::class, 'update'])
+        ->name('vehicle-requests.approvals.update');
+    Route::delete('/request-vehicle-2/{vehicleRequestApproval}', [VehicleRequestApprovalController::class, 'destroy'])
+        ->name('vehicle-requests.approvals.destroy');
+    Route::get('/request-vehicle-2/{vehicleRequestApproval}', [VehicleRequestApprovalController::class, 'show'])
+        ->name('vehicle-requests.approvals.show');
 
     // Vehicle Types
     Route::get('/vehicle-types', [VehicleTypeController::class, 'index'])->name('vehicle-types.index');
@@ -171,14 +188,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
     //all vehicle info
-Route::get('/vehicle-basic-info/{serial_number}', [VehicleRequestController::class, 'showBasicInfo'])->name('vehicle.basic.info');
-Route::get('/all-vehicle-info', [VehicleRequestController::class, 'allVehicleInfo'])->name('vehicle.all.info');
-
+    Route::get('/vehicle-basic-info/{serial_number}', [VehicleRequestController::class, 'showBasicInfo'])->name('vehicle.basic.info');
+    Route::get('/all-vehicle-info', [VehicleRequestController::class, 'allVehicleInfo'])->name('vehicle.all.info');
 });
-
-
-use App\Http\Controllers\VehicleController;
-use App\Http\Controllers\DropdownController;
 
 // Vehicle management routes
 Route::middleware(['web'])->group(function () {
@@ -186,10 +198,6 @@ Route::middleware(['web'])->group(function () {
     Route::get('/vehicles/{serialNumber}/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
     Route::post('/vehicles/store', [VehicleController::class, 'store'])->name('vehicles.store');
 });
-Route::get('/request-vehicle-2', function () {
-    return view('request-vehicle-2');
-})->name('request.vehicle.2');
-
 
 // Dropdown data API routes
 Route::get('/get-vehicle-types', [DropdownController::class, 'getVehicleTypes']);
