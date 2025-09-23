@@ -9,14 +9,14 @@
     }
 </style>
 
-<div style="width: 100%; padding: 8px; font-family: Arial, sans-serif; background-color: white;">
+<div style="width: 100%; max-width: 64rem; padding: 8px; font-family: Arial, sans-serif; background-color: white; margin: 0 auto;">
 
     <!-- Page Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <nav style="font-size: 14px;">
             <a href="{{ route('home') }}" style="text-decoration: none; color: #0077B6;">Home</a> /
             <a href="{{ route('vehicle.request.index') }}" style="text-decoration: none; color: #0077B6;">Vehicle Requests</a> /
-            <span style="font-weight: bold; color:#023E8A;">Edit Vehicle Request</span>
+            <span style="font-weight: bold; color: #023E8A;">Edit Vehicle Request</span>
         </nav>
     </div>
 
@@ -50,134 +50,134 @@
         @method('PUT')
         <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
             <div style="flex: 1; min-width: 220px;">
-                <label for="request_type" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Request Type</label>
+                <label for="request_type" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Request Type</label>
                 <select id="request_type" name="request_type" required
-                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E; @error('request_type') border-color: #b91c1c; @enderror">
+                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('request_type') border-color: #dc2626; @enderror">
                     <option value="" disabled>Select Request Type</option>
-                    <option value="replacement" {{ old('request_type', $vehicle->request_type) == 'replacement' ? 'selected' : '' }}>Vehicle replacement</option>
-                    <option value="new_approval" {{ old('request_type', $vehicle->request_type) == 'new_approval' ? 'selected' : '' }}>Taking over a vehicle based on a new approval</option>
+                    <option value="replacement" {{ old('request_type', $vehicle->request_type) == 'replacement' ? 'selected' : '' }}>Vehicle Replacement</option>
+                    <option value="new_approval" {{ old('request_type', $vehicle->request_type) == 'new_approval' ? 'selected' : '' }}>Taking Over a Vehicle Based on a New Approval</option>
                 </select>
                 @error('request_type')
-                    <span style="color: #b91c1c; font-size: 0.75rem;">{{ $message }}</span>
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
                 @enderror
             </div>
             <div style="flex: 1; min-width: 220px;">
-                <label for="cat_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Category</label>
+                <label for="cat_id" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Category</label>
                 <select id="cat_id" name="cat_id" required
-                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E; @error('cat_id') border-color: #b91c1c; @enderror">
+                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('cat_id') border-color: #dc2626; @enderror">
                     <option value="" disabled>Select Category</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category->id }}" {{ old('cat_id', $vehicle->cat_id) == $category->id ? 'selected' : '' }}>{{ $category->category }}</option>
                     @endforeach
                 </select>
                 @error('cat_id')
-                    <span style="color: #b91c1c; font-size: 0.75rem;">{{ $message }}</span>
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
                 @enderror
             </div>
             <div style="flex: 1; min-width: 220px;">
-                <label for="sub_cat_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Sub Category</label>
+                <label for="sub_cat_id" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Sub Category</label>
                 <select id="sub_cat_id" name="sub_cat_id" required
-                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E; @error('sub_cat_id') border-color: #b91c1c; @enderror">
+                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('sub_cat_id') border-color: #dc2626; @enderror">
                     <option value="" disabled>Select Sub-Category</option>
                     @foreach ($subCategories as $subCategory)
                         <option value="{{ $subCategory->id }}" {{ old('sub_cat_id', $vehicle->sub_cat_id) == $subCategory->id ? 'selected' : '' }}>{{ $subCategory->sub_category }}</option>
                     @endforeach
                 </select>
                 @error('sub_cat_id')
-                    <span style="color: #b91c1c; font-size: 0.75rem;">{{ $message }}</span>
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
                 @enderror
             </div>
             <div style="flex: 1; min-width: 220px;">
-                <label for="required_quantity" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Required Quantity</label>
+                <label for="required_quantity" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Required Quantity</label>
                 <input type="number" id="required_quantity" name="qty" min="1" value="{{ old('qty', $vehicle->qty) }}" required
-                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E; @error('qty') border-color: #b91c1c; @enderror">
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('qty') border-color: #dc2626; @enderror">
                 @error('qty')
-                    <span style="color: #b91c1c; font-size: 0.75rem;">{{ $message }}</span>
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
                 @enderror
             </div>
             <div style="flex: 1; min-width: 220px;">
-                <label for="vehicle_book" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Letter</label>
+                <label for="vehicle_book" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Letter</label>
                 <input type="file" id="vehicle_book" name="vehicle_book" accept=".pdf,.doc,.docx,.jpg,.png"
-                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E; @error('vehicle_book') border-color: #b91c1c; @enderror">
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('vehicle_book') border-color: #dc2626; @enderror">
                 @if($vehicle->vehicle_book_path)
-                    <a href="{{ Storage::url($vehicle->vehicle_book_path) }}" target="_blank" style="color: #0077B6; font-size: 0.75rem; margin-top: 0.25rem; display: block;">View Current</a>
+                    <a href="{{ Storage::url($vehicle->vehicle_book_path) }}" target="_blank" style="color: #0077B6; font-size: 12px; margin-top: 4px; display: block;">View Current Letter</a>
                 @endif
                 @error('vehicle_book')
-                    <span style="color: #b91c1c; font-size: 0.75rem;">{{ $message }}</span>
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
                 @enderror
             </div>
             <div style="flex: 1; min-width: 220px;">
-                <label for="image_01" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Front View</label>
+                <label for="image_01" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Front View</label>
                 <input type="file" id="image_01" name="image_01" accept=".jpg,.png"
-                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E; @error('image_01') border-color: #b91c1c; @enderror">
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('image_01') border-color: #dc2626; @enderror">
                 @if($vehicle->image_01_path)
-                    <a href="javascript:void(0)" onclick="openImageModal('Front View', '{{ Storage::url($vehicle->image_01_path) }}')" style="color: #0077B6; font-size: 0.75rem; margin-top: 0.25rem; display: block;">View Current</a>
+                    <a href="javascript:void(0)" onclick="openImageModal('Front View', '{{ Storage::url($vehicle->image_01_path) }}')" style="color: #0077B6; font-size: 12px; margin-top: 4px; display: block;">View Current Image</a>
                 @endif
                 @error('image_01')
-                    <span style="color: #b91c1c; font-size: 0.75rem;">{{ $message }}</span>
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
                 @enderror
             </div>
             <div style="flex: 1; min-width: 220px;">
-                <label for="image_02" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Rear View</label>
+                <label for="image_02" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Rear View</label>
                 <input type="file" id="image_02" name="image_02" accept=".jpg,.png"
-                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E; @error('image_02') border-color: #b91c1c; @enderror">
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('image_02') border-color: #dc2626; @enderror">
                 @if($vehicle->image_02_path)
-                    <a href="javascript:void(0)" onclick="openImageModal('Rear View', '{{ Storage::url($vehicle->image_02_path) }}')" style="color: #0077B6; font-size: 0.75rem; margin-top: 0.25rem; display: block;">View Current</a>
+                    <a href="javascript:void(0)" onclick="openImageModal('Rear View', '{{ Storage::url($vehicle->image_02_path) }}')" style="color: #0077B6; font-size: 12px; margin-top: 4px; display: block;">View Current Image</a>
                 @endif
                 @error('image_02')
-                    <span style="color: #b91c1c; font-size: 0.75rem;">{{ $message }}</span>
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
                 @enderror
             </div>
             <div style="flex: 1; min-width: 220px;">
-                <label for="image_03" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Side View 1</label>
+                <label for="image_03" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Side View 1</label>
                 <input type="file" id="image_03" name="image_03" accept=".jpg,.png"
-                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E; @error('image_03') border-color: #b91c1c; @enderror">
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('image_03') border-color: #dc2626; @enderror">
                 @if($vehicle->image_03_path)
-                    <a href="javascript:void(0)" onclick="openImageModal('Side View 1', '{{ Storage::url($vehicle->image_03_path) }}')" style="color: #0077B6; font-size: 0.75rem; margin-top: 0.25rem; display: block;">View Current</a>
+                    <a href="javascript:void(0)" onclick="openImageModal('Side View 1', '{{ Storage::url($vehicle->image_03_path) }}')" style="color: #0077B6; font-size: 12px; margin-top: 4px; display: block;">View Current Image</a>
                 @endif
                 @error('image_03')
-                    <span style="color: #b91c1c; font-size: 0.75rem;">{{ $message }}</span>
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
                 @enderror
             </div>
             <div style="flex: 1; min-width: 220px;">
-                <label for="image_04" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Side View 2</label>
+                <label for="image_04" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Side View 2</label>
                 <input type="file" id="image_04" name="image_04" accept=".jpg,.png"
-                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E; @error('image_04') border-color: #b91c1c; @enderror">
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('image_04') border-color: #dc2626; @enderror">
                 @if($vehicle->image_04_path)
-                    <a href="javascript:void(0)" onclick="openImageModal('Side View 2', '{{ Storage::url($vehicle->image_04_path) }}')" style="color: #0077B6; font-size: 0.75rem; margin-top: 0.25rem; display: block;">View Current</a>
+                    <a href="javascript:void(0)" onclick="openImageModal('Side View 2', '{{ Storage::url($vehicle->image_04_path) }}')" style="color: #0077B6; font-size: 12px; margin-top: 4px; display: block;">View Current Image</a>
                 @endif
                 @error('image_04')
-                    <span style="color: #b91c1c; font-size: 0.75rem;">{{ $message }}</span>
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
                 @enderror
             </div>
             <div style="flex: 1; min-width: 220px;">
-                <label for="date_submit" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Date Submitted</label>
+                <label for="date_submit" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Date Submitted</label>
                 <input type="date" id="date_submit" name="date_submit" value="{{ old('date_submit', $vehicle->date_submit) }}"
-                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E; @error('date_submit') border-color: #b91c1c; @enderror">
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('date_submit') border-color: #dc2626; @enderror">
                 @error('date_submit')
-                    <span style="color: #b91c1c; font-size: 0.75rem;">{{ $message }}</span>
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
                 @enderror
             </div>
             <div style="flex: 1; min-width: 220px;">
-                <label for="status" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Status</label>
+                <label for="status" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Status</label>
                 <select id="status" name="status"
-                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E; @error('status') border-color: #b91c1c; @enderror">
+                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('status') border-color: #dc2626; @enderror">
                     <option value="pending" {{ old('status', $vehicle->status) == 'pending' ? 'selected' : '' }}>Pending</option>
                     <option value="approved" {{ old('status', $vehicle->status) == 'approved' ? 'selected' : '' }}>Approved</option>
                     <option value="rejected" {{ old('status', $vehicle->status) == 'rejected' ? 'selected' : '' }}>Rejected</option>
                 </select>
                 @error('status')
-                    <span style="color: #b91c1c; font-size: 0.75rem;">{{ $message }}</span>
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
                 @enderror
             </div>
-            <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end;">
+        </div>
+        <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end; justify-content:center;">
                 <button type="submit"
-                        style="width: 100%; background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer;"
+                        style="width: 20%; background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer;"
                         onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
                     Update
                 </button>
             </div>
-        </div>
     </form>
 
     <!-- Image Preview Modal -->
