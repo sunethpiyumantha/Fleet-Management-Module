@@ -70,9 +70,12 @@
             <div style="display: inline-block; cursor: pointer; padding: 10px; font-size: 24px; position: relative;" title="Notifications">
                     <i class="fas fa-bell"></i>
             </div> 
-            <div style="display: inline-block; cursor: pointer; padding: 10px; font-size: 24px;" title="Logout">
-                <i class="fas fa-sign-out-alt"></i>
-            </div>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: inline;">
+                @csrf
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt"></i> <!-- Example logout icon -->
+                </a>
+            </form>
               
         </div>        
         <div class="ui-theme-settings">

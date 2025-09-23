@@ -215,3 +215,7 @@ Route::get('/get-statuses', [DropdownController::class, 'getStatuses']);
 Route::get('/get-locations', [DropdownController::class, 'getLocations']);
 Route::get('/get-drivers', [DropdownController::class, 'getDrivers']);
 Route::get('/get-faults', [DropdownController::class, 'getFaults']);
+
+use Illuminate\Support\Facades\Auth;
+
+Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
