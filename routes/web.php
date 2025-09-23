@@ -38,6 +38,9 @@ Route::get('/welcome', function () {
     return view('welcome');
 })->name('welcome')->middleware('auth');
 
+Route::get('/index.html', function () {
+    return view('welcome');
+});
 // Protected routes (require authentication)
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
