@@ -50,7 +50,7 @@ class VehicleRequestApprovalController extends Controller
             'cat_id' => 'required|exists:vehicle_categories,id',
             'sub_cat_id' => 'required|exists:vehicle_sub_categories,id',
             'qty' => 'required|integer|min:1',
-            'vehicle_book' => 'required|file|mimes:pdf,doc,docx,jpg,png|max:5120', // 5MB max
+            'vehicle_book' => 'required|file|mimes:pdf,jpg|max:5120', // 5MB max, only pdf and jpg
         ]);
 
         // Generate unique serial number
@@ -101,7 +101,7 @@ class VehicleRequestApprovalController extends Controller
             'qty' => 'required|integer|min:1',
             'status' => 'required|in:pending,approved,rejected',
             'notes' => 'nullable|string|max:1000',
-            'vehicle_book' => 'nullable|file|mimes:pdf,doc,docx,jpg,png|max:5120',
+            'vehicle_book' => 'nullable|file|mimes:pdf,jpg|max:5120', // only pdf and jpg
         ]);
 
         // Handle file upload if new file is provided

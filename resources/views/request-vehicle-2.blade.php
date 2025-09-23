@@ -1,4 +1,7 @@
+<<<<<<< HEAD
+=======
 
+>>>>>>> 944e39dd45628950223da346bcbf491b7a88c68b
 @extends('layouts.app')
 
 @section('title', 'Vehicle Request Management 2')
@@ -104,7 +107,7 @@
             </div>
             <div style="flex: 1; min-width: 220px;">
                 <label for="vehicle_book" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Letter</label>
-                <input type="file" id="vehicle_book" name="vehicle_book" accept=".pdf,.doc,.docx,.jpg,.png" required
+                <input type="file" id="vehicle_book" name="vehicle_book" accept=".pdf,.jpg" required
                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
                 @error('vehicle_book')
                     <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
@@ -161,11 +164,11 @@
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{!! $approval->status_badge !!}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">
                             @if($approval->vehicle_letter)
-                                <button onclick="viewFile('{{ $approval->vehicle_letter }}', '{{ $approval->serial_number }}')"
-                                        style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; border: none; cursor: pointer;"
-                                        onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">
-                                    <i class="fa-solid fa-image"></i> View
-                                </button>
+                                <a href="{{ asset('storage/' . $approval->vehicle_letter) }}" target="_blank"
+                                   style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none;"
+                                   onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">
+                                    <i class="fa-solid fa-eye"></i> View
+                                </a>
                             @else
                                 <span style="color: #6b7280; font-size: 0.75rem;">No file</span>
                             @endif
@@ -207,22 +210,6 @@
         @endif
     </div>
 
-    <!-- File Modal -->
-    <div id="fileModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
-        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; max-width: 90%; max-height: 90%; overflow: auto;">
-            <h3 id="modalTitle" style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem; color: #023E8A;">Vehicle File</h3>
-            <div id="fileContainer" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
-                <!-- File content will be loaded here -->
-            </div>
-            <div style="text-align: center; margin-top: 1rem;">
-                <button onclick="closeModal()"
-                        style="background-color: #00B4D8; color: white; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer;"
-                        onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
 </div>
 
 <script>
@@ -239,7 +226,7 @@
             row.cells[2].innerText.toLowerCase().includes(search) ||
             row.cells[3].innerText.toLowerCase().includes(search) ||
             row.cells[4].innerText.toLowerCase().includes(search) ||
-            row.cells[6].innerText.toLowerCase().includes(search)
+            row.cells[6].innerText.toLowerCase().includes(search) 
         );
 
         const start = (currentPage - 1) * rowsPerPage;
@@ -291,55 +278,6 @@
         });
         renderTable();
     }
-
-    function viewFile(filePath, serialNumber) {
-        const modal = document.getElementById('fileModal');
-        const title = document.getElementById('modalTitle');
-        const container = document.getElementById('fileContainer');
-
-        title.textContent = `Vehicle Letter - ${serialNumber}`;
-
-        const extension = filePath.split('.').pop().toLowerCase();
-        const isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(extension);
-        const isPdf = extension === 'pdf';
-
-        if (isImage) {
-            container.innerHTML = `<img src="{{ asset('storage') }}/${filePath}" style="max-width: 100%; max-height: 70vh; border-radius: 0.25rem;" />`;
-        } else if (isPdf) {
-            container.innerHTML = `
-                <iframe src="{{ asset('storage') }}/${filePath}" 
-                        style="width: 100%; height: 70vh; border: none; border-radius: 0.25rem;" 
-                        frameborder="0"></iframe>
-            `;
-        } else {
-            container.innerHTML = `
-                <div style="text-align: center; padding: 2rem;">
-                    <i class="fa-solid fa-file" style="font-size: 3rem; color: #90E0EF; margin-bottom: 1rem;"></i>
-                    <p style="color: #6b7280;">${filePath}</p>
-                    <a href="{{ asset('storage') }}/${filePath}" target="_blank" 
-                       style="background-color: #00B4D8; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; display: inline-block; margin-top: 1rem;"
-                       onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
-                        Download File
-                    </a>
-                </div>
-            `;
-        }
-
-        modal.style.display = 'flex';
-    }
-
-    function closeModal() {
-        document.getElementById('fileModal').style.display = 'none';
-    }
-
-    document.getElementById('fileModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeModal();
-        }
-    });
-
-    // Initial Render
-    renderTable();
 </script>
 
 <style>
