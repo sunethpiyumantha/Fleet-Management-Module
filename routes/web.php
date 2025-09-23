@@ -25,6 +25,8 @@ use App\Http\Controllers\VehicleRequestApprovalController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\DropdownController;
 
+use Illuminate\Support\Facades\Auth;
+
 // Public routes
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('home');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -187,19 +189,19 @@ Route::middleware('auth')->group(function () {
     Route::put('/user-creation/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
-    //all vehicle info
+    // All vehicle info
     Route::get('/vehicle-basic-info/{serial_number}', [VehicleRequestController::class, 'showBasicInfo'])->name('vehicle.basic.info');
     Route::get('/all-vehicle-info', [VehicleRequestController::class, 'allVehicleInfo'])->name('vehicle.all.info');
-});
 
-// Vehicle management routes
-Route::middleware(['web'])->group(function () {
+    // Vehicle management routes (moved inside auth middleware)
     Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');
     Route::get('/vehicles/{serialNumber}/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
     Route::post('/vehicles/store', [VehicleController::class, 'store'])->name('vehicles.store');
+    Route::put('/vehicles/{serialNumber}', [VehicleController::class, 'update'])->name('vehicles.update');
+    Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
 });
-Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
-// Dropdown data API routes
+
+// Dropdown data API routes (kept outside auth middleware for AJAX calls)
 Route::get('/get-vehicle-types', [DropdownController::class, 'getVehicleTypes']);
 Route::get('/get-allocation-types', [DropdownController::class, 'getAllocationTypes']);
 Route::get('/get-makes', [DropdownController::class, 'getMakes']);
@@ -215,7 +217,3 @@ Route::get('/get-statuses', [DropdownController::class, 'getStatuses']);
 Route::get('/get-locations', [DropdownController::class, 'getLocations']);
 Route::get('/get-drivers', [DropdownController::class, 'getDrivers']);
 Route::get('/get-faults', [DropdownController::class, 'getFaults']);
-
-use Illuminate\Support\Facades\Auth;
-
-Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
