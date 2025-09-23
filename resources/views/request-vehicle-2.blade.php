@@ -1,4 +1,4 @@
-```blade
+
 @extends('layouts.app')
 
 @section('title', 'Vehicle Request Management 2')
@@ -371,4 +371,3 @@
     }
 </style>
 @endsection
-```
