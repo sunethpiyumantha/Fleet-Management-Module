@@ -74,7 +74,13 @@ class VehicleController extends Controller
 
     public function index()
     {
-        $vehicles = Vehicle::all();
+        $vehicles = Vehicle::with('vehicleType')->get()->map(function ($vehicle) {
+            return [
+                'serial_number' => $vehicle->serial_number,
+                'vehicle_army_no' => $vehicle->vehicle_army_no,
+                'vehicle_type' => $vehicle->vehicleType ? $vehicle->vehicleType->name : 'N/A',
+            ];
+        });
         return response()->json($vehicles);
     }
 }

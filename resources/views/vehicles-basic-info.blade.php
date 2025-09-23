@@ -529,6 +529,7 @@
         function renderTable() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const filtered = tableRows.filter(row => row.cells[0].innerText.toLowerCase().includes(search) || row.cells[1].innerText.toLowerCase().includes(search));
+            console.log('Filtered rows:', filtered); // Debug filtered rows
             const start = (currentPage - 1) * rowsPerPage;
             const paginated = filtered.slice(start, start + rowsPerPage);
             const tbody = document.getElementById('tableBody');
@@ -574,7 +575,9 @@
                     headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }
                 });
                 if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-                tableRows = (await res.json()).map(vehicle => {
+                const data = await res.json();
+                console.log('Vehicles data:', data); // Debug the response
+                tableRows = data.map(vehicle => {
                     const row = document.createElement('tr');
                     row.innerHTML = `<td style="border: 1px solid #90E0EF; padding: 8px;">${vehicle.vehicle_army_no}</td>
                                     <td style="border: 1px solid #90E0EF; padding: 8px;">${vehicle.vehicle_type}</td>
@@ -583,6 +586,7 @@
                                     </td>`;
                     return row;
                 });
+                console.log('Table rows:', tableRows); // Debug the rows
                 renderTable();
             } catch (error) {
                 console.error('Error loading vehicles:', error);
