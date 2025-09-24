@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> 944e39dd45628950223da346bcbf491b7a88c68b
 @extends('layouts.app')
 
 @section('title', 'Vehicle Request Management 2')
