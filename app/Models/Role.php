@@ -11,5 +11,9 @@ class Role extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = ['name'];
-    protected $dates = ['deleted_at'];
+
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'role_permission');
+    }
 }

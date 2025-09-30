@@ -20,9 +20,13 @@ class User extends Authenticatable
         'password',
     ];
 
-    // Relationship with roles table
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function hasPermission($permission)
+    {
+        return $this->role && $this->role->permissions->contains('name', $permission);
     }
 }
