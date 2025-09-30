@@ -189,7 +189,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/roles/{id}/restore', [RoleController::class, 'restore'])->name('roles.restore');
     Route::get('/roles/{id}/permissions', [RoleController::class, 'getPermissions']);
     // Users
-    Route::get('/user-creation', [UserController::class, 'index'])->name('users.index');
+    Route::get('/user-creation', [UserController::class, 'index'])->middleware('can:User List')->name('users.index');
     Route::post('/user-creation', [UserController::class, 'store'])->name('users.store');
     Route::get('/user-creation/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/user-creation/{id}', [UserController::class, 'update'])->name('users.update');
