@@ -64,6 +64,16 @@
                 @enderror
             </div>
             <div style="flex: 1; min-width: 220px;">
+                <label for="establishment_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Establishment</label>
+                <select id="establishment_id" name="establishment_id" required
+                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                    <option value="" disabled {{ old('establishment_id') ? '' : 'selected' }}>Select Establishment</option>
+                </select>
+                @error('establishment_id')
+                    <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
+                @enderror
+            </div>
+            <div style="flex: 1; min-width: 220px;">
                 <label for="cat_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Category</label>
                 <select id="cat_id" name="cat_id" required
                         style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
@@ -102,7 +112,7 @@
                 @enderror
             </div>
             <div style="flex: 1; min-width: 220px;">
-                <label for="vehicle_book" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Letter</label>
+                <label for="vehicle_book" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Reference letter</label>
                 <input type="file" id="vehicle_book" name="vehicle_book" accept=".pdf,.jpg" required
                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
                 @error('vehicle_book')
@@ -121,7 +131,7 @@
 
     <!-- Search Bar -->
     <form method="GET" action="{{ route('vehicle-requests.approvals.index') }}" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
-        <input type="text" name="search" id="searchInput" placeholder="Search by Serial Number, Request Type, Category, Sub-Category, or Status"
+        <input type="text" name="search" id="searchInput" placeholder="Search by Serial Number, Request Type, Establishment, Category, Sub-Category, or Status"
                value="{{ request('search') }}"
                style="flex: 1; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
         <button type="submit" style="background-color: #0096C7; color: white; border: none; border-radius: 5px; padding: 8px 15px; cursor: pointer;"
@@ -136,10 +146,11 @@
                     <th style="border: 1px solid #90E0EF; padding: 8px; width: 50px;">#</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(1)">Serial Number ▲▼</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(2)">Request Type ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(3)">Vehicle Category ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(4)">Sub Category ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(5)">Quantity ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(6)">Status ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(3)">Establishment ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(4)">Vehicle Category ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(5)">Sub Category ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(6)">Quantity ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(7)">Status ▲▼</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px;">Vehicle Letter</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">Actions</th>
                 </tr>
@@ -150,6 +161,9 @@
                         <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">{{ $index + 1 }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->serial_number }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->request_type_display }}</td>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">
+                            {{ $approval->establishment ? $approval->establishment->name : 'N/A' }}
+                        </td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">
                             {{ $approval->category ? $approval->category->category . ' (' . $approval->category->serial_number . ')' : 'N/A' }}
                         </td>
@@ -186,7 +200,7 @@
                     </tr>
                 @empty
                     <tr style="background-color:white; color:#03045E;">
-                        <td colspan="9" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No vehicle requests found.</td>
+                        <td colspan="10" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No vehicle requests found.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -222,7 +236,8 @@
             row.cells[2].innerText.toLowerCase().includes(search) ||
             row.cells[3].innerText.toLowerCase().includes(search) ||
             row.cells[4].innerText.toLowerCase().includes(search) ||
-            row.cells[6].innerText.toLowerCase().includes(search) 
+            row.cells[5].innerText.toLowerCase().includes(search) ||
+            row.cells[7].innerText.toLowerCase().includes(search)
         );
 
         const start = (currentPage - 1) * rowsPerPage;
