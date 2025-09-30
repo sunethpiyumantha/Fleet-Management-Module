@@ -7,14 +7,12 @@
     body {
         background-color: white !important;
     }
-    /* Optional: table row hover effect */
     #roleTable tbody tr:hover {
         background-color: #f1f1f1;
     }
 </style>
 
 <div style="width: 100%; padding: 8px; font-family: Arial, sans-serif; background-color: white;">
-
     <!-- Page Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <nav style="font-size: 14px;">
@@ -25,12 +23,10 @@
 
     <!-- Blue Header -->
     <div style="background: #0077B6; color: white; font-weight: bold; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-        <h5 style="font-weight: bold; margin: 0; color: #ffffff;">
-            User Role
-        </h5>
+        <h5 style="font-weight: bold; margin: 0; color: #ffffff;">User Role</h5>
     </div>
 
-    <!-- Success or Error Messages -->
+    <!-- Messages -->
     @if (session('success'))
         <div style="background-color: #ADE8F4; color: #023E8A; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
             {{ session('success') }}
@@ -51,7 +47,7 @@
         </div>
     @endif
 
-    <!-- Add User Role Form -->
+    <!-- Add User Role Form with Permissions -->
     <form action="{{ route('roles.store') }}" method="POST" style="margin-bottom: 20px;">
         @csrf
         <div style="display: flex; flex-wrap: wrap; gap: 15px;">
@@ -60,55 +56,87 @@
                 <input type="text" id="userRole" name="role" value="{{ old('role') }}" required
                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
             </div>
-            <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end;">
-                <button type="submit"
-                        style="width: 100%; background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer;"
-                        onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
-                    + Add
-                </button>
+        </div>
+
+        <!-- Permissions Section -->
+        <div style="margin-bottom: 20px; margin-top: 10px;">
+            <h5 style="color: #023E8A; font-weight: bold; margin-bottom: 10px;">Permissions</h5>
+            <div style="display: flex; gap: 20px;">
+                <div>
+                    <h6 style="color: #023E8A; font-weight: bold;">User Management</h6>
+                    @foreach (['Role Create', 'Role List', 'User Edit', 'Logindetail List', 'Role Delete', 'User Create', 'User List'] as $perm)
+                        <label><input type="checkbox" name="permissions[]" value="{{ $perm }}" {{ in_array($perm, old('permissions', [])) ? 'checked' : '' }}> {{ $perm }}</label><br>
+                    @endforeach
+                </div>
+                <div>
+                    <h6 style="color: #023E8A; font-weight: bold;">Requests</h6>
+                    @foreach (['Request Create', 'Request Edit (own)', 'Request List (all / own)', 'Request Delete (own, before approval)', 'Approve Request', 'Reject Request', 'Forward Request', 'Add Forward Reason'] as $perm)
+                        <label><input type="checkbox" name="permissions[]" value="{{ $perm }}" {{ in_array($perm, old('permissions', [])) ? 'checked' : '' }}> {{ $perm }}</label><br>
+                    @endforeach
+                </div>
+                <div>
+                    <h6 style="color: #023E8A; font-weight: bold;">Establishment Management</h6>
+                    @foreach (['Establishment Create', 'Establishment Edit', 'Establishment Delete', 'Establishment List'] as $perm)
+                        <label><input type="checkbox" name="permissions[]" value="{{ $perm }}" {{ in_array($perm, old('permissions', [])) ? 'checked' : '' }}> {{ $perm }}</label><br>
+                    @endforeach
+                </div>
+                <div>
+                    <h6 style="color: #023E8A; font-weight: bold;">System</h6>
+                    <label><input type="checkbox" name="permissions[]" value="Manage Notifications" {{ in_array('Manage Notifications', old('permissions', [])) ? 'checked' : '' }}> Manage Notifications</label><br>
+                </div>
             </div>
+        </div>
+
+        <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end;">
+            <button type="submit"
+                    style="width: 100%; background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer;"
+                    onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
+                + Add
+            </button>
         </div>
     </form>
 
-    <!-- Permissions Section -->
-    <div style="margin-bottom: 20px;">
-        <h5 style="color: #023E8A; font-weight: bold; margin-bottom: 10px;">Permissions</h5>
-        <div style="display: flex; gap: 20px;">
-            <div>
-                <h6 style="color: #023E8A; font-weight: bold;">User Management</h6>
-                <label><input type="checkbox" name="permissions[]" value="Role Create"> Role Create</label><br>
-                <label><input type="checkbox" name="permissions[]" value="Role List"> Role List</label><br>
-                <label><input type="checkbox" name="permissions[]" value="User Edit"> User Edit</label><br>
-                <label><input type="checkbox" name="permissions[]" value="Logindetail List"> Logindetail List</label><br>
-                <label><input type="checkbox" name="permissions[]" value="Role Delete"> Role Delete</label><br>
-                <label><input type="checkbox" name="permissions[]" value="User Create"> User Create</label><br>
-                <label><input type="checkbox" name="permissions[]" value="User List"> User List</label><br>
+    <!-- Edit Permissions Form -->
+    <div style="margin-top: 30px;">
+        <h5 style="color: #023E8A; font-weight: bold; margin-bottom: 10px;">Edit Permissions for Role</h5>
+        <form action="{{ route('roles.permissions.update', ':role_id') }}" method="POST" id="editPermissionsForm">
+            @csrf
+            @method('PATCH')
+            <select name="role_id" onchange="this.form.action = this.form.action.replace(':role_id', this.value); loadPermissions(this.value);" required>
+                <option value="">Select Role</option>
+                @foreach ($roles as $role)
+                    @if (!$role->deleted_at)
+                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                    @endif
+                @endforeach
+            </select>
+            <div style="display: flex; gap: 20px; margin-top: 10px;">
+                <div>
+                    <h6 style="color: #023E8A; font-weight: bold;">User Management</h6>
+                    @foreach (['Role Create', 'Role List', 'User Edit', 'Logindetail List', 'Role Delete', 'User Create', 'User List'] as $perm)
+                        <label><input type="checkbox" name="permissions[]" value="{{ $perm }}" class="permission-checkbox"> {{ $perm }}</label><br>
+                    @endforeach
+                </div>
+                <div>
+                    <h6 style="color: #023E8A; font-weight: bold;">Requests</h6>
+                    @foreach (['Request Create', 'Request Edit (own)', 'Request List (all / own)', 'Request Delete (own, before approval)', 'Approve Request', 'Reject Request', 'Forward Request', 'Add Forward Reason'] as $perm)
+                        <label><input type="checkbox" name="permissions[]" value="{{ $perm }}" class="permission-checkbox"> {{ $perm }}</label><br>
+                    @endforeach
+                </div>
+                <div>
+                    <h6 style="color: #023E8A; font-weight: bold;">Establishment Management</h6>
+                    @foreach (['Establishment Create', 'Establishment Edit', 'Establishment Delete', 'Establishment List'] as $perm)
+                        <label><input type="checkbox" name="permissions[]" value="{{ $perm }}" class="permission-checkbox"> {{ $perm }}</label><br>
+                    @endforeach
+                </div>
+                <div>
+                    <h6 style="color: #023E8A; font-weight: bold;">System</h6>
+                    <label><input type="checkbox" name="permissions[]" value="Manage Notifications" class="permission-checkbox"> Manage Notifications</label><br>
+                </div>
             </div>
-            <div>
-                <h6 style="color: #023E8A; font-weight: bold;">Requests</h6>
-                <label><input type="checkbox" name="permissions[]" value="Request Create"> Request Create</label><br>
-                <label><input type="checkbox" name="permissions[]" value="Request Edit (own)"> Request Edit </label><br>
-                <label><input type="checkbox" name="permissions[]" value="Request List (all / own)"> Request List </label><br>
-                <label><input type="checkbox" name="permissions[]" value="Request Delete (own, before approval)"> Request Delete </label><br>
-                <label><input type="checkbox" name="permissions[]" value="Approve Request"> Approve Request</label><br>
-                <label><input type="checkbox" name="permissions[]" value="Reject Request"> Reject Request</label><br>
-                <label><input type="checkbox" name="permissions[]" value="Forward Request"> Forward Request</label><br>
-                <label><input type="checkbox" name="permissions[]" value="Add Forward Reason"> Add Forward Reason</label><br>
-            </div>
-            <div>
-                <h6 style="color: #023E8A; font-weight: bold;">Establishment Management</h6>
-                <label><input type="checkbox" name="permissions[]" value="Establishment Create"> Establishment Create</label><br>
-                <label><input type="checkbox" name="permissions[]" value="Establishment Edit"> Establishment Edit</label><br>
-                <label><input type="checkbox" name="permissions[]" value="Establishment Delete"> Establishment Delete</label><br>
-                <label><input type="checkbox" name="permissions[]" value="Establishment List"> Establishment List</label><br>
-            </div>
-            <div>
-                <h6 style="color: #023E8A; font-weight: bold;">System</h6>
-                <label><input type="checkbox" name="permissions[]" value="Manage Notifications"> Manage Notifications</label><br>
-            </div>
-        </div>
-        <button type="submit" style="background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer; margin-top: 10px;"
-                onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">Save Permissions</button>
+            <button type="submit" style="background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer; margin-top: 10px;"
+                    onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">Save Permissions</button>
+        </form>
     </div>
 
     <!-- Search Bar -->
@@ -127,6 +155,7 @@
                 <tr>
                     <th style="border: 1px solid #90E0EF; padding: 8px; width: 50px;">#</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(1)">User Role ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Permissions</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">Actions</th>
                 </tr>
             </thead>
@@ -141,6 +170,9 @@
                                     <span style="color: #dc2626; font-size: 0.75rem;"> (Deleted)</span>
                                 @endif
                             </td>
+                            <td style="border: 1px solid #90E0EF; padding: 8px;">
+                                {{ $role->permissions->pluck('name')->implode(', ') ?: 'None' }}
+                            </td>
                             <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">
                                 @if ($role->deleted_at)
                                     <form action="{{ route('roles.restore', $role->id) }}" method="POST" style="display:inline;">
@@ -150,7 +182,6 @@
                                                 onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Restore</button>
                                     </form>
                                 @else
-                                    <!-- Update -->
                                     <form action="{{ route('roles.update', $role->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('PUT')
@@ -158,7 +189,6 @@
                                         <button type="submit" style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; border: none;"
                                                 onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Update</button>
                                     </form>
-                                    <!-- Delete -->
                                     <form action="{{ route('roles.destroy', $role->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
@@ -171,7 +201,7 @@
                     @endforeach
                 @else
                     <tr style="background-color:white; color:#03045E;">
-                        <td colspan="3" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No roles found.</td>
+                        <td colspan="4" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No roles found.</td>
                     </tr>
                 @endif
             </tbody>
@@ -182,7 +212,7 @@
     <div id="pagination" style="margin-top: 15px; text-align: center;"></div>
 </div>
 
-<!-- Table Sorting + Pagination -->
+<!-- JavaScript for Table Sorting, Pagination, and Dynamic Permissions -->
 <script>
     const rowsPerPage = 5;
     let currentPage = 1;
@@ -202,7 +232,7 @@
         tbody.innerHTML = "";
         paginated.forEach((row, index) => {
             let clone = row.cloneNode(true);
-            clone.cells[0].innerText = start + index + 1; // Update numbering
+            clone.cells[0].innerText = start + index + 1;
             tbody.appendChild(clone);
         });
 
@@ -229,11 +259,6 @@
         }
     }
 
-    document.getElementById("searchInput").addEventListener("input", () => {
-        currentPage = 1;
-        renderTable();
-    });
-
     function sortTable(colIndex) {
         sortAsc = !sortAsc;
         tableRows.sort((a, b) => {
@@ -243,6 +268,28 @@
         });
         renderTable();
     }
+
+    // Load permissions via AJAX
+    function loadPermissions(roleId) {
+        if (!roleId) {
+            document.querySelectorAll('.permission-checkbox').forEach(checkbox => checkbox.checked = false);
+            return;
+        }
+
+        fetch(`/roles/${roleId}/permissions`)
+            .then(response => response.json())
+            .then(data => {
+                document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
+                    checkbox.checked = data.includes(checkbox.value);
+                });
+            })
+            .catch(error => console.error('Error fetching permissions:', error));
+    }
+
+    document.getElementById("searchInput").addEventListener("input", () => {
+        currentPage = 1;
+        renderTable();
+    });
 
     // Initial Render
     renderTable();

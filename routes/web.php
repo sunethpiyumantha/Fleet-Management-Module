@@ -183,8 +183,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/user-roles', [RoleController::class, 'store'])->name('roles.store');
     Route::put('/user-roles/{id}', [RoleController::class, 'update'])->name('roles.update');
     Route::delete('/user-roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
-    Route::patch('/user-roles/{id}/restore', [RoleController::class, 'restore'])->name('roles.restore');
-
+    //Route::patch('/user-roles/{id}/restore', [RoleController::class, 'restore'])->name('roles.restore');
+    //Route::patch('/roles/{id}/permissions', [RolesController::class, 'updatePermissions'])->name('roles.permissions.update');
+    Route::patch('/roles/{id}/permissions', [RoleController::class, 'updatePermissions'])->name('roles.permissions.update');
+    Route::patch('/roles/{id}/restore', [RoleController::class, 'restore'])->name('roles.restore');
+    Route::get('/roles/{id}/permissions', [RoleController::class, 'getPermissions']);
     // Users
     Route::get('/user-creation', [UserController::class, 'index'])->name('users.index');
     Route::post('/user-creation', [UserController::class, 'store'])->name('users.store');
