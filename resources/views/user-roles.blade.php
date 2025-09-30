@@ -70,6 +70,47 @@
         </div>
     </form>
 
+    <!-- Permissions Section -->
+    <div style="margin-bottom: 20px;">
+        <h5 style="color: #023E8A; font-weight: bold; margin-bottom: 10px;">Permissions</h5>
+        <div style="display: flex; gap: 20px;">
+            <div>
+                <h6 style="color: #023E8A; font-weight: bold;">User Management</h6>
+                <label><input type="checkbox" name="permissions[]" value="Role Create"> Role Create</label><br>
+                <label><input type="checkbox" name="permissions[]" value="Role List"> Role List</label><br>
+                <label><input type="checkbox" name="permissions[]" value="User Edit"> User Edit</label><br>
+                <label><input type="checkbox" name="permissions[]" value="Logindetail List"> Logindetail List</label><br>
+                <label><input type="checkbox" name="permissions[]" value="Role Delete"> Role Delete</label><br>
+                <label><input type="checkbox" name="permissions[]" value="User Create"> User Create</label><br>
+                <label><input type="checkbox" name="permissions[]" value="User List"> User List</label><br>
+            </div>
+            <div>
+                <h6 style="color: #023E8A; font-weight: bold;">Requests</h6>
+                <label><input type="checkbox" name="permissions[]" value="Request Create"> Request Create</label><br>
+                <label><input type="checkbox" name="permissions[]" value="Request Edit (own)"> Request Edit </label><br>
+                <label><input type="checkbox" name="permissions[]" value="Request List (all / own)"> Request List </label><br>
+                <label><input type="checkbox" name="permissions[]" value="Request Delete (own, before approval)"> Request Delete </label><br>
+                <label><input type="checkbox" name="permissions[]" value="Approve Request"> Approve Request</label><br>
+                <label><input type="checkbox" name="permissions[]" value="Reject Request"> Reject Request</label><br>
+                <label><input type="checkbox" name="permissions[]" value="Forward Request"> Forward Request</label><br>
+                <label><input type="checkbox" name="permissions[]" value="Add Forward Reason"> Add Forward Reason</label><br>
+            </div>
+            <div>
+                <h6 style="color: #023E8A; font-weight: bold;">Establishment Management</h6>
+                <label><input type="checkbox" name="permissions[]" value="Establishment Create"> Establishment Create</label><br>
+                <label><input type="checkbox" name="permissions[]" value="Establishment Edit"> Establishment Edit</label><br>
+                <label><input type="checkbox" name="permissions[]" value="Establishment Delete"> Establishment Delete</label><br>
+                <label><input type="checkbox" name="permissions[]" value="Establishment List"> Establishment List</label><br>
+            </div>
+            <div>
+                <h6 style="color: #023E8A; font-weight: bold;">System</h6>
+                <label><input type="checkbox" name="permissions[]" value="Manage Notifications"> Manage Notifications</label><br>
+            </div>
+        </div>
+        <button type="submit" style="background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer; margin-top: 10px;"
+                onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">Save Permissions</button>
+    </div>
+
     <!-- Search Bar -->
     <form method="GET" action="{{ route('roles.index') }}" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
         <input type="text" name="search" id="searchInput" placeholder="Search User Role..."
