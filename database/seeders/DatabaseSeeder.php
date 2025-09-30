@@ -87,5 +87,7 @@ class DatabaseSeeder extends Seeder
         // Faults
         Fault::create(['name' => 'Engine Failure']);
         Fault::create(['name' => 'Brake Issue']);
+
+        $this->call(EstablishmentsSeeder::class);
     }
 }

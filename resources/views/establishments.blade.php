@@ -92,16 +92,16 @@
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $establishment->name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">
                             <!-- Update -->
-                            <form action="{{ route('establishments.update', $establishment->id) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('establishments.update', $establishment->e_id) }}" method="POST" style="display:inline;">
                                 @csrf
-                                @method('POST')
+                                @method('PUT')
                                 <input type="text" name="name" value="{{ $establishment->name }}"
                                        style="padding: 5px; border-radius: 3px; border: 1px solid #90E0EF; color:#03045E; font-size: 0.875rem;">
                                 <button type="submit" style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; border: none;"
                                         onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Update</button>
                             </form>
                             <!-- Delete -->
-                            <form action="{{ route('establishments.destroy', $establishment->id) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('establishments.destroy', $establishment->e_id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" onclick="return confirm('Delete this Establishment?')"
@@ -152,7 +152,30 @@
         const container = document.getElementById("pagination");
         container.innerHTML = "";
 
-        for (let i = 1; i <= totalPages; i++) {
+        // Define the number of visible pages (e.g., 5)
+        const visiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + visiblePages - 1);
+
+        // Adjust startPage if endPage is near the total
+        if (endPage - startPage + 1 < visiblePages) {
+            startPage = Math.max(1, endPage - visiblePages + 1);
+        }
+
+        // Previous Button
+        if (currentPage > 1) {
+            const prevBtn = document.createElement("button");
+            prevBtn.textContent = "Previous";
+            prevBtn.style = "margin: 0 4px; padding: 5px 10px; background: #00B4D8; color: white; border: none; border-radius: 3px; cursor: pointer;";
+            prevBtn.addEventListener("click", () => {
+                currentPage--;
+                renderTable();
+            });
+            container.appendChild(prevBtn);
+        }
+
+        // Page Numbers
+        for (let i = startPage; i <= endPage; i++) {
             const btn = document.createElement("button");
             btn.textContent = i;
             btn.style = "margin: 0 4px; padding: 5px 10px; background: #00B4D8; color: white; border: none; border-radius: 3px; cursor: pointer;";
@@ -164,6 +187,18 @@
                 renderTable();
             });
             container.appendChild(btn);
+        }
+
+        // Next Button
+        if (currentPage < totalPages) {
+            const nextBtn = document.createElement("button");
+            nextBtn.textContent = "Next";
+            nextBtn.style = "margin: 0 4px; padding: 5px 10px; background: #00B4D8; color: white; border: none; border-radius: 3px; cursor: pointer;";
+            nextBtn.addEventListener("click", () => {
+                currentPage++;
+                renderTable();
+            });
+            container.appendChild(nextBtn);
         }
     }
 

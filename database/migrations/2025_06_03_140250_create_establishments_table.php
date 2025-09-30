@@ -9,11 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('establishments', function (Blueprint $table) {
-            $table->id();
+            $table->id('e_id');
+            $table->string('e_name');
+            $table->string('abb_name');
+            $table->integer('type_code')->nullable();
             $table->string('serial_number')->nullable()->unique();
-            $table->string('name')->unique();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

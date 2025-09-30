@@ -4,48 +4,52 @@ namespace App\Http\Controllers;
 
 use App\Models\Establishment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class EstablishmentController extends Controller
 {
     public function index(Request $request)
     {
-        $establishments = Establishment::all();
-        \Log::info('Fetched establishments: ', $establishments->toArray());
-
         $search = $request->query('search');
-        $query = Establishment::query();
+        $establishments = Establishment::query();
 
         if ($search) {
-            $query->where('name', 'LIKE', "%{$search}%");
+            $establishments->where('name', 'LIKE', "%{$search}%");
         }
 
-        $establishments = $query->paginate();
+        // Fetch all establishments (for client-side pagination in Blade)
+        $establishments = $establishments->get();
+        Log::info('Fetched establishments: ', $establishments->toArray());
 
-        // Debug: Check if view exists
-        if (view()->exists('establishments')) {
-            return view('establishments', compact('establishments'));
-        } else {
-            dd('View establishments not found');
+        // Check if view exists (for debugging)
+        if (!view()->exists('establishments')) {
+            abort(404, 'View establishments not found');
         }
+
+        return view('establishments', compact('establishments'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:establishments,name',
+            'name' => 'required|string|max:255|unique:establishments,e_name',
         ]);
 
         Establishment::create([
-            'name' => $request->name,
+            'e_name' => $request->name,
+            'abb_name' => null,
+            'type_code' => null,
         ]);
 
         return redirect()->route('establishments.index')->with('success', 'Establishment added successfully.');
     }
 
-    public function update(Request $request, Establishment $establishment)
+    public function update(Request $request, $e_id)
     {
+        $establishment = Establishment::findOrFail($e_id);
+
         $request->validate([
-            'name' => 'required|string|max:255|unique:establishments,name,' . $establishment->id,
+            'name' => 'required|string|max:255|unique:establishments,name,' . $establishment->e_id,
         ]);
 
         $establishment->update([
@@ -55,12 +59,15 @@ class EstablishmentController extends Controller
         return redirect()->route('establishments.index')->with('success', 'Establishment updated successfully.');
     }
 
-   public function destroy($id)
+    public function destroy($e_id)
     {
-        \Log::info("Attempting to soft delete establishment ID: {$id}");
-        $establishment = Establishment::findOrFail($id);
-        $success = $establishment->delete();
-        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+        Log::info("Attempting to delete establishment with e_id: {$e_id}");
+        $establishment = Establishment::findOrFail($e_id);
+
+        // Since soft deletes aren't supported (no deleted_at column), use hard delete
+        $success = $establishment->forceDelete(); // Use forceDelete() or remove if not needed
+        Log::info("Delete result for e_id {$e_id}: " . ($success ? 'Success' : 'Failed'));
+
         return redirect()->back()->with('success', 'Establishment deleted successfully!');
     }
 }
