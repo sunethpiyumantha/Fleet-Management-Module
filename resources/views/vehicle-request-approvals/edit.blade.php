@@ -140,7 +140,7 @@
                         @enderror
                     </div>
                     <div style="flex: 1; min-width: 220px;">
-                        <label for="vehicle_book" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Letter (Leave empty to keep current)</label>
+                        <label for="vehicle_book" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Refference Letter (Leave empty to keep current)</label>
                         <input type="file" id="vehicle_book" name="vehicle_book" accept=".pdf,.doc,.docx,.jpg,.png"
                                style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('vehicle_book') border-color: #dc2626; @enderror">
                         @if($vehicleRequestApproval->vehicle_letter)
