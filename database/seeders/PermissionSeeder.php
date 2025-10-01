@@ -14,7 +14,7 @@ class PermissionSeeder extends Seeder
             'Request Create', 'Request Edit (own)', 'Request List (all / own)', 'Request Delete (own, before approval)',
             'Approve Request', 'Reject Request', 'Forward Request', 'Add Forward Reason',
             'Establishment Create', 'Establishment Edit', 'Establishment Delete', 'Establishment List',
-            'Manage Notifications'
+            'Manage Notifications', 'Role Update', 'Role Edit',
         ];
 
         foreach ($permissions as $permission) {

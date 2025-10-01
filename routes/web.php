@@ -188,6 +188,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/user-roles/{id}/permissions', [RoleController::class, 'updatePermissions'])->middleware('can:Role Edit')->name('roles.permissions.update');
     Route::get('/user-roles/{id}/permissions', [RoleController::class, 'getPermissions'])->name('roles.permissions.get');
     Route::get('/roles/{id}/permissions', [RoleController::class, 'getPermissions'])->name('roles.permissions.get');
+    Route::put('/user-roles/{id}', [RoleController::class, 'update'])->middleware('can:Role Update')->name('roles.update');
+    
     // Users
     Route::get('/user-creation', [UserController::class, 'index'])->middleware('can:User List')->name('users.index');
     Route::post('/user-creation', [UserController::class, 'store'])->name('users.store');

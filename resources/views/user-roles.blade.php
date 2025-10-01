@@ -64,7 +64,7 @@
             <div style="display: flex; gap: 20px;">
                 <div>
                     <h6 style="color: #023E8A; font-weight: bold;">User Management</h6>
-                    @foreach (['Role Create', 'Role List', 'User Edit', 'Logindetail List', 'Role Delete', 'User Create', 'User List'] as $perm)
+                    @foreach (['Role Create', 'Role List', 'Role Edit', 'User Edit', 'Logindetail List', 'Role Delete', 'Role Update', 'User Create', 'User List'] as $perm)
                         <label><input type="checkbox" name="permissions[]" value="{{ $perm }}" {{ in_array($perm, old('permissions', [])) ? 'checked' : '' }}> {{ $perm }}</label><br>
                     @endforeach
                 </div>
@@ -113,7 +113,7 @@
             <div style="display: flex; gap: 20px; margin-top: 10px;">
                 <div>
                     <h6 style="color: #023E8A; font-weight: bold;">User Management</h6>
-                    @foreach (['Role Create', 'Role List', 'User Edit', 'Logindetail List', 'Role Delete', 'User Create', 'User List'] as $perm)
+                    @foreach (['Role Create', 'Role List', 'Role Edit', 'User Edit', 'Logindetail List', 'Role Delete', 'Role Update', 'User Create', 'User List'] as $perm)
                         <label><input type="checkbox" name="permissions[]" value="{{ $perm }}" class="permission-checkbox"> {{ $perm }}</label><br>
                     @endforeach
                 </div>
