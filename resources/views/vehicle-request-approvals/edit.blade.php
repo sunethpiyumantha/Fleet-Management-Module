@@ -32,6 +32,10 @@
     .text-dark {
         color: #03045E !important;
     }
+    .status-disabled {
+        background-color: #f3f4f6 !important;
+        color: #6b7280 !important;
+    }
 </style>
 
 <div style="width: 100%; max-width: 64rem; padding: 8px; font-family: Arial, sans-serif; background-color: white; margin: 0 auto;">
@@ -129,12 +133,22 @@
                     </div>
                     <div style="flex: 1; min-width: 220px;">
                         <label for="status" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Status</label>
-                        <select id="status" name="status" required
-                                style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('status') border-color: #dc2626; @enderror">
-                            <option value="pending" {{ $vehicleRequestApproval->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="approved" {{ $vehicleRequestApproval->status == 'approved' ? 'selected' : '' }}>Approved</option>
-                            <option value="rejected" {{ $vehicleRequestApproval->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                        </select>
+                        @if(auth()->user()->role && auth()->user()->role->name === 'Fleet Operator')
+                            <input type="hidden" name="status" value="{{ $vehicleRequestApproval->status }}">
+                            <select id="status" disabled
+                                    style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; status-disabled">
+                                <option value="pending" {{ $vehicleRequestApproval->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="approved" {{ $vehicleRequestApproval->status == 'approved' ? 'selected' : '' }}>Approved</option>
+                                <option value="rejected" {{ $vehicleRequestApproval->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                            </select>
+                        @else
+                            <select id="status" name="status" required
+                                    style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('status') border-color: #dc2626; @enderror">
+                                <option value="pending" {{ $vehicleRequestApproval->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="approved" {{ $vehicleRequestApproval->status == 'approved' ? 'selected' : '' }}>Approved</option>
+                                <option value="rejected" {{ $vehicleRequestApproval->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                            </select>
+                        @endif
                         @error('status')
                             <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
                         @enderror
@@ -177,7 +191,7 @@
 </div>
 
 <script>
-    // Sub-category fetching
+    // Sub-category fetching (unchanged from original)
     document.getElementById('cat_id').addEventListener('change', function() {
         const catId = this.value;
         const subCatSelect = document.getElementById('sub_cat_id');
