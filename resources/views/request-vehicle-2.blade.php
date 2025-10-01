@@ -172,26 +172,26 @@
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{!! $approval->status_badge !!}</td>
                         
                         <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">
-                            <div style="display: flex; justify-content: center; gap: 5px;">
-                                <a href=""
-                                   style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none;"
-                                   onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Forword</a>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; justify-items: center; max-width: 300px; margin: 0 auto;">
+    <a href="{{ route('vehicle-requests.approvals.edit', $approval->id) }}"
+       style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
+       onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Update</a>
 
-                                <a href=""
-                                   style="background-color: #f12800; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none;"
-                                   onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Reject</a>
+    <form action="{{ route('vehicle-requests.approvals.destroy', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this request?')">
+        @csrf
+        @method('DELETE')
+        <button type="submit"
+                style="background-color: #dc2626; color: white; padding: 5px 10px; border-radius: 3px; border: none; width: 100%; text-align: center;"
+                onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">Delete</button>
+    </form>
+    <a href=""
+       style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
+       onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Forward</a>
 
-                                <a href="{{ route('vehicle-requests.approvals.edit', $approval->id) }}"
-                                   style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none;"
-                                   onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Update</a>
-                                <form action="{{ route('vehicle-requests.approvals.destroy', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this request?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            style="background-color: #dc2626; color: white; padding: 5px 10px; border-radius: 3px; border: none;"
-                                            onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">Delete</button>
-                                </form>
-                            </div>
+    <a href=""
+       style="background-color: #f12800; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
+       onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#f12800'">Reject</a>
+</div>
                         </td>
                     </tr>
                 @empty
