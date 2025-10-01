@@ -52,8 +52,8 @@
         @csrf
         <div style="display: flex; flex-wrap: wrap; gap: 15px;">
             <div style="flex: 1; min-width: 220px;">
-                <label for="cat_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Forword</label>
-                <select id="cat_id" name="cat_id" required
+                <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Forword</label>
+                <select required
                         style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
                     <option>Select Forword</option>
                 </select>    
@@ -65,7 +65,7 @@
             </div>
             
             <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end;">
-                <button type=""
+                <button 
                         style="width: 100%; background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer;">
                     Forword
                 </button>
