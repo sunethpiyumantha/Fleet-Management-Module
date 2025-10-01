@@ -19,14 +19,14 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <nav style="font-size: 14px;">
             <a href="{{ route('home') }}" style="text-decoration: none; color: #0077B6;">Home</a> /
-            <span style="font-weight: bold; color:#023E8A;">Forword</span>
+            <span style="font-weight: bold; color:#023E8A;">Forward</span>
         </nav>
     </div>
 
     <!-- Blue Header -->
     <div style="background: #0077B6; color: white; font-weight: bold; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
         <h5 style="font-weight: bold; margin: 0; color: #ffffff;">
-            Forword
+            Forward
         </h5>
     </div>
 
@@ -52,10 +52,10 @@
         @csrf
         <div style="display: flex; flex-wrap: wrap; gap: 15px;">
             <div style="flex: 1; min-width: 220px;">
-                <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Forword</label>
+                <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Forward To</label>
                 <select required
                         style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
-                    <option>Select Forword</option>
+                    <option>Select Forward</option>
                 </select>    
             </div>
             <div style="flex: 3; min-width: 220px;">
