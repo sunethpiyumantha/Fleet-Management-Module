@@ -103,6 +103,36 @@
                 @enderror
             </div>
             <div style="flex: 1; min-width: 220px;">
+                <label for="initiate_establishment_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Initiate Establishment</label>
+                <select id="initiate_establishment_id" name="initiate_establishment_id" required
+                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                    <option value="" disabled {{ old('initiate_establishment_id') ? '' : 'selected' }}>Select Initiate Establishment</option>
+                    @foreach($establishments as $establishment)
+                        <option value="{{ $establishment->e_id }}" {{ old('initiate_establishment_id') == $establishment->e_id ? 'selected' : '' }}>
+                            {{ $establishment->e_name }} ({{ $establishment->abb_name }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('initiate_establishment_id')
+                    <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
+                @enderror
+            </div>
+            <div style="flex: 1; min-width: 220px;">
+                <label for="current_establishment_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Current Establishment</label>
+                <select id="current_establishment_id" name="current_establishment_id"
+                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                    <option value="" {{ old('current_establishment_id') ? '' : 'selected' }}>Select Current Establishment (Optional)</option>
+                    @foreach($establishments as $establishment)
+                        <option value="{{ $establishment->e_id }}" {{ old('current_establishment_id') == $establishment->e_id ? 'selected' : '' }}>
+                            {{ $establishment->e_name }} ({{ $establishment->abb_name }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('current_establishment_id')
+                    <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
+                @enderror
+            </div>
+            <div style="flex: 1; min-width: 220px;">
                 <label for="vehicle_book" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Reference letter</label>
                 <input type="file" id="vehicle_book" name="vehicle_book" accept=".pdf,.jpg" required
                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
@@ -138,7 +168,11 @@
                     <th style="border: 1px solid #90E0EF; padding: 8px;">Sub Category</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px;">Quantity</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px;">Reference Letter</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Initiated By</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Initiate Establishment</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Current Establishment</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px;">Status</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Date</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px;">Actions</th>
                 </tr>
             </thead>
@@ -162,7 +196,11 @@
                                 <span style="color: #6b7280; font-size: 0.75rem;">No file</span>
                             @endif
                         </td>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->user->name ?? 'N/A' }}</td>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->initiate_establishment_name }}</td>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->current_establishment_name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{!! $approval->status_badge !!}</td>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->created_at->format('Y-m-d') }}</td>
                         
                         <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">
                             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; justify-items: center; max-width: 400px; margin: 0 auto;">
@@ -204,7 +242,7 @@
                     </tr>
                 @empty
                     <tr style="background-color:white; color:#03045E;">
-                        <td colspan="9" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No vehicle requests found.</td>
+                        <td colspan="13" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No vehicle requests found.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -268,7 +306,10 @@
             row.cells[3].innerText.toLowerCase().includes(search) ||
             row.cells[4].innerText.toLowerCase().includes(search) ||
             row.cells[5].innerText.toLowerCase().includes(search) ||
-            row.cells[7].innerText.toLowerCase().includes(search)
+            row.cells[7].innerText.toLowerCase().includes(search) ||
+            row.cells[8].innerText.toLowerCase().includes(search) ||
+            row.cells[9].innerText.toLowerCase().includes(search) ||
+            row.cells[10].innerText.toLowerCase().includes(search)
         );
 
         const start = (currentPage - 1) * rowsPerPage;
@@ -281,7 +322,7 @@
             clone.cells[0].innerText = start + index + 1;
             html += clone.outerHTML;
         });
-        tbody.innerHTML = html || '<tr><td colspan="9" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No results</td></tr>';
+        tbody.innerHTML = html || '<tr><td colspan="13" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No results</td></tr>';
 
         renderPagination(filtered.length);
     }

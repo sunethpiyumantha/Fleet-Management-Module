@@ -22,6 +22,10 @@ class VehicleRequestApproval extends Model
         'approved_at',
         'approved_by',
         'user_id',
+        'initiated_by',  // Add this
+        'current_user_id',  // Add this (if the column exists and is used)
+        'initiate_establishment_id',
+        'current_establishment_id',
         'forward_reason',
         'forwarded_at',
         'forwarded_by',
@@ -32,7 +36,7 @@ class VehicleRequestApproval extends Model
         'forwarded_at' => 'datetime',
     ];
 
-    // Relationships - Updated to match your existing models
+    // ... (rest of the relationships, scopes, accessors remain unchanged)
     public function category(): BelongsTo
     {
         return $this->belongsTo(VehicleCategory::class, 'category_id', 'id');
@@ -51,6 +55,16 @@ class VehicleRequestApproval extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function initiateEstablishment(): BelongsTo
+    {
+        return $this->belongsTo(Establishment::class, 'initiate_establishment_id', 'e_id');
+    }
+
+    public function currentEstablishment(): BelongsTo
+    {
+        return $this->belongsTo(Establishment::class, 'current_establishment_id', 'e_id');
     }
 
     public function forwarder(): BelongsTo
@@ -74,7 +88,7 @@ class VehicleRequestApproval extends Model
         return $query->where('status', 'rejected');
     }
 
-    // Accessors - Updated to use your field names
+    // Accessors
     public function getRequestTypeDisplayAttribute(): string
     {
         return match($this->request_type) {
@@ -96,6 +110,11 @@ class VehicleRequestApproval extends Model
         };
     }
 
+    public function initiator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'initiated_by');
+    }
+
     // Helper to get category name
     public function getCategoryNameAttribute(): string
     {
@@ -106,5 +125,17 @@ class VehicleRequestApproval extends Model
     public function getSubCategoryNameAttribute(): string
     {
         return $this->subCategory ? $this->subCategory->sub_category : 'N/A';
+    }
+
+    // Helper to get initiated establishment name
+    public function getInitiateEstablishmentNameAttribute(): string
+    {
+        return $this->initiateEstablishment ? $this->initiateEstablishment->name . ' (' . $this->initiateEstablishment->abb_name . ')' : 'N/A';
+    }
+
+    // Helper to get current establishment name
+    public function getCurrentEstablishmentNameAttribute(): string
+    {
+        return $this->currentEstablishment ? $this->currentEstablishment->name . ' (' . $this->currentEstablishment->abb_name . ')' : 'N/A';
     }
 }

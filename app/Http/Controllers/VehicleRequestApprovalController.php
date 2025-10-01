@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\VehicleRequestApproval;
 use App\Models\VehicleCategory;
 use App\Models\VehicleSubCategory;
+use App\Models\Establishment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +21,7 @@ class VehicleRequestApprovalController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $query = VehicleRequestApproval::with(['category', 'subCategory'])
+        $query = VehicleRequestApproval::with(['category', 'subCategory', 'user', 'initiateEstablishment', 'currentEstablishment'])
             ->orderBy('created_at', 'desc');
 
         // Filter to own requests for Fleet Operator role
@@ -46,8 +47,9 @@ class VehicleRequestApprovalController extends Controller
         $approvals = $query->paginate(10);
         $categories = VehicleCategory::all();
         $subCategories = VehicleSubCategory::all();
+        $establishments = Establishment::all();
 
-        return view('request-vehicle-2', compact('approvals', 'categories', 'subCategories'));
+        return view('request-vehicle-2', compact('approvals', 'categories', 'subCategories', 'establishments'));
     }
 
     public function store(Request $request)
@@ -59,6 +61,8 @@ class VehicleRequestApprovalController extends Controller
             'cat_id' => 'required|exists:vehicle_categories,id',
             'sub_cat_id' => 'required|exists:vehicle_sub_categories,id',
             'qty' => 'required|integer|min:1',
+            'initiate_establishment_id' => 'required|exists:establishments,e_id',
+            'current_establishment_id' => 'nullable|exists:establishments,e_id',
             'vehicle_book' => 'required|file|mimes:pdf,jpg|max:5120', // 5MB max, only pdf and jpg
         ]);
 
@@ -75,6 +79,11 @@ class VehicleRequestApprovalController extends Controller
             $vehicleLetterPath = $file->storeAs('vehicle_letters', $filename, 'public');
         }
 
+        $userId = auth()->id();
+        if (!$userId) {
+            abort(401, 'User not authenticated.');
+        }
+
         VehicleRequestApproval::create([
             'serial_number' => $serialNumber,
             'request_type' => $request->request_type,
@@ -82,7 +91,11 @@ class VehicleRequestApprovalController extends Controller
             'sub_category_id' => $request->sub_cat_id,
             'quantity' => $request->qty,
             'vehicle_letter' => $vehicleLetterPath,
-            'user_id' => Auth::id(),
+            'user_id' => $userId,
+            'initiated_by' => $userId, // Fix: Add this for NOT NULL field
+            'current_user_id' => $userId, // Optional: For consistency
+            'initiate_establishment_id' => $request->initiate_establishment_id,
+            'current_establishment_id' => $request->current_establishment_id,
             'status' => 'pending',
         ]);
 
@@ -96,7 +109,7 @@ class VehicleRequestApprovalController extends Controller
         if ($user->role && $user->role->name === 'Fleet Operator' && $vehicleRequestApproval->user_id != $user->id) {
             abort(403);
         }
-        $vehicleRequestApproval->load(['category', 'subCategory', 'approver', 'user']);
+        $vehicleRequestApproval->load(['category', 'subCategory', 'approver', 'user', 'initiateEstablishment', 'currentEstablishment']);
         return view('vehicle-request-approvals.show', compact('vehicleRequestApproval'));
     }
 
@@ -108,7 +121,8 @@ class VehicleRequestApprovalController extends Controller
         }
         $categories = VehicleCategory::all();
         $subCategories = VehicleSubCategory::all();
-        return view('vehicle-request-approvals.edit', compact('vehicleRequestApproval', 'categories', 'subCategories'));
+        $establishments = Establishment::all();
+        return view('vehicle-request-approvals.edit', compact('vehicleRequestApproval', 'categories', 'subCategories', 'establishments'));
     }
 
     public function update(Request $request, VehicleRequestApproval $vehicleRequestApproval)
