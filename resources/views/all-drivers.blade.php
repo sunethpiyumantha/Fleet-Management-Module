@@ -1,4 +1,4 @@
-```blade
+
 @extends('layouts.app')
 
 @section('title', 'All Drivers')
@@ -96,4 +96,3 @@
     </div>
 </div>
 @endsection
-```
