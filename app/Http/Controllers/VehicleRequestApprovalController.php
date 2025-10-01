@@ -130,6 +130,7 @@ class VehicleRequestApprovalController extends Controller
         $oldStatus = $vehicleRequestApproval->status;
         $newStatus = $request->status;
         $user = Auth::id();
+        $authUser = Auth::user();
 
         if ($newStatus === 'pending') {
             // This is an edit action
@@ -152,6 +153,11 @@ class VehicleRequestApprovalController extends Controller
             'notes' => 'nullable|string|max:1000',
             'vehicle_book' => 'nullable|file|mimes:pdf,jpg|max:5120', // only pdf and jpg
         ]);
+
+        // Server-side protection: Prevent Fleet Operators from changing status
+        if ($authUser->role && $authUser->role->name === 'Fleet Operator' && $request->status !== $vehicleRequestApproval->status) {
+            return back()->withErrors(['status' => 'Status cannot be changed by Fleet Operators.']);
+        }
 
         // Handle file upload if new file is provided
         if ($request->hasFile('vehicle_book')) {
