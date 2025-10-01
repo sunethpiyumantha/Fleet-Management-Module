@@ -1,4 +1,4 @@
-```blade
+
 @extends('layouts.app')
 
 @section('title', 'Driver Amendment Form')
@@ -104,4 +104,3 @@ function toggleFields() {
 }
 </script>
 @endsection
-```
