@@ -234,3 +234,7 @@ Route::get('/get-faults', [DropdownController::class, 'getFaults']);
 Route::get('/forward', function () {
     return view('forward'); // forward.blade.php inside resources/views
 })->name('forward');
+
+Route::get('/reject', function () {
+    return view('reject'); // reject.blade.php inside resources/views
+})->name('reject');
