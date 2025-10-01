@@ -225,3 +225,7 @@ Route::get('/get-statuses', [DropdownController::class, 'getStatuses']);
 Route::get('/get-locations', [DropdownController::class, 'getLocations']);
 Route::get('/get-drivers', [DropdownController::class, 'getDrivers']);
 Route::get('/get-faults', [DropdownController::class, 'getFaults']);
+
+Route::get('/forward', function () {
+    return view('forward'); // forward.blade.php inside resources/views
+})->name('forward');
