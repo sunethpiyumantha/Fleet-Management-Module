@@ -177,6 +177,10 @@
                                    style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none;"
                                    onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Forword</a>
 
+                                <a href=""
+                                   style="background-color: #f12800; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none;"
+                                   onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Reject</a>
+
                                 <a href="{{ route('vehicle-requests.approvals.edit', $approval->id) }}"
                                    style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none;"
                                    onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Update</a>
