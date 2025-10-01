@@ -56,8 +56,12 @@
                 <select id="cat_id" name="cat_id" required
                         style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
                     <option>Select Forword</option>
-                </select>
-                
+                </select>    
+            </div>
+            <div style="flex: 3; min-width: 220px;">
+                <label  style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Enter Remark</label>
+                <input type="text" required
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
             </div>
             
             <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end;">
