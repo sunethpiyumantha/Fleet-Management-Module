@@ -63,16 +63,7 @@
                     <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
                 @enderror
             </div>
-            <div style="flex: 1; min-width: 220px;">
-                <label for="establishment_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Establishment</label>
-                <select id="establishment_id" name="establishment_id" required
-                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
-                    <option value="" disabled {{ old('establishment_id') ? '' : 'selected' }}>Select Establishment</option>
-                </select>
-                @error('establishment_id')
-                    <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
-                @enderror
-            </div>
+            
             <div style="flex: 1; min-width: 220px;">
                 <label for="cat_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Category</label>
                 <select id="cat_id" name="cat_id" required
