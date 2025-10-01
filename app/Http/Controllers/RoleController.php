@@ -94,7 +94,14 @@ class RoleController extends Controller
 
     public function getPermissions($id)
     {
-        $role = Role::findOrFail($id);
-        return response()->json($role->permissions->pluck('name')->toArray());
+        try {
+            $role = Role::with('permissions')->findOrFail($id);  // Eager-load permissions
+            $permissions = $role->permissions->pluck('name')->toArray();
+            Log::info("Permissions loaded for role {$id}: " . json_encode($permissions));  // For debugging
+            return response()->json($permissions);
+        } catch (\Exception $e) {
+            Log::error("Failed to load permissions for role {$id}: " . $e->getMessage());
+            return response()->json(['error' => 'Role not found or permissions unavailable'], 404);
+        }
     }
 }

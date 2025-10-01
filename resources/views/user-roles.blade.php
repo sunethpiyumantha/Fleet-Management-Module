@@ -271,19 +271,39 @@
 
     // Load permissions via AJAX
     function loadPermissions(roleId) {
+        const checkboxes = document.querySelectorAll('.permission-checkbox');
+        const submitBtn = document.querySelector('#editPermissionsForm button[type="submit"]');  // Target the save button
+
         if (!roleId) {
-            document.querySelectorAll('.permission-checkbox').forEach(checkbox => checkbox.checked = false);
+            checkboxes.forEach(checkbox => checkbox.checked = false);
+            if (submitBtn) submitBtn.disabled = true;
+            console.log('No role selected - cleared checkboxes');
             return;
         }
 
+        console.log(`Fetching permissions for role ID: ${roleId}`);  // Debug log
+
         fetch(`/roles/${roleId}/permissions`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
             .then(data => {
-                document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
+                console.log('Permissions data received:', data);  // Debug: Shows array like ["User Create", "Role Create"]
+                checkboxes.forEach(checkbox => {
                     checkbox.checked = data.includes(checkbox.value);
                 });
+                if (submitBtn) submitBtn.disabled = false;
+                console.log(`Pre-filled ${data.length} permissions for role ${roleId}`);
             })
-            .catch(error => console.error('Error fetching permissions:', error));
+            .catch(error => {
+                console.error('Error fetching permissions:', error);
+                checkboxes.forEach(checkbox => checkbox.checked = false);  // Clear on error
+                if (submitBtn) submitBtn.disabled = true;
+                alert(`Failed to load permissions for this role. Error: ${error.message}. Check console for details.`);
+            });
     }
 
     document.getElementById("searchInput").addEventListener("input", () => {
