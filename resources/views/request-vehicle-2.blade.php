@@ -212,18 +212,6 @@
                                     @endif
                                 @endcan
 
-
-    <form action="{{ route('vehicle-requests.approvals.destroy', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this request?')">
-        @csrf
-        @method('DELETE')
-        <button type="submit"
-                style="background-color: #dc2626; color: white; padding: 5px 10px; border-radius: 3px; border: none; width: 100%; text-align: center;"
-                onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">Delete</button>
-    </form>
-    <a href="{{ route('forward') }}"
-       style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
-       onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Forward</a>
-
                                 @can('Request Delete (own, before approval)', $approval)
                                     @if($approval->user_id == Auth::id() && $approval->status == 'pending')
                                         <form action="{{ route('vehicle-requests.approvals.destroy', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this request?')">
@@ -235,7 +223,6 @@
                                         </form>
                                     @endif
                                 @endcan
-
 
                                 @can('Forward Request', $approval)
                                     @if($approval->user_id == Auth::id() && $approval->status == 'pending')
