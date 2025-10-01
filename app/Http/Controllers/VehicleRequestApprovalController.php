@@ -6,6 +6,7 @@ use App\Models\VehicleRequestApproval;
 use App\Models\VehicleCategory;
 use App\Models\VehicleSubCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -18,8 +19,14 @@ class VehicleRequestApprovalController extends Controller
 
     public function index(Request $request)
     {
+        $user = Auth::user();
         $query = VehicleRequestApproval::with(['category', 'subCategory'])
             ->orderBy('created_at', 'desc');
+
+        // Filter to own requests for Fleet Operator role
+        if ($user->role && $user->role->name === 'Fleet Operator') {
+            $query->where('user_id', $user->id);
+        }
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -45,6 +52,8 @@ class VehicleRequestApprovalController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('Request Create');
+
         $request->validate([
             'request_type' => 'required|in:replacement,new_approval',
             'cat_id' => 'required|exists:vehicle_categories,id',
@@ -73,6 +82,8 @@ class VehicleRequestApprovalController extends Controller
             'sub_category_id' => $request->sub_cat_id,
             'quantity' => $request->qty,
             'vehicle_letter' => $vehicleLetterPath,
+            'user_id' => Auth::id(),
+            'status' => 'pending',
         ]);
 
         return redirect()->route('vehicle-requests.approvals.index')
@@ -81,12 +92,20 @@ class VehicleRequestApprovalController extends Controller
 
     public function show(VehicleRequestApproval $vehicleRequestApproval)
     {
-        $vehicleRequestApproval->load(['category', 'subCategory', 'approver']);
+        $user = Auth::user();
+        if ($user->role && $user->role->name === 'Fleet Operator' && $vehicleRequestApproval->user_id != $user->id) {
+            abort(403);
+        }
+        $vehicleRequestApproval->load(['category', 'subCategory', 'approver', 'user']);
         return view('vehicle-request-approvals.show', compact('vehicleRequestApproval'));
     }
 
     public function edit(VehicleRequestApproval $vehicleRequestApproval)
     {
+        $this->authorize('Request Edit (own)', $vehicleRequestApproval);
+        if ($vehicleRequestApproval->user_id != Auth::id() || $vehicleRequestApproval->status != 'pending') {
+            abort(403);
+        }
         $categories = VehicleCategory::all();
         $subCategories = VehicleSubCategory::all();
         return view('vehicle-request-approvals.edit', compact('vehicleRequestApproval', 'categories', 'subCategories'));
@@ -94,6 +113,22 @@ class VehicleRequestApprovalController extends Controller
 
     public function update(Request $request, VehicleRequestApproval $vehicleRequestApproval)
     {
+        $oldStatus = $vehicleRequestApproval->status;
+        $newStatus = $request->status;
+        $user = Auth::id();
+
+        if ($newStatus === 'pending') {
+            // This is an edit action
+            $this->authorize('Request Edit (own)', $vehicleRequestApproval);
+            if ($vehicleRequestApproval->user_id != $user || $oldStatus != 'pending') {
+                abort(403);
+            }
+        } else {
+            // This is an approve/reject action
+            $perm = $newStatus === 'approved' ? 'Approve Request' : 'Reject Request';
+            $this->authorize($perm, $vehicleRequestApproval);
+        }
+
         $request->validate([
             'request_type' => 'required|in:replacement,new_approval',
             'cat_id' => 'required|exists:vehicle_categories,id',
@@ -131,7 +166,7 @@ class VehicleRequestApprovalController extends Controller
 
         if (in_array($request->status, ['approved', 'rejected'])) {
             $updateData['approved_at'] = now();
-            $updateData['approved_by'] = auth()->id();
+            $updateData['approved_by'] = $user;
         }
 
         $vehicleRequestApproval->update($updateData);
@@ -142,6 +177,11 @@ class VehicleRequestApprovalController extends Controller
 
     public function destroy(VehicleRequestApproval $vehicleRequestApproval)
     {
+        $this->authorize('Request Delete (own, before approval)', $vehicleRequestApproval);
+        if ($vehicleRequestApproval->user_id != Auth::id() || $vehicleRequestApproval->status != 'pending') {
+            abort(403);
+        }
+
         // Delete associated file
         if ($vehicleRequestApproval->vehicle_letter) {
             Storage::disk('public')->delete($vehicleRequestApproval->vehicle_letter);
@@ -151,5 +191,27 @@ class VehicleRequestApprovalController extends Controller
 
         return redirect()->route('vehicle-requests.approvals.index')
             ->with('success', 'Vehicle request deleted successfully!');
+    }
+
+    public function forward(Request $request, VehicleRequestApproval $vehicleRequestApproval)
+    {
+        $this->authorize('Forward Request', $vehicleRequestApproval);
+        if ($vehicleRequestApproval->user_id != Auth::id() || $vehicleRequestApproval->status != 'pending') {
+            abort(403);
+        }
+
+        $request->validate([
+            'reason' => 'required|string|max:1000',
+        ]);
+
+        $vehicleRequestApproval->update([
+            'status' => 'forwarded',
+            'forward_reason' => $request->reason,
+            'forwarded_at' => now(),
+            'forwarded_by' => Auth::id(),
+        ]);
+
+        return redirect()->route('vehicle-requests.approvals.index')
+            ->with('success', 'Vehicle request forwarded successfully!');
     }
 }

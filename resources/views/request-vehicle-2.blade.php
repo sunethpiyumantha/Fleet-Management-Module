@@ -47,6 +47,7 @@
         </div>
     @endif
 
+    @can('Request Create')
     <!-- Add Vehicle Request Form -->
     <form action="{{ route('vehicle-requests.approvals.store') }}" method="POST" enctype="multipart/form-data" style="margin-bottom: 20px;">
         @csrf
@@ -113,54 +114,46 @@
                 <button type="submit"
                         style="width: 100%; background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer;"
                         onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
-                    + Add
+                    Submit Request
                 </button>
             </div>
         </div>
     </form>
+    @endcan
 
-    <!-- Search Bar -->
-    <form method="GET" action="{{ route('vehicle-requests.approvals.index') }}" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
-        <input type="text" name="search" id="searchInput" placeholder="Search by Serial Number, Request Type, Establishment, Category, Sub-Category, or Status"
-               value="{{ request('search') }}"
-               style="flex: 1; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
-        <button type="submit" style="background-color: #0096C7; color: white; border: none; border-radius: 5px; padding: 8px 15px; cursor: pointer;"
-                onmouseover="this.style.backgroundColor='#023E8A'" onmouseout="this.style.backgroundColor='#0096C7'">🔍</button>
-    </form>
+    <!-- Search Input (assuming it's here based on controller) -->
+    <div style="margin-bottom: 15px;">
+        <input type="text" id="searchInput" placeholder="Search requests..." style="padding: 8px; border: 1px solid #90E0EF; border-radius: 5px;">
+    </div>
 
-    <!-- Vehicle Requests Table -->
+    <!-- Table -->
     <div style="overflow-x: auto;">
-        <table id="vehicleTable" style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; border: 1px solid #90E0EF;">
-            <thead style="background: #023E8A; color: white; text-align: left;">
+        <table id="vehicleTable" style="width: 100%; border-collapse: collapse; border: 1px solid #90E0EF;">
+            <thead style="background-color: #0077B6; color: white;">
                 <tr>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; width: 50px;">#</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(1)">Serial Number ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(2)">Request Type ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(4)">Vehicle Category ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(5)">Sub Category ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(6)">Quantity ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">#</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Serial Number</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Request Type</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Category</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Sub Category</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Quantity</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px;">Reference Letter</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(7)">Status ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">Actions</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Status</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Actions</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
                 @forelse($approvals as $index => $approval)
-                    <tr style="background-color:white; color:#03045E;">
-                        <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">{{ $index + 1 }}</td>
+                    <tr style="background-color: white;">
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ ($approvals->currentPage() - 1) * $approvals->perPage() + $index + 1 }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->serial_number }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->request_type_display }}</td>
-
-                        <td style="border: 1px solid #90E0EF; padding: 8px;">
-                            {{ $approval->category ? $approval->category->category . ' (' . $approval->category->serial_number . ')' : 'N/A' }}
-                        </td>
-                        <td style="border: 1px solid #90E0EF; padding: 8px;">
-                            {{ $approval->subCategory ? $approval->subCategory->sub_category . ' (' . $approval->subCategory->serial_number . ')' : 'N/A' }}
-                        </td>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->category_name }}</td>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->sub_category_name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->quantity }}</td>
-                        <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">
                             @if($approval->vehicle_letter)
-                                <a href="{{ asset('storage/' . $approval->vehicle_letter) }}" target="_blank"
+                                <a href="{{ Storage::url($approval->vehicle_letter) }}" target="_blank"
                                    style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none;"
                                    onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">
                                     <i class="fa-solid fa-eye"></i> View
@@ -172,58 +165,100 @@
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{!! $approval->status_badge !!}</td>
                         
                         <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; justify-items: center; max-width: 300px; margin: 0 auto;">
-    <a href="{{ route('vehicle-requests.approvals.edit', $approval->id) }}"
-       style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
-       onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Update</a>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; justify-items: center; max-width: 400px; margin: 0 auto;">
+                                @can('Request Edit (own)', $approval)
+                                    @if($approval->user_id == Auth::id() && $approval->status == 'pending')
+                                        <a href="{{ route('vehicle-requests.approvals.edit', $approval->id) }}"
+                                           style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
+                                           onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Update</a>
+                                    @endif
+                                @endcan
 
-    <form action="{{ route('vehicle-requests.approvals.destroy', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this request?')">
-        @csrf
-        @method('DELETE')
-        <button type="submit"
-                style="background-color: #dc2626; color: white; padding: 5px 10px; border-radius: 3px; border: none; width: 100%; text-align: center;"
-                onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">Delete</button>
-    </form>
-    <a href=""
-       style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
-       onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Forward</a>
+                                @can('Request Delete (own, before approval)', $approval)
+                                    @if($approval->user_id == Auth::id() && $approval->status == 'pending')
+                                        <form action="{{ route('vehicle-requests.approvals.destroy', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this request?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                    style="background-color: #dc2626; color: white; padding: 5px 10px; border-radius: 3px; border: none; width: 100%; text-align: center;"
+                                                    onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">Delete</button>
+                                        </form>
+                                    @endif
+                                @endcan
 
-    <a href=""
-       style="background-color: #f12800; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
-       onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#f12800'">Reject</a>
-</div>
+                                @can('Forward Request', $approval)
+                                    @if($approval->user_id == Auth::id() && $approval->status == 'pending')
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#forwardModal{{ $approval->id }}"
+                                           style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
+                                           onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Forward</a>
+                                    @endif
+                                @endcan
+
+                                @can('Reject Request')
+                                    <a href=""
+                                       style="background-color: #f12800; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
+                                       onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#f12800'">Reject</a>
+                                @endcan
+                            </div>
                         </td>
                     </tr>
                 @empty
                     <tr style="background-color:white; color:#03045E;">
-                        <td colspan="10" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No vehicle requests found.</td>
+                        <td colspan="9" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No vehicle requests found.</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 
+    <!-- Forward Modals -->
+    @foreach($approvals as $approval)
+        @can('Forward Request', $approval)
+            @if($approval->user_id == Auth::id() && $approval->status == 'pending')
+                <div class="modal fade" id="forwardModal{{ $approval->id }}" tabindex="-1" aria-labelledby="forwardModalLabel{{ $approval->id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background-color: #0077B6; color: white;">
+                                <h5 class="modal-title" id="forwardModalLabel{{ $approval->id }}">Forward Request: {{ $approval->serial_number }}</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form id="forwardForm{{ $approval->id }}" action="{{ route('vehicle-requests.approvals.forward', $approval->id) }}" method="POST">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="reason{{ $approval->id }}" class="form-label">Forward Reason</label>
+                                        <textarea class="form-control" id="reason{{ $approval->id }}" name="reason" rows="4" placeholder="Enter the reason for forwarding this request..." required></textarea>
+                                        @error('reason', 'forward.' . $approval->id)
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Forward Request</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endcan
+    @endforeach
+
     <!-- Pagination -->
     <div id="pagination" style="margin-top: 15px; text-align: center;">
-        @if($approvals->hasPages())
-            @foreach ($approvals->links()->elements[0] as $page => $url)
-                <button onclick="window.location.href='{{ $url }}'"
-                        style="margin: 0 4px; padding: 5px 10px; background: #00B4D8; color: white; border: none; border-radius: 3px; cursor: pointer; {{ request()->fullUrlIs($url) ? 'background-color: #023E8A;' : '' }}"
-                        onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='{{ request()->fullUrlIs($url) ? '#023E8A' : '#00B4D8' }}'">
-                    {{ $page }}
-                </button>
-            @endforeach
-        @endif
+        {{ $approvals->links() }}
     </div>
 
 </div>
 
 <script>
+    // Client-side search and pagination script (unchanged, but note: server-side pagination is primary)
     const rowsPerPage = 5;
     let currentPage = 1;
     let sortAsc = true;
     let sortColumn = 1;
-    let tableRows = Array.from(document.querySelectorAll("#vehicleTable tbody tr"));
+    let tableRows = Array.from(document.querySelectorAll("#vehicleTable tbody tr:not(:last-child)")); // Exclude empty row
 
     function renderTable() {
         const search = document.getElementById("searchInput").value.toLowerCase();
@@ -240,12 +275,13 @@
         const paginated = filtered.slice(start, start + rowsPerPage);
 
         const tbody = document.getElementById("tableBody");
-        tbody.innerHTML = "";
+        let html = '';
         paginated.forEach((row, index) => {
             let clone = row.cloneNode(true);
             clone.cells[0].innerText = start + index + 1;
-            tbody.appendChild(clone);
+            html += clone.outerHTML;
         });
+        tbody.innerHTML = html || '<tr><td colspan="9" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No results</td></tr>';
 
         renderPagination(filtered.length);
     }
@@ -253,21 +289,11 @@
     function renderPagination(totalRows) {
         const totalPages = Math.ceil(totalRows / rowsPerPage);
         const container = document.getElementById("pagination");
-        container.innerHTML = "";
-
+        let html = '';
         for (let i = 1; i <= totalPages; i++) {
-            const btn = document.createElement("button");
-            btn.textContent = i;
-            btn.style = "margin: 0 4px; padding: 5px 10px; background: #00B4D8; color: white; border: none; border-radius: 3px; cursor: pointer;";
-            if (i === currentPage) {
-                btn.style.backgroundColor = "#023E8A";
-            }
-            btn.addEventListener("click", () => {
-                currentPage = i;
-                renderTable();
-            });
-            container.appendChild(btn);
+            html += `<button onclick="currentPage=${i}; renderTable();" style="margin: 0 4px; padding: 5px 10px; background: ${i === currentPage ? '#023E8A' : '#00B4D8'}; color: white; border: none; border-radius: 3px; cursor: pointer;" onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='${i === currentPage ? '#023E8A' : '#00B4D8'}'">${i}</button>`;
         }
+        container.innerHTML = html;
     }
 
     document.getElementById("searchInput").addEventListener("input", () => {
@@ -285,6 +311,9 @@
         });
         renderTable();
     }
+
+    // Initial render
+    renderTable();
 </script>
 
 <style>
@@ -305,6 +334,10 @@
 
     .bg-danger {
         background-color: #ef4444 !important;
+    }
+
+    .bg-info {
+        background-color: #0dcaf0 !important;
     }
 
     .bg-secondary {

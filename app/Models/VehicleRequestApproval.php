@@ -21,10 +21,15 @@ class VehicleRequestApproval extends Model
         'notes',
         'approved_at',
         'approved_by',
+        'user_id',
+        'forward_reason',
+        'forwarded_at',
+        'forwarded_by',
     ];
 
     protected $casts = [
         'approved_at' => 'datetime',
+        'forwarded_at' => 'datetime',
     ];
 
     // Relationships - Updated to match your existing models
@@ -41,6 +46,16 @@ class VehicleRequestApproval extends Model
     public function approver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function forwarder(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'forwarded_by');
     }
 
     // Scopes
@@ -76,6 +91,7 @@ class VehicleRequestApproval extends Model
             'pending' => '<span class="badge bg-warning text-dark">PENDING</span>',
             'approved' => '<span class="badge bg-success">APPROVED</span>',
             'rejected' => '<span class="badge bg-danger">REJECTED</span>',
+            'forwarded' => '<span class="badge bg-info">FORWARDED</span>',
             default => '<span class="badge bg-secondary">' . $status . '</span>'
         };
     }

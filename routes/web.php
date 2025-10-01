@@ -46,9 +46,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // Vehicle Request Approvals Routes
+    // Excerpt from web.php - Vehicle Request Approvals Routes (inside the auth middleware group)
     Route::get('/request-vehicle-2', [VehicleRequestApprovalController::class, 'index'])
         ->name('vehicle-requests.approvals.index');
     Route::post('/request-vehicle-2', [VehicleRequestApprovalController::class, 'store'])
+        ->middleware('can:Request Create')
         ->name('vehicle-requests.approvals.store');
     Route::get('/request-vehicle-2/{vehicleRequestApproval}/edit', [VehicleRequestApprovalController::class, 'edit'])
         ->name('vehicle-requests.approvals.edit');
@@ -58,6 +60,9 @@ Route::middleware('auth')->group(function () {
         ->name('vehicle-requests.approvals.destroy');
     Route::get('/request-vehicle-2/{vehicleRequestApproval}', [VehicleRequestApprovalController::class, 'show'])
         ->name('vehicle-requests.approvals.show');
+    Route::post('/request-vehicle-2/{vehicleRequestApproval}/forward', [VehicleRequestApprovalController::class, 'forward'])
+        ->middleware('can:Forward Request')
+        ->name('vehicle-requests.approvals.forward');
 
     // Vehicle Types
     Route::get('/vehicle-types', [VehicleTypeController::class, 'index'])->name('vehicle-types.index');
