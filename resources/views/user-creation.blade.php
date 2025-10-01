@@ -47,7 +47,8 @@
         </div>
     @endif
 
-    <!-- Add User Form -->
+    <!-- Add User Form (only visible if user has 'User Create' permission) -->
+    @can('User Create')
     <form action="{{ route('users.store') }}" method="POST" style="margin-bottom: 20px;">
         @csrf
         <div style="display: flex; flex-wrap: wrap; gap: 15px;">
@@ -90,47 +91,37 @@
             </div>
         </div>
     </form>
+    @endcan
 
-    <!-- Search Bar -->
-    <form method="GET" action="{{ route('users.index') }}" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
-        <input type="text" name="search" id="searchInput" placeholder="Search Users..."
-               value="{{ request('search') }}"
-               style="flex: 1; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
-        <button type="submit" style="background-color: #0096C7; color: white; border: none; border-radius: 5px; padding: 8px 15px; cursor: pointer;"
-                onmouseover="this.style.backgroundColor='#023E8A'" onmouseout="this.style.backgroundColor='#0096C7'">🔍</button>
-    </form>
-
-    <!-- Users Table -->
-    <div style="overflow-x: auto;">
-        <table id="userTable" style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; border: 1px solid #90E0EF;">
-            <thead style="background: #023E8A; color: white; text-align: left;">
-                <tr>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; width: 50px;">#</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(1)">Name ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(2)">Username ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(3)">User Role ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">Actions</th>
+    <!-- User Table (assuming 'User List' permission for the table, but since not specified, leaving visible; adjust if needed) -->
+    <div style="overflow-x: auto; margin-top: 20px;">
+        <table id="userTable" style="width: 100%; border-collapse: collapse; font-size: 14px; background-color: white;">
+            <thead>
+                <tr style="background-color: #48CAE4; color: white; font-weight: bold;">
+                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">Sl No</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">Name</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">Username</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">User Role</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">Actions</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
-                @if (isset($users) && $users->isNotEmpty())
+                @if ($users->count() > 0)
                     @foreach ($users as $index => $user)
                         <tr style="background-color:white; color:#03045E;">
-                            <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">{{ $index + 1 }}</td>
-                            <td style="border: 1px solid #90E0EF; padding: 8px;">
-                                {{ $user->name }}
-                                @if ($user->deleted_at)
-                                    <span style="color: #dc2626; font-size: 0.75rem;"> (Deleted)</span>
-                                @endif
-                            </td>
+                            <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $index + 1 }}</td>
+                            <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $user->name }} @if ($user->deleted_at) (Deleted) @endif</td>
                             <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $user->username }}</td>
-                            <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $user->role->name }}</td>
-                            <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">
-                                <!-- Edit -->
-                                <a href="{{ route('users.edit', $user->id) }}"
-                                   style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; margin-right: 5px;"
+                            <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $user->role->name ?? 'N/A' }}</td>
+                            <td style="border: 1px solid #90E0EF; padding: 8px;">
+                                <!-- Edit (only if 'User Edit' permission) -->
+                                @can('User Edit')
+                                <a href="{{ route('users.edit', $user->id) }}" style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; margin-right: 5px;"
                                    onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Edit</a>
-                                <!-- Delete -->
+                                @endcan
+                                <!-- Delete (only if 'User Delete' permission) -->
+                                @can('User Delete')
+                                @if (!$user->deleted_at)
                                 <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
@@ -138,8 +129,11 @@
                                             style="background-color: #dc2626; color: white; padding: 5px 10px; border-radius: 3px; border: none; margin-left: 5px;"
                                             onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">Delete</button>
                                 </form>
+                                @endif
+                                @endcan
+                                <!-- Restore (only if 'User Delete' permission and user is deleted) -->
+                                @can('User Delete')
                                 @if ($user->deleted_at)
-                                    <!-- Restore -->
                                     <form action="{{ route('users.restore', $user->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('PATCH')
@@ -148,6 +142,7 @@
                                                 onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">Restore</button>
                                     </form>
                                 @endif
+                                @endcan
                             </td>
                         </tr>
                     @endforeach

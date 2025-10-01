@@ -31,7 +31,7 @@
             </div>
         @endif
 
-        <!-- Form -->
+        <!-- Form (wrap submit button with @can for 'User Edit'; the page itself should be protected via route/middleware) -->
         <form action="{{ route('users.update', $user->id) }}" method="POST" class="mb-8" style="margin-bottom: 2rem;">
             @csrf
             @method('PUT')
@@ -67,13 +67,15 @@
                     </div>
                 </div>
 
-                <!-- Third Line: Submit Button -->
+                <!-- Third Line: Submit Button (only if 'User Edit' permission) -->
                 <div style="width: 100%; display: flex; justify-content: center;">
+                    @can('User Edit')
                     <button type="submit"
                             style="background-color: #16a34a; color: white; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer;"
                             onmouseover="this.style.backgroundColor='#15803d'" onmouseout="this.style.backgroundColor='#16a34a'">
                         <i class="fa-solid fa-save" style="margin-right: 0.25rem;"></i> Save Changes
                     </button>
+                    @endcan
                     <a href="{{ route('users.index') }}"
                        style="background-color: #f97316; color: white; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; text-decoration: none; margin-left: 1rem; cursor: pointer;"
                        onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'">
