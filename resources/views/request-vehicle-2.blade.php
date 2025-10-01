@@ -63,7 +63,6 @@
                     <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
                 @enderror
             </div>
-            
             <div style="flex: 1; min-width: 220px;">
                 <label for="cat_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Category</label>
                 <select id="cat_id" name="cat_id" required
@@ -137,12 +136,11 @@
                     <th style="border: 1px solid #90E0EF; padding: 8px; width: 50px;">#</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(1)">Serial Number ▲▼</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(2)">Request Type ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(3)">Establishment ▲▼</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(4)">Vehicle Category ▲▼</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(5)">Sub Category ▲▼</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(6)">Quantity ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Reference Letter</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(7)">Status ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">Vehicle Letter</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">Actions</th>
                 </tr>
             </thead>
@@ -152,9 +150,7 @@
                         <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">{{ $index + 1 }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->serial_number }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->request_type_display }}</td>
-                        <td style="border: 1px solid #90E0EF; padding: 8px;">
-                            {{ $approval->establishment ? $approval->establishment->name : 'N/A' }}
-                        </td>
+
                         <td style="border: 1px solid #90E0EF; padding: 8px;">
                             {{ $approval->category ? $approval->category->category . ' (' . $approval->category->serial_number . ')' : 'N/A' }}
                         </td>
@@ -162,7 +158,6 @@
                             {{ $approval->subCategory ? $approval->subCategory->sub_category . ' (' . $approval->subCategory->serial_number . ')' : 'N/A' }}
                         </td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->quantity }}</td>
-                        <td style="border: 1px solid #90E0EF; padding: 8px;">{!! $approval->status_badge !!}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">
                             @if($approval->vehicle_letter)
                                 <a href="{{ asset('storage/' . $approval->vehicle_letter) }}" target="_blank"
@@ -174,8 +169,14 @@
                                 <span style="color: #6b7280; font-size: 0.75rem;">No file</span>
                             @endif
                         </td>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">{!! $approval->status_badge !!}</td>
+                        
                         <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">
                             <div style="display: flex; justify-content: center; gap: 5px;">
+                                <a href=""
+                                   style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none;"
+                                   onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Forword</a>
+
                                 <a href="{{ route('vehicle-requests.approvals.edit', $approval->id) }}"
                                    style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none;"
                                    onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Update</a>
