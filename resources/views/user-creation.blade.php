@@ -78,7 +78,17 @@
                         style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
                     <option value="" disabled selected>Select Role</option>
                     @foreach ($roles as $role)
-                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                        <option value="{{ $role->id }}" {{ old('user_role') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div style="flex: 1; min-width: 220px;">
+                <label for="establishment_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Establishment</label>
+                <select id="establishment_id" name="establishment_id" required
+                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                    <option value="" disabled selected>Select Establishment</option>
+                    @foreach ($establishments as $establishment)
+                        <option value="{{ $establishment->e_id }}" {{ old('establishment_id') == $establishment->e_id ? 'selected' : '' }}>{{ $establishment->e_name }} ({{ $establishment->abb_name }})</option>
                     @endforeach
                 </select>
             </div>
@@ -95,7 +105,7 @@
 
     <!-- Search Bar (for client-side filtering) -->
     <form method="GET" action="{{ route('users.index') }}" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
-        <input type="text" name="search" id="searchInput" placeholder="Search by Name, Username, or Role..."
+        <input type="text" name="search" id="searchInput" placeholder="Search by Name, Username, Role, or Establishment..."
                value="{{ request('search') }}"
                style="flex: 1; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
         <button type="submit" style="background-color: #0096C7; color: white; border: none; border-radius: 5px; padding: 8px 15px; cursor: pointer;"
@@ -111,6 +121,7 @@
                     <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left; cursor: pointer;" onclick="sortTable(1)">Name ▲▼</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left; cursor: pointer;" onclick="sortTable(2)">Username ▲▼</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left; cursor: pointer;" onclick="sortTable(3)">User Role ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left; cursor: pointer;" onclick="sortTable(4)">Establishment ▲▼</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">Actions</th>
                 </tr>
             </thead>
@@ -118,11 +129,24 @@
                 @if ($users->count() > 0)
                     @foreach ($users as $index => $user)
                         <tr style="background-color:white; color:#03045E;">
-                            <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $index + 1 }}</td>
-                            <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $user->name }} @if ($user->deleted_at) (Deleted) @endif</td>
-                            <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $user->username }}</td>
-                            <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $user->role->name ?? 'N/A' }}</td>
-                            <td style="border: 1px solid #90E0EF; padding: 8px;">
+                            <td style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">{{ $index + 1 }}</td>
+                            <td style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">
+                                {{ $user->name }}
+                                @if($user->deleted_at) <span style="color: #dc2626;">(Deleted)</span> @endif
+                            </td>
+                            <td style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">
+                                {{ $user->username }}
+                                @if($user->deleted_at) <span style="color: #dc2626;">(Deleted)</span> @endif
+                            </td>
+                            <td style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">
+                                {{ $user->role ? $user->role->name : 'N/A' }}
+                                @if($user->deleted_at) <span style="color: #dc2626;">(Deleted)</span> @endif
+                            </td>
+                            <td style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">
+                                {{ $user->establishment ? $user->establishment->e_name . ' (' . $user->establishment->abb_name . ')' : 'N/A' }}
+                                @if($user->deleted_at) <span style="color: #dc2626;">(Deleted)</span> @endif
+                            </td>
+                            <td style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">
                                 <!-- Edit (only if 'User Edit' permission) -->
                                 @can('User Edit')
                                 <a href="{{ route('users.edit', $user->id) }}" style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; margin-right: 5px;"
@@ -157,7 +181,7 @@
                     @endforeach
                 @else
                     <tr style="background-color:white; color:#03045E;">
-                        <td colspan="5" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No users found.</td>
+                        <td colspan="6" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No users found.</td>
                     </tr>
                 @endif
             </tbody>
@@ -181,7 +205,8 @@
         const filtered = tableRows.filter(row =>
             row.cells[1].innerText.toLowerCase().includes(search) ||
             row.cells[2].innerText.toLowerCase().includes(search) ||
-            row.cells[3].innerText.toLowerCase().includes(search)
+            row.cells[3].innerText.toLowerCase().includes(search) ||
+            row.cells[4].innerText.toLowerCase().includes(search)
         );
 
         const start = (currentPage - 1) * rowsPerPage;

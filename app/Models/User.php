@@ -14,6 +14,7 @@ class User extends Authenticatable
         'username',
         'password',
         'role_id',
+        'establishment_id', // Add this
     ];
 
     protected $hidden = [
@@ -23,6 +24,12 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    // Add this new relationship
+    public function establishment()
+    {
+        return $this->belongsTo(Establishment::class, 'establishment_id', 'e_id');
     }
 
     public function hasPermission($permission)
