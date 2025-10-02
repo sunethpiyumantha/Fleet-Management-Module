@@ -102,36 +102,7 @@
                     <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
                 @enderror
             </div>
-            <div style="flex: 1; min-width: 220px;">
-                <label for="initiate_establishment_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Initiate Establishment</label>
-                <select id="initiate_establishment_id" name="initiate_establishment_id" required
-                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
-                    <option value="" disabled {{ old('initiate_establishment_id') ? '' : 'selected' }}>Select Initiate Establishment</option>
-                    @foreach($establishments as $establishment)
-                        <option value="{{ $establishment->e_id }}" {{ old('initiate_establishment_id') == $establishment->e_id ? 'selected' : '' }}>
-                            {{ $establishment->e_name }} ({{ $establishment->abb_name }})
-                        </option>
-                    @endforeach
-                </select>
-                @error('initiate_establishment_id')
-                    <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
-                @enderror
-            </div>
-            <div style="flex: 1; min-width: 220px;">
-                <label for="current_establishment_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Current Establishment</label>
-                <select id="current_establishment_id" name="current_establishment_id"
-                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
-                    <option value="" {{ old('current_establishment_id') ? '' : 'selected' }}>Select Current Establishment (Optional)</option>
-                    @foreach($establishments as $establishment)
-                        <option value="{{ $establishment->e_id }}" {{ old('current_establishment_id') == $establishment->e_id ? 'selected' : '' }}>
-                            {{ $establishment->e_name }} ({{ $establishment->abb_name }})
-                        </option>
-                    @endforeach
-                </select>
-                @error('current_establishment_id')
-                    <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
-                @enderror
-            </div>
+            <!-- Removed Initiate and Current Establishment dropdowns -->
             <div style="flex: 1; min-width: 220px;">
                 <label for="vehicle_book" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Reference letter</label>
                 <input type="file" id="vehicle_book" name="vehicle_book" accept=".pdf,.jpg" required
@@ -151,25 +122,29 @@
     </form>
     @endcan
 
-    <!-- Search Input (assuming it's here based on controller) -->
-    <div style="margin-bottom: 15px;">
-        <input type="text" id="searchInput" placeholder="Search requests..." style="padding: 8px; border: 1px solid #90E0EF; border-radius: 5px;">
-    </div>
+    <!-- Search Input -->
+    <form method="GET" action="{{ route('vehicle-requests.approvals.index') }}" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
+        <input type="text" name="search" id="searchInput" placeholder="Search requests by serial, type, category, sub-category, status, or establishment..."
+               value="{{ request('search') }}"
+               style="flex: 1; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+        <button type="submit" style="background-color: #0096C7; color: white; border: none; border-radius: 5px; padding: 8px 15px; cursor: pointer;"
+                onmouseover="this.style.backgroundColor='#023E8A'" onmouseout="this.style.backgroundColor='#0096C7'">🔍</button>
+    </form>
 
     <!-- Table -->
     <div style="overflow-x: auto;">
         <table id="vehicleTable" style="width: 100%; border-collapse: collapse; border: 1px solid #90E0EF;">
             <thead style="background-color: #0077B6; color: white;">
                 <tr>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">#</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">Serial Number</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">Request Type</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">Category</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">Sub Category</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">Quantity</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">Reference Letter</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">Initiated By</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Req ID (Auto gen.)</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Type</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Cat</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Sub Cat</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Qty</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Ref: Ltr ID</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px;">Initiate Establishment</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Initiated User</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px;">Current User</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px;">Current Establishment</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px;">Status</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px;">Date</th>
@@ -180,7 +155,6 @@
                 @forelse($approvals as $index => $approval)
                     <tr style="background-color: white;">
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ ($approvals->currentPage() - 1) * $approvals->perPage() + $index + 1 }}</td>
-                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->serial_number }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->request_type_display }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->category_name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->sub_category_name }}</td>
@@ -196,16 +170,17 @@
                                 <span style="color: #6b7280; font-size: 0.75rem;">No file</span>
                             @endif
                         </td>
-                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->user->name ?? 'N/A' }}</td>
-                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->initiate_establishment_name }}</td>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->initiate_establishment_name ?? 'N/A' }}</td>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->initiated_user_name }}</td>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->current_user_name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->current_establishment_name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{!! $approval->status_badge !!}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->created_at->format('Y-m-d') }}</td>
                         
                         <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">
-                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; justify-items: center; max-width: 400px; margin: 0 auto;">
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-items: center; max-width: 300px; margin: 0 auto;">
                                 @can('Request Edit (own)', $approval)
-                                    @if($approval->user_id == Auth::id() && $approval->status == 'pending')
+                                    @if($approval->current_user_id == Auth::id() && $approval->status == 'pending')
                                         <a href="{{ route('vehicle-requests.approvals.edit', $approval->id) }}"
                                            style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
                                            onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Update</a>
@@ -213,7 +188,7 @@
                                 @endcan
 
                                 @can('Request Delete (own, before approval)', $approval)
-                                    @if($approval->user_id == Auth::id() && $approval->status == 'pending')
+                                    @if($approval->current_user_id == Auth::id() && $approval->status == 'pending')
                                         <form action="{{ route('vehicle-requests.approvals.destroy', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this request?')">
                                             @csrf
                                             @method('DELETE')
@@ -225,17 +200,29 @@
                                 @endcan
 
                                 @can('Forward Request', $approval)
-                                    @if($approval->user_id == Auth::id() && $approval->status == 'pending')
-                                        <a href="{{ route('forward', $approval->id) }}" data-bs-toggle="modal" data-bs-target="#forwardModal{{ $approval->id }}"
+                                    @if($approval->current_user_id == Auth::id() && $approval->status == 'pending')
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#forwardModal{{ $approval->id }}"
                                            style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
                                            onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Forward</a>
                                     @endif
                                 @endcan
 
                                 @can('Reject Request')
-                                    <a href=""
-                                       style="background-color: #f12800; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
-                                       onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#f12800'">Reject</a>
+                                    @if($approval->status == 'pending')
+                                        <form action="{{ route('vehicle-requests.approvals.update', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to reject this request?')">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="status" value="rejected">
+                                            <input type="hidden" name="notes" value="Rejected via UI">
+                                            <input type="hidden" name="request_type" value="{{ $approval->request_type }}">
+                                            <input type="hidden" name="cat_id" value="{{ $approval->category_id }}">
+                                            <input type="hidden" name="sub_cat_id" value="{{ $approval->sub_category_id }}">
+                                            <input type="hidden" name="qty" value="{{ $approval->quantity }}">
+                                            <button type="submit"
+                                                    style="background-color: #f12800; color: white; padding: 5px 10px; border-radius: 3px; border: none; width: 100%; text-align: center;"
+                                                    onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#f12800'">Reject</button>
+                                        </form>
+                                    @endif
                                 @endcan
                             </div>
                         </td>
@@ -252,7 +239,7 @@
     <!-- Forward Modals -->
     @foreach($approvals as $approval)
         @can('Forward Request', $approval)
-            @if($approval->user_id == Auth::id() && $approval->status == 'pending')
+            @if($approval->current_user_id == Auth::id() && $approval->status == 'pending')
                 <div class="modal fade" id="forwardModal{{ $approval->id }}" tabindex="-1" aria-labelledby="forwardModalLabel{{ $approval->id }}" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -285,108 +272,9 @@
 
     <!-- Pagination -->
     <div id="pagination" style="margin-top: 15px; text-align: center;">
-        {{ $approvals->links() }}
+        {{ $approvals->appends(request()->query())->links() }}
     </div>
 
 </div>
 
-<script>
-    // Client-side search and pagination script (unchanged, but note: server-side pagination is primary)
-    const rowsPerPage = 5;
-    let currentPage = 1;
-    let sortAsc = true;
-    let sortColumn = 1;
-    let tableRows = Array.from(document.querySelectorAll("#vehicleTable tbody tr:not(:last-child)")); // Exclude empty row
-
-    function renderTable() {
-        const search = document.getElementById("searchInput").value.toLowerCase();
-        const filtered = tableRows.filter(row =>
-            row.cells[1].innerText.toLowerCase().includes(search) ||
-            row.cells[2].innerText.toLowerCase().includes(search) ||
-            row.cells[3].innerText.toLowerCase().includes(search) ||
-            row.cells[4].innerText.toLowerCase().includes(search) ||
-            row.cells[5].innerText.toLowerCase().includes(search) ||
-            row.cells[7].innerText.toLowerCase().includes(search) ||
-            row.cells[8].innerText.toLowerCase().includes(search) ||
-            row.cells[9].innerText.toLowerCase().includes(search) ||
-            row.cells[10].innerText.toLowerCase().includes(search)
-        );
-
-        const start = (currentPage - 1) * rowsPerPage;
-        const paginated = filtered.slice(start, start + rowsPerPage);
-
-        const tbody = document.getElementById("tableBody");
-        let html = '';
-        paginated.forEach((row, index) => {
-            let clone = row.cloneNode(true);
-            clone.cells[0].innerText = start + index + 1;
-            html += clone.outerHTML;
-        });
-        tbody.innerHTML = html || '<tr><td colspan="13" style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">No results</td></tr>';
-
-        renderPagination(filtered.length);
-    }
-
-    function renderPagination(totalRows) {
-        const totalPages = Math.ceil(totalRows / rowsPerPage);
-        const container = document.getElementById("pagination");
-        let html = '';
-        for (let i = 1; i <= totalPages; i++) {
-            html += `<button onclick="currentPage=${i}; renderTable();" style="margin: 0 4px; padding: 5px 10px; background: ${i === currentPage ? '#023E8A' : '#00B4D8'}; color: white; border: none; border-radius: 3px; cursor: pointer;" onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='${i === currentPage ? '#023E8A' : '#00B4D8'}'">${i}</button>`;
-        }
-        container.innerHTML = html;
-    }
-
-    document.getElementById("searchInput").addEventListener("input", () => {
-        currentPage = 1;
-        renderTable();
-    });
-
-    function sortTable(colIndex) {
-        sortAsc = colIndex === sortColumn ? !sortAsc : true;
-        sortColumn = colIndex;
-        tableRows.sort((a, b) => {
-            const textA = a.cells[colIndex].innerText.toLowerCase();
-            const textB = b.cells[colIndex].innerText.toLowerCase();
-            return sortAsc ? textA.localeCompare(textB) : textB.localeCompare(textA);
-        });
-        renderTable();
-    }
-
-    // Initial render
-    renderTable();
-</script>
-
-<style>
-    .badge {
-        padding: 0.25em 0.5em;
-        border-radius: 0.25rem;
-        font-size: 0.75rem;
-        font-weight: 500;
-    }
-
-    .bg-warning {
-        background-color: #f59e0b !important;
-    }
-
-    .bg-success {
-        background-color: #10b981 !important;
-    }
-
-    .bg-danger {
-        background-color: #ef4444 !important;
-    }
-
-    .bg-info {
-        background-color: #0dcaf0 !important;
-    }
-
-    .bg-secondary {
-        background-color: #6b7280 !important;
-    }
-
-    .text-dark {
-        color: #000000 !important;
-    }
-</style>
 @endsection
