@@ -161,8 +161,6 @@
 
 <!-- Table Sorting + Pagination -->
 <script>
-    const rowsPerPage = 5;
-    let currentPage = 1;
     let sortAsc = true;
     let sortColumn = 1;
     let tableRows = Array.from(document.querySelectorAll("#userTable tbody tr"));
@@ -175,53 +173,33 @@
             row.cells[3].innerText.toLowerCase().includes(search)
         );
 
-        const start = (currentPage - 1) * rowsPerPage;
-        const paginated = filtered.slice(start, start + rowsPerPage);
+        // Sort the filtered rows
+        filtered.sort((a, b) => {
+            const textA = a.cells[sortColumn].innerText.replace(/ \(Deleted\)/, '').toLowerCase();
+            const textB = b.cells[sortColumn].innerText.replace(/ \(Deleted\)/, '').toLowerCase();
+            return sortAsc ? textA.localeCompare(textB) : textB.localeCompare(textA);
+        });
 
         const tbody = document.getElementById("tableBody");
         tbody.innerHTML = "";
-        paginated.forEach((row, index) => {
+        filtered.forEach((row, index) => {
             let clone = row.cloneNode(true);
-            clone.cells[0].innerText = start + index + 1;
+            clone.cells[0].innerText = index + 1; // Re-number sequentially
             tbody.appendChild(clone);
         });
 
-        renderPagination(filtered.length);
-    }
-
-    function renderPagination(totalRows) {
-        const totalPages = Math.ceil(totalRows / rowsPerPage);
-        const container = document.getElementById("pagination");
-        container.innerHTML = "";
-
-        for (let i = 1; i <= totalPages; i++) {
-            const btn = document.createElement("button");
-            btn.textContent = i;
-            btn.style = "margin: 0 4px; padding: 5px 10px; background: #00B4D8; color: white; border: none; border-radius: 3px; cursor: pointer;";
-            if (i === currentPage) {
-                btn.style.backgroundColor = "#023E8A";
-            }
-            btn.addEventListener("click", () => {
-                currentPage = i;
-                renderTable();
-            });
-            container.appendChild(btn);
-        }
+        // Hide pagination since unlimited
+        document.getElementById("pagination").innerHTML = "";
+        document.getElementById("pagination").style.display = "none";
     }
 
     document.getElementById("searchInput").addEventListener("input", () => {
-        currentPage = 1;
         renderTable();
     });
 
     function sortTable(colIndex) {
         sortAsc = colIndex === sortColumn ? !sortAsc : true;
         sortColumn = colIndex;
-        tableRows.sort((a, b) => {
-            const textA = a.cells[colIndex].innerText.replace(/ \(Deleted\)/, '').toLowerCase();
-            const textB = b.cells[colIndex].innerText.replace(/ \(Deleted\)/, '').toLowerCase();
-            return sortAsc ? textA.localeCompare(textB) : textB.localeCompare(textA);
-        });
         renderTable();
     }
 

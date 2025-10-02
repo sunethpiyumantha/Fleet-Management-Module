@@ -24,7 +24,7 @@ class UserController extends Controller
               });
         });
 
-        $users = $query->orderBy('name')->paginate(5); // Server-side pagination
+        $users = $query->orderBy('name')->get(); // Changed from paginate(5) to get() for unlimited results
         $roles = Role::all();
 
         return view('user-creation', compact('users', 'roles'));
