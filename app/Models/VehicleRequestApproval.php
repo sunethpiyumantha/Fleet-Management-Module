@@ -21,11 +21,10 @@ class VehicleRequestApproval extends Model
         'notes',
         'approved_at',
         'approved_by',
-        'user_id',
-        'initiated_by',  // Add this
-        'current_user_id',  // Add this (if the column exists and is used)
+        'current_user_id', // Renamed from user_id
+        'initiated_by',
         'initiate_establishment_id',
-        'current_establishment_id',
+        'current_establishment_id', // New column
         'forward_reason',
         'forwarded_at',
         'forwarded_by',
@@ -36,7 +35,6 @@ class VehicleRequestApproval extends Model
         'forwarded_at' => 'datetime',
     ];
 
-    // ... (rest of the relationships, scopes, accessors remain unchanged)
     public function category(): BelongsTo
     {
         return $this->belongsTo(VehicleCategory::class, 'category_id', 'id');
@@ -52,9 +50,10 @@ class VehicleRequestApproval extends Model
         return $this->belongsTo(User::class, 'approved_by');
     }
 
-    public function user(): BelongsTo
+    // Renamed relationship to currentUser
+    public function currentUser(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'current_user_id');
     }
 
     public function initiateEstablishment(): BelongsTo
@@ -70,6 +69,11 @@ class VehicleRequestApproval extends Model
     public function forwarder(): BelongsTo
     {
         return $this->belongsTo(User::class, 'forwarded_by');
+    }
+
+    public function initiator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'initiated_by');
     }
 
     // Scopes
@@ -110,11 +114,6 @@ class VehicleRequestApproval extends Model
         };
     }
 
-    public function initiator(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'initiated_by');
-    }
-
     // Helper to get category name
     public function getCategoryNameAttribute(): string
     {
@@ -137,5 +136,17 @@ class VehicleRequestApproval extends Model
     public function getCurrentEstablishmentNameAttribute(): string
     {
         return $this->currentEstablishment ? $this->currentEstablishment->name . ' (' . $this->currentEstablishment->abb_name . ')' : 'N/A';
+    }
+
+    // Helper to get initiated user name
+    public function getInitiatedUserNameAttribute(): string
+    {
+        return $this->initiator ? $this->initiator->name : 'N/A';
+    }
+
+    // Helper to get current user name
+    public function getCurrentUserNameAttribute(): string
+    {
+        return $this->currentUser ? $this->currentUser->name : 'N/A';
     }
 }

@@ -38,7 +38,7 @@
     }
 </style>
 
-<div style="width: 100%; max-width: 64rem; padding: 8px; font-family: Arial, sans-serif; background-color: white; margin: 0 auto;">
+<div style="width: 100%; padding: 8px; font-family: Arial, sans-serif; background-color: white;">
 
     <!-- Page Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
@@ -74,124 +74,121 @@
     @endif
 
     <!-- Edit Vehicle Request Form -->
-    <div style="border: 1px solid #90E0EF; border-radius: 5px; padding: 1rem; background-color: #f9fafb;">
-        <form method="POST" action="{{ route('vehicle-requests.approvals.update', $vehicleRequestApproval->id) }}" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-            <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
-                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
-                    <div style="flex: 1; min-width: 220px;">
-                        <label for="request_type" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Request Type</label>
-                        <select id="request_type" name="request_type" required
-                                style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('request_type') border-color: #dc2626; @enderror">
-                            <option value="replacement" {{ $vehicleRequestApproval->request_type == 'replacement' ? 'selected' : '' }}>Vehicle Replacement</option>
-                            <option value="new_approval" {{ $vehicleRequestApproval->request_type == 'new_approval' ? 'selected' : '' }}>Taking Over a Vehicle Based on a New Approval</option>
-                        </select>
-                        @error('request_type')
-                            <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div style="flex: 1; min-width: 220px;">
-                        <label for="cat_id" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Category</label>
-                        <select id="cat_id" name="cat_id" required
-                                style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('cat_id') border-color: #dc2626; @enderror">
-                            <option value="" disabled>Select Category</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ $vehicleRequestApproval->category_id == $category->id ? 'selected' : '' }}>
-                                    {{ $category->category }} ({{ $category->serial_number }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('cat_id')
-                            <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div style="flex: 1; min-width: 220px;">
-                        <label for="sub_cat_id" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Vehicle Sub Category</label>
-                        <select id="sub_cat_id" name="sub_cat_id" required
-                                style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('sub_cat_id') border-color: #dc2626; @enderror">
-                            <option value="" disabled>Select Sub-Category</option>
-                            @foreach($subCategories as $subCategory)
-                                <option value="{{ $subCategory->id }}" {{ $vehicleRequestApproval->sub_category_id == $subCategory->id ? 'selected' : '' }}>
-                                    {{ $subCategory->sub_category }} ({{ $subCategory->serial_number }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('sub_cat_id')
-                            <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
-                    <div style="flex: 1; min-width: 220px;">
-                        <label for="required_quantity" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Required Quantity</label>
-                        <input type="number" id="required_quantity" name="qty" min="1" value="{{ $vehicleRequestApproval->quantity }}" required
-                               style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('qty') border-color: #dc2626; @enderror">
-                        @error('qty')
-                            <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div style="flex: 1; min-width: 220px;">
-                        <label for="status" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Status</label>
-                        @if(auth()->user()->role && auth()->user()->role->name === 'Fleet Operator')
-                            <input type="hidden" name="status" value="{{ $vehicleRequestApproval->status }}">
-                            <select id="status" disabled
-                                    style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; status-disabled">
-                                <option value="pending" {{ $vehicleRequestApproval->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="approved" {{ $vehicleRequestApproval->status == 'approved' ? 'selected' : '' }}>Approved</option>
-                                <option value="rejected" {{ $vehicleRequestApproval->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                            </select>
-                        @else
-                            <select id="status" name="status" required
-                                    style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('status') border-color: #dc2626; @enderror">
-                                <option value="pending" {{ $vehicleRequestApproval->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="approved" {{ $vehicleRequestApproval->status == 'approved' ? 'selected' : '' }}>Approved</option>
-                                <option value="rejected" {{ $vehicleRequestApproval->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                            </select>
-                        @endif
-                        @error('status')
-                            <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div style="flex: 1; min-width: 220px;">
-                        <label for="vehicle_book" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Reference letter (Leave empty to keep current)</label>
-                        <input type="file" id="vehicle_book" name="vehicle_book" accept=".pdf,.doc,.docx,.jpg,.png"
-                               style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('vehicle_book') border-color: #dc2626; @enderror">
-                        @if($vehicleRequestApproval->vehicle_letter)
-                            <a href="{{ Storage::url($vehicleRequestApproval->vehicle_letter) }}" target="_blank" style="color: #0077B6; font-size: 12px; margin-top: 4px; display: block;">View Current Letter</a>
-                        @endif
-                        @error('vehicle_book')
-                            <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-                <div style="width: 100%; max-width: 900px;">
-                    <label for="notes" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Notes</label>
-                    <textarea id="notes" name="notes" rows="3" 
-                              style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; @error('notes') border-color: #dc2626; @enderror">{{ $vehicleRequestApproval->notes }}</textarea>
-                    @error('notes')
-                        <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
-                    @enderror
-                </div>
-                <div style="width: 100%; display: flex; justify-content: center; gap: 1rem;">
-                    <a href="{{ route('vehicle-requests.approvals.index') }}"
-                       style="background-color: #6b7280; color: white; font-weight: 600; padding: 8px 16px; border-radius: 5px; border: none; cursor: pointer; text-decoration: none; text-align: center;"
-                       onmouseover="this.style.backgroundColor='#4b5563'" onmouseout="this.style.backgroundColor='#6b7280'">
-                        <i class="fa-solid fa-arrow-left" style="margin-right: 0.25rem;"></i> Cancel
-                    </a>
-                    <button type="submit"
-                            style="background-color: #00B4D8; color: white; font-weight: 600; padding: 8px 16px; border-radius: 5px; border: none; cursor: pointer;"
-                            onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
-                        <i class="fa-solid fa-save" style="margin-right: 0.25rem;"></i> Update
-                    </button>
-                </div>
+    @can('Request Edit (own)', $vehicleRequestApproval)
+    <form action="{{ route('vehicle-requests.approvals.update', $vehicleRequestApproval->id) }}" method="POST" enctype="multipart/form-data" style="margin-bottom: 20px;">
+        @csrf
+        @method('PUT')
+        <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+            <div style="flex: 1; min-width: 220px;">
+                <label for="request_type" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Request Type</label>
+                <select id="request_type" name="request_type" required
+                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                    <option value="replacement" {{ old('request_type', $vehicleRequestApproval->request_type) == 'replacement' ? 'selected' : '' }}>Vehicle Replacement</option>
+                    <option value="new_approval" {{ old('request_type', $vehicleRequestApproval->request_type) == 'new_approval' ? 'selected' : '' }}>Taking Over a Vehicle Based on a New Approval</option>
+                </select>
+                @error('request_type')
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
+                @enderror
             </div>
-        </form>
-    </div>
+            <div style="flex: 1; min-width: 220px;">
+                <label for="cat_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Category</label>
+                <select id="cat_id" name="cat_id" required
+                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                    <option value="" disabled>Select Category</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ old('cat_id', $vehicleRequestApproval->category_id) == $category->id ? 'selected' : '' }}>
+                            {{ $category->category }} ({{ $category->serial_number }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('cat_id')
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
+                @enderror
+            </div>
+            <div style="flex: 1; min-width: 220px;">
+                <label for="sub_cat_id" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Vehicle Sub Category</label>
+                <select id="sub_cat_id" name="sub_cat_id" required
+                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                    <option value="" disabled>Select Sub-Category</option>
+                    @foreach($subCategories as $subCategory)
+                        <option value="{{ $subCategory->id }}" {{ old('sub_cat_id', $vehicleRequestApproval->sub_category_id) == $subCategory->id ? 'selected' : '' }}>
+                            {{ $subCategory->sub_category }} ({{ $subCategory->serial_number }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('sub_cat_id')
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
+                @enderror
+            </div>
+            <div style="flex: 1; min-width: 220px;">
+                <label for="qty" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Required Quantity</label>
+                <input type="number" id="qty" name="qty" min="1" value="{{ old('qty', $vehicleRequestApproval->quantity) }}" required
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                @error('qty')
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
+                @enderror
+            </div>
+            <div style="flex: 1; min-width: 220px;">
+                <label for="status" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Status</label>
+                @if(auth()->user()->role && auth()->user()->role->name === 'Fleet Operator')
+                    <input type="hidden" name="status" value="{{ $vehicleRequestApproval->status }}">
+                    <select id="status" disabled
+                            style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E; background-color: #f3f4f6;">
+                        <option value="pending" {{ $vehicleRequestApproval->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="approved" {{ $vehicleRequestApproval->status == 'approved' ? 'selected' : '' }}>Approved</option>
+                        <option value="rejected" {{ $vehicleRequestApproval->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                    </select>
+                @else
+                    <select id="status" name="status" required
+                            style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                        <option value="pending" {{ old('status', $vehicleRequestApproval->status) == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="approved" {{ old('status', $vehicleRequestApproval->status) == 'approved' ? 'selected' : '' }}>Approved</option>
+                        <option value="rejected" {{ old('status', $vehicleRequestApproval->status) == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                    </select>
+                @endif
+                @error('status')
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
+                @enderror
+            </div>
+            <div style="flex: 1; min-width: 220px;">
+                <label for="vehicle_book" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Reference Letter (Leave empty to keep current)</label>
+                <input type="file" id="vehicle_book" name="vehicle_book" accept=".pdf,.jpg" 
+                       style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                @if($vehicleRequestApproval->vehicle_letter)
+                    <a href="{{ Storage::url($vehicleRequestApproval->vehicle_letter) }}" target="_blank" style="color: #0077B6; font-size: 12px; margin-top: 4px; display: block;">View Current Letter</a>
+                @endif
+                @error('vehicle_book')
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
+                @enderror
+            </div>
+            <div style="flex: 2; min-width: 400px;">
+                <label for="notes" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Notes</label>
+                <textarea id="notes" name="notes" rows="3" placeholder="Enter notes..." 
+                          style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">{{ old('notes', $vehicleRequestApproval->notes) }}</textarea>
+                @error('notes')
+                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
+                @enderror
+            </div>
+            <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end; gap: 10px;">
+                <a href="{{ route('vehicle-requests.approvals.index') }}"
+                   style="flex: 1; background-color: #6b7280; color: white; font-weight: 600; padding: 10px; border-radius: 5px; text-decoration: none; text-align: center; cursor: pointer;"
+                   onmouseover="this.style.backgroundColor='#4b5563'" onmouseout="this.style.backgroundColor='#6b7280'">
+                    Cancel
+                </a>
+                <button type="submit"
+                        style="flex: 1; background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer; text-align: center;"
+                        onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
+                    Update
+                </button>
+            </div>
+        </div>
+    </form>
+    @endcan
+
 </div>
 
 <script>
-    // Sub-category fetching (unchanged from original)
+    // Sub-category fetching
     document.getElementById('cat_id').addEventListener('change', function() {
         const catId = this.value;
         const subCatSelect = document.getElementById('sub_cat_id');
@@ -202,38 +199,27 @@
             return;
         }
 
-        fetch(`/get-sub-categories/${catId}`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            subCatSelect.innerHTML = '<option value="" disabled selected>Select Sub-Category</option>';
-            data.forEach(subCat => {
-                const option = document.createElement('option');
-                option.value = subCat.id;
-                option.textContent = `${subCat.sub_category} (${subCat.serial_number})`;
-                if (subCat.id == '{{ $vehicleRequestApproval->sub_category_id }}') {
-                    option.selected = true;
-                }
-                subCatSelect.appendChild(option);
+        fetch(`/get-sub-categories/${catId}`)
+            .then(response => response.json())
+            .then(data => {
+                subCatSelect.innerHTML = '<option value="" disabled selected>Select Sub-Category</option>';
+                data.forEach(subCat => {
+                    const option = document.createElement('option');
+                    option.value = subCat.id;
+                    option.textContent = `${subCat.sub_category} (${subCat.serial_number})`;
+                    if (option.value == '{{ old("sub_cat_id", $vehicleRequestApproval->sub_category_id) }}') {
+                        option.selected = true;
+                    }
+                    subCatSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                subCatSelect.innerHTML = '<option value="" disabled selected>Error loading sub-categories</option>';
             });
-        })
-        .catch(error => {
-            console.error('Error fetching sub-categories:', error);
-            subCatSelect.innerHTML = '<option value="" disabled selected>Error loading sub-categories</option>';
-        });
     });
 
-    // Trigger change event to load sub-categories on page load
+    // Trigger on load
     document.getElementById('cat_id').dispatchEvent(new Event('change'));
 </script>
 @endsection
