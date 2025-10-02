@@ -5,33 +5,25 @@
     <div style="background-color: white; border: 1px solid #f97316; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 1.5rem;">
         <h2 style="font-size: 1.875rem; font-weight: bold; color: #ea580c; text-align: center; margin-bottom: 1.5rem;">Edit User</h2>
 
-        <!-- Display Success or Error Messages -->
+        <!-- Display Success Message -->
         @if (session('success'))
-            <div style="background-color: #d1fae5; color: #065f46; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; display: block;">
+            <div style="background-color: #d1fae5; color: #065f46; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
                 {{ session('success') }}
             </div>
-        @else
-            <div style="background-color: #d1fae5; color: #065f46; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; display: none;">
-                <!-- Placeholder for success message -->
-            </div>
         @endif
+
+        <!-- Display Error Messages -->
         @if ($errors->any())
-            <div style="background-color: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; display: block;">
+            <div style="background-color: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
                 <ul style="margin: 0; padding-left: 1rem;">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
-        @else
-            <div style="background-color: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; display: none;">
-                <ul style="margin: 0; padding-left: 1rem;">
-                    <!-- Placeholder for error messages -->
-                </ul>
-            </div>
         @endif
 
-        <!-- Form (wrap submit button with @can for 'User Edit'; the page itself should be protected via route/middleware) -->
+        <!-- Form -->
         <form action="{{ route('users.update', $user->id) }}" method="POST" class="mb-8" style="margin-bottom: 2rem;">
             @csrf
             @method('PUT')
