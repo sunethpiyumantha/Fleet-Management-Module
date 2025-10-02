@@ -200,8 +200,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/user-creation', [UserController::class, 'store'])->name('users.store');
     Route::get('/user-creation/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/user-creation/{id}', [UserController::class, 'update'])->name('users.update');
-    Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->name('users.destroy');
-
+    //Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    // Add this route in web.php, inside the auth middleware group, after the users.destroy route
+    Route::patch('/user-creation/{id}/restore', [UserController::class, 'restore'])->middleware('can:User Delete')->name('users.restore');
+    Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->middleware('can:User Delete')->name('users.destroy');
     // All vehicle info
     Route::get('/vehicle-basic-info/{serial_number}', [VehicleRequestController::class, 'showBasicInfo'])->name('vehicle.basic.info');
     Route::get('/all-vehicle-info', [VehicleRequestController::class, 'allVehicleInfo'])->name('vehicle.all.info');
