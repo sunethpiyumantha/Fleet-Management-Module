@@ -49,7 +49,7 @@ class VehicleRequestApprovalController extends Controller
             });
         }
 
-        $approvals = $query->paginate(10);
+        $approvals = $query->get();
         $categories = VehicleCategory::all();
         $subCategories = VehicleSubCategory::all();
 
