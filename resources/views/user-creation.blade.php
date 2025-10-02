@@ -93,15 +93,24 @@
     </form>
     @endcan
 
-    <!-- User Table (assuming 'User List' permission for the table, but since not specified, leaving visible; adjust if needed) -->
+    <!-- Search Bar (for client-side filtering) -->
+    <form method="GET" action="{{ route('users.index') }}" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
+        <input type="text" name="search" id="searchInput" placeholder="Search by Name, Username, or Role..."
+               value="{{ request('search') }}"
+               style="flex: 1; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+        <button type="submit" style="background-color: #0096C7; color: white; border: none; border-radius: 5px; padding: 8px 15px; cursor: pointer;"
+                onmouseover="this.style.backgroundColor='#023E8A'" onmouseout="this.style.backgroundColor='#0096C7'">🔍</button>
+    </form>
+
+    <!-- User Table -->
     <div style="overflow-x: auto; margin-top: 20px;">
         <table id="userTable" style="width: 100%; border-collapse: collapse; font-size: 14px; background-color: white;">
             <thead>
                 <tr style="background-color: #48CAE4; color: white; font-weight: bold;">
                     <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">Sl No</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">Name</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">Username</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">User Role</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left; cursor: pointer;" onclick="sortTable(1)">Name ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left; cursor: pointer;" onclick="sortTable(2)">Username ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left; cursor: pointer;" onclick="sortTable(3)">User Role ▲▼</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; text-align: left;">Actions</th>
                 </tr>
             </thead>
@@ -161,6 +170,8 @@
 
 <!-- Table Sorting + Pagination -->
 <script>
+    const rowsPerPage = 5;
+    let currentPage = 1;
     let sortAsc = true;
     let sortColumn = 1;
     let tableRows = Array.from(document.querySelectorAll("#userTable tbody tr"));
@@ -173,33 +184,88 @@
             row.cells[3].innerText.toLowerCase().includes(search)
         );
 
-        // Sort the filtered rows
-        filtered.sort((a, b) => {
-            const textA = a.cells[sortColumn].innerText.replace(/ \(Deleted\)/, '').toLowerCase();
-            const textB = b.cells[sortColumn].innerText.replace(/ \(Deleted\)/, '').toLowerCase();
-            return sortAsc ? textA.localeCompare(textB) : textB.localeCompare(textA);
-        });
+        const start = (currentPage - 1) * rowsPerPage;
+        const paginated = filtered.slice(start, start + rowsPerPage);
 
         const tbody = document.getElementById("tableBody");
         tbody.innerHTML = "";
-        filtered.forEach((row, index) => {
+        paginated.forEach((row, index) => {
             let clone = row.cloneNode(true);
-            clone.cells[0].innerText = index + 1; // Re-number sequentially
+            clone.cells[0].innerText = start + index + 1;
             tbody.appendChild(clone);
         });
 
-        // Hide pagination since unlimited
-        document.getElementById("pagination").innerHTML = "";
-        document.getElementById("pagination").style.display = "none";
+        renderPagination(filtered.length);
+    }
+
+    function renderPagination(totalRows) {
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+        const container = document.getElementById("pagination");
+        container.innerHTML = "";
+
+        // Define the number of visible pages (e.g., 5)
+        const visiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + visiblePages - 1);
+
+        // Adjust startPage if endPage is near the total
+        if (endPage - startPage + 1 < visiblePages) {
+            startPage = Math.max(1, endPage - visiblePages + 1);
+        }
+
+        // Previous Button
+        if (currentPage > 1) {
+            const prevBtn = document.createElement("button");
+            prevBtn.textContent = "Previous";
+            prevBtn.style = "margin: 0 4px; padding: 5px 10px; background: #00B4D8; color: white; border: none; border-radius: 3px; cursor: pointer;";
+            prevBtn.addEventListener("click", () => {
+                currentPage--;
+                renderTable();
+            });
+            container.appendChild(prevBtn);
+        }
+
+        // Page Numbers
+        for (let i = startPage; i <= endPage; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            btn.style = "margin: 0 4px; padding: 5px 10px; background: #00B4D8; color: white; border: none; border-radius: 3px; cursor: pointer;";
+            if (i === currentPage) {
+                btn.style.backgroundColor = "#023E8A";
+            }
+            btn.addEventListener("click", () => {
+                currentPage = i;
+                renderTable();
+            });
+            container.appendChild(btn);
+        }
+
+        // Next Button
+        if (currentPage < totalPages) {
+            const nextBtn = document.createElement("button");
+            nextBtn.textContent = "Next";
+            nextBtn.style = "margin: 0 4px; padding: 5px 10px; background: #00B4D8; color: white; border: none; border-radius: 3px; cursor: pointer;";
+            nextBtn.addEventListener("click", () => {
+                currentPage++;
+                renderTable();
+            });
+            container.appendChild(nextBtn);
+        }
     }
 
     document.getElementById("searchInput").addEventListener("input", () => {
+        currentPage = 1;
         renderTable();
     });
 
     function sortTable(colIndex) {
         sortAsc = colIndex === sortColumn ? !sortAsc : true;
         sortColumn = colIndex;
+        tableRows.sort((a, b) => {
+            const textA = a.cells[colIndex].innerText.replace(/ \(Deleted\)/, '').toLowerCase();
+            const textB = b.cells[colIndex].innerText.replace(/ \(Deleted\)/, '').toLowerCase();
+            return sortAsc ? textA.localeCompare(textB) : textB.localeCompare(textA);
+        });
         renderTable();
     }
 
