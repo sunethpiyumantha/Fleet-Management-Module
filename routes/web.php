@@ -26,6 +26,7 @@ use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\DropdownController;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 // Public routes
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('home');
@@ -214,6 +215,24 @@ Route::middleware('auth')->group(function () {
     Route::post('/vehicles/store', [VehicleController::class, 'store'])->name('vehicles.store');
     Route::put('/vehicles/{serialNumber}', [VehicleController::class, 'update'])->name('vehicles.update');
     Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
+
+    // Generic Forward route (uses query param for req_id)
+    Route::get('/forward', function (Request $request) {
+        $req_id = $request->query('req_id');
+        if (!$req_id) {
+            return redirect()->back()->with('error', 'Request ID is required to forward.');
+        }
+
+        $currentUser = Auth::user();
+        $users = \App\Models\User::with('role')->where('establishment_id', $currentUser->establishment_id)
+                                 ->where('id', '!=', $currentUser->id)
+                                 ->orderBy('name')
+                                 ->get();
+        return view('forward', compact('users', 'req_id'));
+    })->name('forward');
+
+    // Generic forward action route
+    Route::post('/forward', [VehicleRequestApprovalController::class, 'genericForward'])->middleware('can:Forward Request')->name('forward.generic');
 });
 
 // Dropdown data API routes (kept outside auth middleware for AJAX calls)
@@ -232,10 +251,6 @@ Route::get('/get-statuses', [DropdownController::class, 'getStatuses']);
 Route::get('/get-locations', [DropdownController::class, 'getLocations']);
 Route::get('/get-drivers', [DropdownController::class, 'getDrivers']);
 Route::get('/get-faults', [DropdownController::class, 'getFaults']);
-
-Route::get('/forward', function () {
-    return view('forward'); // forward.blade.php inside resources/views
-})->name('forward');
 
 Route::get('/reject', function () {
     return view('reject'); // reject.blade.php inside resources/views

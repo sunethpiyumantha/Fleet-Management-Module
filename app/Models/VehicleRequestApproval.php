@@ -18,7 +18,6 @@ class VehicleRequestApproval extends Model
         'quantity',
         'status',
         'vehicle_letter',
-        'notes',
         'approved_at',
         'approved_by',
         'current_user_id', // Renamed from user_id
