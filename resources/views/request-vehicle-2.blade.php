@@ -201,7 +201,7 @@
 
                                 @can('Forward Request', $approval)
                                     @if($approval->current_user_id == Auth::id() && $approval->status == 'pending')
-                                        <a href="{{ route('forword'}}" data-bs-toggle="modal" data-bs-target="#forwardModal{{ $approval->id }}"
+                                        <a href="{{ route('forword' )}}" data-bs-toggle="modal" data-bs-target="#forwardModal{{ $approval->id }}"
                                            style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
                                            onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Forward</a>
                                     @endif
