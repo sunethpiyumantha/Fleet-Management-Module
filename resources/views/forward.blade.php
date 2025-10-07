@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Forword')
+@section('title', 'Forward')
 
 @section('content')
 <style>
@@ -48,26 +48,29 @@
     @endif
 
     <!-- Add Vehicle Request Form -->
-    <form style="margin-bottom: 20px;">
+    <form action="{{ route('forward.generic') }}" method="POST" style="margin-bottom: 20px;">
         @csrf
         <div style="display: flex; flex-wrap: wrap; gap: 15px;">
             <div style="flex: 1; min-width: 220px;">
                 <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Forward To</label>
-                <select required
+                <select name="forward_to" required
                         style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
-                    <option>Select Forward</option>
+                    <option value="">Select Forward</option>
+                    @foreach($users as $user)
+                        <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->role->name }}</option>
+                    @endforeach
                 </select>    
             </div>
             <div style="flex: 3; min-width: 220px;">
                 <label  style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Enter Remark</label>
-                <input type="text" required
+                <input type="text" name="remark" required
                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
             </div>
             
             <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end;">
-                <button 
+                <button type="submit"
                         style="width: 100%; background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer;">
-                    Forword
+                    Forward
                 </button>
             </div>
         </div>
@@ -82,7 +85,9 @@
     let sortColumn = 1;
     let tableRows = Array.from(document.querySelectorAll("#vehicleTable tbody tr"));
 
-    function renderTable() 
+    function renderTable() {
+
+    }
 
     function renderPagination(totalRows) {
         const totalPages = Math.ceil(totalRows / rowsPerPage);

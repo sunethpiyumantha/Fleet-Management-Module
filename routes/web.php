@@ -214,6 +214,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/vehicles/store', [VehicleController::class, 'store'])->name('vehicles.store');
     Route::put('/vehicles/{serialNumber}', [VehicleController::class, 'update'])->name('vehicles.update');
     Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
+
+    // Generic Forward route (moved inside auth middleware for security)
+    Route::get('/forward', function () {
+        $currentUser = Auth::user();
+        $users = \App\Models\User::where('establishment_id', $currentUser->establishment_id)
+                                 ->where('id', '!=', $currentUser->id)
+                                 ->orderBy('name')
+                                 ->get();
+        return view('forward', compact('users'));
+    })->name('forward');
+
+    // New generic forward action route
+    Route::post('/forward', [VehicleRequestApprovalController::class, 'genericForward'])->middleware('can:Forward Request')->name('forward.generic');
 });
 
 // Dropdown data API routes (kept outside auth middleware for AJAX calls)
@@ -232,10 +245,6 @@ Route::get('/get-statuses', [DropdownController::class, 'getStatuses']);
 Route::get('/get-locations', [DropdownController::class, 'getLocations']);
 Route::get('/get-drivers', [DropdownController::class, 'getDrivers']);
 Route::get('/get-faults', [DropdownController::class, 'getFaults']);
-
-Route::get('/forward', function () {
-    return view('forward'); // forward.blade.php inside resources/views
-})->name('forward');
 
 Route::get('/reject', function () {
     return view('reject'); // reject.blade.php inside resources/views

@@ -239,27 +239,36 @@ class VehicleRequestApprovalController extends Controller
             ->with('success', 'Vehicle request deleted successfully!');
     }
 
-    public function forward(Request $request, VehicleRequestApproval $vehicleRequestApproval)
-    {
-        $this->authorize('Forward Request', $vehicleRequestApproval);
-        if ($vehicleRequestApproval->current_user_id != Auth::id() || $vehicleRequestApproval->status != 'pending') {
-            abort(403);
-        }
+   public function forward(Request $request, VehicleRequestApproval $vehicleRequestApproval)
+{
+    $this->authorize('Forward Request', $vehicleRequestApproval);
 
-        $request->validate([
-            'reason' => 'required|string|max:1000',
-        ]);
+    if ($vehicleRequestApproval->current_user_id != Auth::id() || $vehicleRequestApproval->status != 'pending') {
+        abort(403);
+    }
 
+    $request->validate([
+        'reason' => 'required|string|max:1000',
+        // 'forward_to' => 'required|exists:users,id', // Uncomment if needed
+    ]);
+
+    try {
         $vehicleRequestApproval->update([
             'status' => 'forwarded',
             'forward_reason' => $request->reason,
             'forwarded_at' => now(),
             'forwarded_by' => Auth::id(),
-            // Optionally update current_user_id or current_establishment_id here if forwarding changes them
+            // 'forward_to_user_id' => $request->forward_to, // Uncomment if needed
         ]);
 
-        // FIXED: Redirect to page 1 (clears search/filter and refreshes list)
+        // Optional: Notify the forwarded user or log an activity
+        // $vehicleRequestApproval->forwardToUser($request->forward_to); // Custom method if applicable
+
         return redirect()->route('vehicle-requests.approvals.index', ['page' => 1])
             ->with('success', 'Vehicle request forwarded successfully!');
+    } catch (\Exception $e) {
+        return back()->with('error', 'Failed to forward request: ' . $e->getMessage())->withInput();
     }
+}
+
 }
