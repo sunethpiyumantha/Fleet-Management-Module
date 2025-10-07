@@ -8,7 +8,9 @@ use App\Models\VehicleSubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Models\RequestProcess;
 
 class VehicleRequestApprovalController extends Controller
 {
@@ -239,36 +241,104 @@ class VehicleRequestApprovalController extends Controller
             ->with('success', 'Vehicle request deleted successfully!');
     }
 
-   public function forward(Request $request, VehicleRequestApproval $vehicleRequestApproval)
-{
-    $this->authorize('Forward Request', $vehicleRequestApproval);
+    public function forward(Request $request, VehicleRequestApproval $vehicleRequestApproval)
+    {
+        $this->authorize('Forward Request', $vehicleRequestApproval);
 
-    if ($vehicleRequestApproval->current_user_id != Auth::id() || $vehicleRequestApproval->status != 'pending') {
-        abort(403);
-    }
+        if ($vehicleRequestApproval->current_user_id != Auth::id() || $vehicleRequestApproval->status != 'pending') {
+            abort(403);
+        }
 
-    $request->validate([
-        'reason' => 'required|string|max:1000',
-        // 'forward_to' => 'required|exists:users,id', // Uncomment if needed
-    ]);
-
-    try {
-        $vehicleRequestApproval->update([
-            'status' => 'forwarded',
-            'forward_reason' => $request->reason,
-            'forwarded_at' => now(),
-            'forwarded_by' => Auth::id(),
-            // 'forward_to_user_id' => $request->forward_to, // Uncomment if needed
+        $request->validate([
+            'forward_to' => 'required|exists:users,id',
+            'remark' => 'required|string|max:1000',
         ]);
 
-        // Optional: Notify the forwarded user or log an activity
-        // $vehicleRequestApproval->forwardToUser($request->forward_to); // Custom method if applicable
+        $forwardToUser = \App\Models\User::findOrFail($request->forward_to);
 
-        return redirect()->route('vehicle-requests.approvals.index', ['page' => 1])
-            ->with('success', 'Vehicle request forwarded successfully!');
-    } catch (\Exception $e) {
-        return back()->with('error', 'Failed to forward request: ' . $e->getMessage())->withInput();
+        try {
+            // Create the request process record
+            RequestProcess::create([
+                'req_id' => $vehicleRequestApproval->serial_number,
+                'from_user_id' => Auth::id(),
+                'from_establishment_id' => Auth::user()->establishment_id,
+                'to_user_id' => $forwardToUser->id,
+                'to_establishment_id' => $forwardToUser->establishment_id,
+                'remark' => $request->remark,
+                'status' => 'forwarded',
+                'processed_at' => now(),
+            ]);
+
+            // Update the main approval status
+            $vehicleRequestApproval->update([
+                'status' => 'forwarded',
+                'forward_reason' => $request->remark,
+                'forwarded_at' => now(),
+                'forwarded_by' => Auth::id(),
+                'current_user_id' => $forwardToUser->id, // Optionally update current_user_id to the forwarded user
+                'current_establishment_id' => $forwardToUser->establishment_id, // Optionally update current establishment
+            ]);
+
+            // Optional: Notify the forwarded user or log an activity
+            // $vehicleRequestApproval->forwardToUser($forwardToUser->id); // Custom method if applicable
+
+            return redirect()->route('vehicle-requests.approvals.index', ['page' => 1])
+                ->with('success', 'Vehicle request forwarded successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to forward request: ' . $e->getMessage())->withInput();
+        }
     }
-}
 
+    public function genericForward(Request $request)
+    {
+        $this->authorize('Forward Request'); // Uses Gate from AuthServiceProvider
+
+        $validator = Validator::make($request->all(), [
+            'req_id' => 'required|string', // serial_number of VehicleRequestApproval
+            'forward_to' => 'required|exists:users,id',
+            'remark' => 'required|string|max:1000',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $req_id = $request->req_id;
+        $forwardToUser = \App\Models\User::findOrFail($request->forward_to);
+
+        try {
+            // Fetch the VehicleRequestApproval to validate ownership/status
+            $vehicleRequestApproval = VehicleRequestApproval::where('serial_number', $req_id)->firstOrFail();
+            if ($vehicleRequestApproval->current_user_id != Auth::id() || $vehicleRequestApproval->status != 'pending') {
+                abort(403, 'Unauthorized to forward this request.');
+            }
+
+            // Create the request process record
+            RequestProcess::create([
+                'req_id' => $req_id,
+                'from_user_id' => Auth::id(),
+                'from_establishment_id' => Auth::user()->establishment_id,
+                'to_user_id' => $forwardToUser->id,
+                'to_establishment_id' => $forwardToUser->establishment_id,
+                'remark' => $request->remark,
+                'status' => 'forwarded',
+                'processed_at' => now(),
+            ]);
+
+            // Optionally update the main approval status
+            $vehicleRequestApproval->update([
+                'status' => 'forwarded',
+                'forward_reason' => $request->remark,
+                'forwarded_at' => now(),
+                'forwarded_by' => Auth::id(),
+                'current_user_id' => $forwardToUser->id, // Optionally update current_user_id to the forwarded user
+                'current_establishment_id' => $forwardToUser->establishment_id, // Optionally update current establishment
+            ]);
+
+            return redirect()->route('vehicle-requests.approvals.index', ['page' => 1])
+                ->with('success', 'Request forwarded successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to forward request: ' . $e->getMessage())->withInput();
+        }
+    }
 }

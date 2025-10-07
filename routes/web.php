@@ -26,6 +26,7 @@ use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\DropdownController;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 // Public routes
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('home');
@@ -215,17 +216,22 @@ Route::middleware('auth')->group(function () {
     Route::put('/vehicles/{serialNumber}', [VehicleController::class, 'update'])->name('vehicles.update');
     Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
 
-    // Generic Forward route (moved inside auth middleware for security)
-    Route::get('/forward', function () {
+    // Generic Forward route (uses query param for req_id)
+    Route::get('/forward', function (Request $request) {
+        $req_id = $request->query('req_id');
+        if (!$req_id) {
+            return redirect()->back()->with('error', 'Request ID is required to forward.');
+        }
+
         $currentUser = Auth::user();
-        $users = \App\Models\User::where('establishment_id', $currentUser->establishment_id)
+        $users = \App\Models\User::with('role')->where('establishment_id', $currentUser->establishment_id)
                                  ->where('id', '!=', $currentUser->id)
                                  ->orderBy('name')
                                  ->get();
-        return view('forward', compact('users'));
+        return view('forward', compact('users', 'req_id'));
     })->name('forward');
 
-    // New generic forward action route
+    // Generic forward action route
     Route::post('/forward', [VehicleRequestApprovalController::class, 'genericForward'])->middleware('can:Forward Request')->name('forward.generic');
 });
 

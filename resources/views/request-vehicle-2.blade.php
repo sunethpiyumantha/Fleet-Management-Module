@@ -201,7 +201,7 @@
 
                                 @can('Forward Request', $approval)
                                     @if($approval->current_user_id == Auth::id() && $approval->status == 'pending')
-                                        <a href="{{ route('forward') }}" data-bs-toggle="modal" data-bs-target="#forwardModal{{ $approval->id }}"
+                                        <a href="{{ route('forward', ['req_id' => $approval->serial_number]) }}"
                                            style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
                                            onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Forward</a>
                                     @endif
@@ -232,40 +232,6 @@
             </tbody>
         </table>
     </div>
-
-    <!-- Forward Modals -->
-    @foreach($approvals as $approval)
-        @can('Forward Request', $approval)
-            @if($approval->current_user_id == Auth::id() && $approval->status == 'pending')
-                <div class="modal fade" id="forwardModal{{ $approval->id }}" tabindex="-1" aria-labelledby="forwardModalLabel{{ $approval->id }}" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header" style="background-color: #0077B6; color: white;">
-                                <h5 class="modal-title" id="forwardModalLabel{{ $approval->id }}">Forward Request: {{ $approval->serial_number }}</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <form id="forwardForm{{ $approval->id }}" action="{{ route('vehicle-requests.approvals.forward', $approval->id) }}" method="POST">
-                                @csrf
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <label for="reason{{ $approval->id }}" class="form-label">Forward Reason</label>
-                                        <textarea class="form-control" id="reason{{ $approval->id }}" name="reason" rows="4" placeholder="Enter the reason for forwarding this request..." required></textarea>
-                                        @error('reason', 'forward.' . $approval->id)
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-primary">Forward Request</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            @endif
-        @endcan
-    @endforeach
 
     <!-- Pagination -->
     <div id="pagination" style="margin-top: 15px; text-align: center;"></div>

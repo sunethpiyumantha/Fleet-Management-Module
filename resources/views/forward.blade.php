@@ -47,9 +47,16 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div style="background-color: #caf0f8; color: #03045E; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <!-- Add Vehicle Request Form -->
     <form action="{{ route('forward.generic') }}" method="POST" style="margin-bottom: 20px;">
         @csrf
+        <input type="hidden" name="req_id" value="{{ $req_id }}">
         <div style="display: flex; flex-wrap: wrap; gap: 15px;">
             <div style="flex: 1; min-width: 220px;">
                 <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Forward To</label>
