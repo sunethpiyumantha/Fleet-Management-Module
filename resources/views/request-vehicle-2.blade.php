@@ -139,13 +139,13 @@
                     <th style="border: 1px solid #90E0EF; padding: 8px;">Req ID (Auto gen.)</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(1)">Type ▲▼</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(2)">Cat ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(3)">Sub Cat ▲▼</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">Qty</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">Ref: Ltr </th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">Initiate Estb</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">Initiated User</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">Current User</th>
-                    <th style="border: 1px solid #90E0EF; padding: 8px;">Current Estb</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(3)">Sub-Cat ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(4)">Qty ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(5)">Reference Letter ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(6)">Initiate Est. ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(7)">Initiate User ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(8)">Current User ▲▼</th>
+                    <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(9)">Current Est. ▲▼</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(10)">Status ▲▼</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px; cursor: pointer;" onclick="sortTable(11)">Date ▲▼</th>
                     <th style="border: 1px solid #90E0EF; padding: 8px;">Actions</th>
@@ -153,62 +153,34 @@
             </thead>
             <tbody id="tableBody">
                 @foreach($approvals as $approval)
-                    <tr style="background-color: white;">
-                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $loop->index + 1 }}</td> {{-- Initial numbering; JS will override --}}
+                    <tr>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->serial_number }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->request_type_display }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->category_name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->sub_category_name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->quantity }}</td>
-                        <td style="border: 1px solid #90E0EF; padding: 8px;">
-                            @if($approval->vehicle_letter)
-                                <a href="{{ Storage::url($approval->vehicle_letter) }}" target="_blank"
-                                   style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none;"
-                                   onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">
-                                    <i class="fa-solid fa-eye"></i> View
-                                </a>
-                            @else
-                                <span style="color: #6b7280; font-size: 0.75rem;">No file</span>
-                            @endif
-                        </td>
-                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->initiate_establishment_name ?? 'N/A' }}</td>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->vehicle_letter ? 'Uploaded' : 'N/A' }}</td>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->initiate_establishment_name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->initiated_user_name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->current_user_name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->current_establishment_name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{!! $approval->status_badge !!}</td>
-                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->created_at->format('Y-m-d') }}</td>
-                        
-                        <td style="border: 1px solid #90E0EF; padding: 8px; text-align: center;">
-                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-items: center; max-width: 300px; margin: 0 auto;">
-                                @can('Request Edit (own)', $approval)
-                                    @if($approval->current_user_id == Auth::id() && $approval->status == 'pending')
-                                        <a href="{{ route('vehicle-requests.approvals.edit', $approval->id) }}"
-                                           style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
-                                           onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Update</a>
-                                    @endif
-                                @endcan
-
-                                @can('Request Delete (own, before approval)', $approval)
-                                    @if($approval->current_user_id == Auth::id() && $approval->status == 'pending')
-                                        <form action="{{ route('vehicle-requests.approvals.destroy', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this request?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                    style="background-color: #dc2626; color: white; padding: 5px 10px; border-radius: 3px; border: none; width: 100%; text-align: center;"
-                                                    onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">Delete</button>
-                                        </form>
-                                    @endif
-                                @endcan
-
-                                @can('Forward Request', $approval)
-                                    @if($approval->current_user_id == Auth::id() && $approval->status == 'pending')
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->created_at->format('Y-m-d H:i') }}</td>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">
+                            @php
+                                $userRole = Auth::user()->role->name ?? '';
+                            @endphp
+                            <div style="display: flex; flex-direction: column; gap: 5px;">
+                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || ($userRole === 'Establishment Head' && $approval->status == 'forwarded'))
+                                    @can('Forward Request')
                                         <a href="{{ route('forward', ['req_id' => $approval->serial_number]) }}"
                                            style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
                                            onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Forward</a>
-                                    @endif
-                                @endcan
+                                    @endcan
+                                @endif
 
-                                @can('Reject Request')
-                                    @if($approval->status == 'pending')
+                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || ($userRole === 'Establishment Head' && $approval->status == 'forwarded'))
+                                    @can('Reject Request')
                                         <form action="{{ route('vehicle-requests.approvals.update', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to reject this request?')">
                                             @csrf
                                             @method('PATCH')
@@ -222,8 +194,8 @@
                                                     style="background-color: #f12800; color: white; padding: 5px 10px; border-radius: 3px; border: none; width: 100%; text-align: center;"
                                                     onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#f12800'">Reject</button>
                                         </form>
-                                    @endif
-                                @endcan
+                                    @endcan
+                                @endif
                             </div>
                         </td>
                     </tr>
