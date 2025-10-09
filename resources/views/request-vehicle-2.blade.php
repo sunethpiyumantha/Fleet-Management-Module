@@ -11,6 +11,10 @@
     #vehicleTable tbody tr:hover {
         background-color: #f1f1f1;
     }
+    /* Highlight row for Establishment Head's forwarded requests */
+    .highlighted-row {
+        background-color: #e3f2fd !important;
+    }
 </style>
 
 <div style="width: 100%; padding: 8px; font-family: Arial, sans-serif; background-color: white;">
@@ -153,7 +157,11 @@
             </thead>
             <tbody id="tableBody">
                 @foreach($approvals as $approval)
-                    <tr>
+                    @php
+                        $userRole = Auth::user()->role->name ?? '';
+                        $isHighlighted = ($userRole === 'Establishment Head' && $approval->forwarded_by == Auth::id());
+                    @endphp
+                    <tr @if($isHighlighted) class="highlighted-row" @endif>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->serial_number }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->request_type_display }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->category_name }}</td>
@@ -167,11 +175,8 @@
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{!! $approval->status_badge !!}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->created_at->format('Y-m-d H:i') }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">
-                            @php
-                                $userRole = Auth::user()->role->name ?? '';
-                            @endphp
                             <div style="display: flex; flex-direction: column; gap: 5px;">
-                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || ($userRole === 'Establishment Head' && $approval->status == 'forwarded'))
+                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || ($userRole === 'Establishment Head' && $approval->status == 'forwarded') || ($userRole === 'Request Handler' && $approval->status == 'forwarded'))
                                     @can('Forward Request')
                                         <a href="{{ route('forward', ['req_id' => $approval->serial_number]) }}"
                                            style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
@@ -179,7 +184,7 @@
                                     @endcan
                                 @endif
 
-                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || ($userRole === 'Establishment Head' && $approval->status == 'forwarded'))
+                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || ($userRole === 'Establishment Head' && $approval->status == 'forwarded') || ($userRole === 'Request Handler' && $approval->status == 'forwarded'))
                                     @can('Reject Request')
                                         <form action="{{ route('vehicle-requests.approvals.update', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to reject this request?')">
                                             @csrf
