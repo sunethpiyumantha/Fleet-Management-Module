@@ -167,7 +167,13 @@
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->category_name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->sub_category_name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->quantity }}</td>
-                        <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->vehicle_letter ? 'Uploaded' : 'N/A' }}</td>
+                        <td style="border: 1px solid #90E0EF; padding: 8px;">
+                            @if($approval->vehicle_letter)
+                                <a href="{{ asset('storage/' . $approval->vehicle_letter) }}" target="_blank" style="color: #0077B6; text-decoration: none;">Uploaded</a>
+                            @else
+                                N/A
+                            @endif
+                        </td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->initiate_establishment_name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->initiated_user_name }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->current_user_name }}</td>
