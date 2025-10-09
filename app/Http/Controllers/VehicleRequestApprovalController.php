@@ -25,9 +25,13 @@ class VehicleRequestApprovalController extends Controller
         $query = VehicleRequestApproval::with(['category', 'subCategory', 'currentUser', 'initiator', 'initiateEstablishment', 'currentEstablishment'])
             ->orderBy('created_at', 'desc');
 
-        // Filter to own requests for Fleet Operator role (using current_user_id)
+        // Filter based on role
         if ($user->role && $user->role->name === 'Fleet Operator') {
             $query->where('current_user_id', $user->id);
+        } elseif ($user->role && $user->role->name === 'Establishment Head') {
+            $query->where('status', 'forwarded')->where('current_establishment_id', $user->establishment_id);
+        } elseif ($user->role && $user->role->name === 'Request Handler') {
+            $query->where('status', 'forwarded')->where('current_user_id', $user->id);
         }
 
         if ($request->filled('search')) {
@@ -245,8 +249,18 @@ class VehicleRequestApprovalController extends Controller
     {
         $this->authorize('Forward Request', $vehicleRequestApproval);
 
-        if ($vehicleRequestApproval->current_user_id != Auth::id() || $vehicleRequestApproval->status != 'pending') {
-            abort(403);
+        $user = Auth::user();
+        $isHead = $user->role && $user->role->name === 'Establishment Head';
+
+        // Updated check: For Fleet Operator, check current_user_id and status; for Establishment Head, check status and establishment
+        if ($isHead) {
+            if (!($vehicleRequestApproval->status === 'forwarded' && $vehicleRequestApproval->current_establishment_id == $user->establishment_id)) {
+                abort(403, 'Unauthorized to forward this request.');
+            }
+        } else {
+            if ($vehicleRequestApproval->current_user_id != $user->id || !in_array($vehicleRequestApproval->status, ['pending', 'forwarded'])) {
+                abort(403, 'Unauthorized to forward this request.');
+            }
         }
 
         $request->validate([
@@ -269,21 +283,24 @@ class VehicleRequestApprovalController extends Controller
                 'processed_at' => now(),
             ]);
 
+            // Determine new status: 'forwarded' for Fleet Operator, 'sent' for Establishment Head (to remove from their view)
+            $newStatus = $isHead ? 'sent' : 'forwarded';
+
             // Update the main approval status
             $vehicleRequestApproval->update([
-                'status' => 'forwarded',
+                'status' => $newStatus,
                 'forward_reason' => $request->remark,
                 'forwarded_at' => now(),
                 'forwarded_by' => Auth::id(),
-                'current_user_id' => $forwardToUser->id, // Optionally update current_user_id to the forwarded user
-                'current_establishment_id' => $forwardToUser->establishment_id, // Optionally update current establishment
+                'current_user_id' => $forwardToUser->id, // Update current_user_id to the forwarded user
+                'current_establishment_id' => $forwardToUser->establishment_id, // Update current establishment
             ]);
 
             // Optional: Notify the forwarded user or log an activity
             // $vehicleRequestApproval->forwardToUser($forwardToUser->id); // Custom method if applicable
 
             return redirect()->route('vehicle-requests.approvals.index', ['page' => 1])
-                ->with('success', 'Vehicle request forwarded successfully!');
+                ->with('success', 'Request forwarded successfully!');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to forward request: ' . $e->getMessage())->withInput();
         }
@@ -309,8 +326,19 @@ class VehicleRequestApprovalController extends Controller
         try {
             // Fetch the VehicleRequestApproval to validate ownership/status
             $vehicleRequestApproval = VehicleRequestApproval::where('serial_number', $req_id)->firstOrFail();
-            if ($vehicleRequestApproval->current_user_id != Auth::id() || $vehicleRequestApproval->status != 'pending') {
-                abort(403, 'Unauthorized to forward this request.');
+            
+            $user = Auth::user();
+            $isHead = $user->role && $user->role->name === 'Establishment Head';
+
+            // Updated check: For Fleet Operator, check current_user_id and status; for Establishment Head, check status and establishment
+            if ($isHead) {
+                if (!($vehicleRequestApproval->status === 'forwarded' && $vehicleRequestApproval->current_establishment_id == $user->establishment_id)) {
+                    abort(403, 'Unauthorized to forward this request.');
+                }
+            } else {
+                if ($vehicleRequestApproval->current_user_id != $user->id || !in_array($vehicleRequestApproval->status, ['pending', 'forwarded'])) {
+                    abort(403, 'Unauthorized to forward this request.');
+                }
             }
 
             // Create the request process record
@@ -325,14 +353,17 @@ class VehicleRequestApprovalController extends Controller
                 'processed_at' => now(),
             ]);
 
+            // Determine new status: 'forwarded' for Fleet Operator, 'sent' for Establishment Head (to remove from their view)
+            $newStatus = $isHead ? 'sent' : 'forwarded';
+
             // Optionally update the main approval status
             $vehicleRequestApproval->update([
-                'status' => 'forwarded',
+                'status' => $newStatus,
                 'forward_reason' => $request->remark,
                 'forwarded_at' => now(),
                 'forwarded_by' => Auth::id(),
-                'current_user_id' => $forwardToUser->id, // Optionally update current_user_id to the forwarded user
-                'current_establishment_id' => $forwardToUser->establishment_id, // Optionally update current establishment
+                'current_user_id' => $forwardToUser->id, // Update current_user_id to the forwarded user
+                'current_establishment_id' => $forwardToUser->establishment_id, // Update current establishment
             ]);
 
             return redirect()->route('vehicle-requests.approvals.index', ['page' => 1])

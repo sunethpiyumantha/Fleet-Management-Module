@@ -224,8 +224,7 @@ Route::middleware('auth')->group(function () {
         }
 
         $currentUser = Auth::user();
-        $users = \App\Models\User::with('role')->where('establishment_id', $currentUser->establishment_id)
-                                 ->where('id', '!=', $currentUser->id)
+        $users = \App\Models\User::with('role')->where('id', '!=', $currentUser->id)
                                  ->orderBy('name')
                                  ->get();
         return view('forward', compact('users', 'req_id'));
