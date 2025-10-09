@@ -29,7 +29,7 @@ class VehicleRequestApprovalController extends Controller
         if ($user->role && $user->role->name === 'Fleet Operator') {
             $query->where('current_user_id', $user->id);
         } elseif ($user->role && $user->role->name === 'Establishment Head') {
-            $query->where('status', 'forwarded');
+            $query->where('status', 'forwarded')->where('current_establishment_id', $user->establishment_id);
         }
 
         if ($request->filled('search')) {
@@ -247,9 +247,18 @@ class VehicleRequestApprovalController extends Controller
     {
         $this->authorize('Forward Request', $vehicleRequestApproval);
 
-        // Updated check: Allow forwarding for both 'pending' and 'forwarded' status, if current_user_id matches
-        if ($vehicleRequestApproval->current_user_id != Auth::id() || !in_array($vehicleRequestApproval->status, ['pending', 'forwarded'])) {
-            abort(403);
+        $user = Auth::user();
+        $isHead = $user->role && $user->role->name === 'Establishment Head';
+
+        // Updated check: For Fleet Operator, check current_user_id and status; for Establishment Head, check status and establishment
+        if ($isHead) {
+            if (!($vehicleRequestApproval->status === 'forwarded' && $vehicleRequestApproval->current_establishment_id == $user->establishment_id)) {
+                abort(403, 'Unauthorized to forward this request.');
+            }
+        } else {
+            if ($vehicleRequestApproval->current_user_id != $user->id || !in_array($vehicleRequestApproval->status, ['pending', 'forwarded'])) {
+                abort(403, 'Unauthorized to forward this request.');
+            }
         }
 
         $request->validate([
@@ -286,7 +295,7 @@ class VehicleRequestApprovalController extends Controller
             // $vehicleRequestApproval->forwardToUser($forwardToUser->id); // Custom method if applicable
 
             return redirect()->route('vehicle-requests.approvals.index', ['page' => 1])
-                ->with('success', 'Vehicle request forwarded successfully!');
+                ->with('success', 'Request forwarded successfully!');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to forward request: ' . $e->getMessage())->withInput();
         }
@@ -312,9 +321,19 @@ class VehicleRequestApprovalController extends Controller
         try {
             // Fetch the VehicleRequestApproval to validate ownership/status
             $vehicleRequestApproval = VehicleRequestApproval::where('serial_number', $req_id)->firstOrFail();
-            // Updated check: Allow forwarding for both 'pending' and 'forwarded' status, if current_user_id matches
-            if ($vehicleRequestApproval->current_user_id != Auth::id() || !in_array($vehicleRequestApproval->status, ['pending', 'forwarded'])) {
-                abort(403, 'Unauthorized to forward this request.');
+            
+            $user = Auth::user();
+            $isHead = $user->role && $user->role->name === 'Establishment Head';
+
+            // Updated check: For Fleet Operator, check current_user_id and status; for Establishment Head, check status and establishment
+            if ($isHead) {
+                if (!($vehicleRequestApproval->status === 'forwarded' && $vehicleRequestApproval->current_establishment_id == $user->establishment_id)) {
+                    abort(403, 'Unauthorized to forward this request.');
+                }
+            } else {
+                if ($vehicleRequestApproval->current_user_id != $user->id || !in_array($vehicleRequestApproval->status, ['pending', 'forwarded'])) {
+                    abort(403, 'Unauthorized to forward this request.');
+                }
             }
 
             // Create the request process record
