@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class VehicleRequestApproval extends Model
 {
@@ -73,6 +75,17 @@ class VehicleRequestApproval extends Model
     public function initiator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'initiated_by');
+    }
+
+    public function requestProcesses(): HasMany
+    {
+        return $this->hasMany(RequestProcess::class, 'req_id', 'serial_number');
+    }
+
+    public function latestForwardProcess(): HasOne
+    {
+        return $this->hasOne(RequestProcess::class, 'req_id', 'serial_number')
+            ->latestOfMany('processed_at', 'max');
     }
 
     // Scopes

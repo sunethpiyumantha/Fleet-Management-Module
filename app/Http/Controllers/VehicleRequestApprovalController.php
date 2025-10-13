@@ -29,7 +29,11 @@ class VehicleRequestApprovalController extends Controller
         if ($user->role && $user->role->name === 'Fleet Operator') {
             $query->where('current_user_id', $user->id);
         } elseif ($user->role && $user->role->name === 'Establishment Head') {
-            $query->where('status', 'forwarded')->where('current_establishment_id', $user->establishment_id);
+            $query->where('status', 'forwarded')
+                  ->where('current_establishment_id', $user->establishment_id)
+                  ->whereHas('latestForwardProcess.fromUser.role', function($subQuery) {
+                      $subQuery->where('name', 'Request Handler');
+                  });
         } elseif ($user->role && $user->role->name === 'Request Handler') {
             $query->where('status', 'forwarded')->where('current_user_id', $user->id);
         }

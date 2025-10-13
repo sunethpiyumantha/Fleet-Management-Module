@@ -7,7 +7,7 @@ use App\Models\Permission;
 
 class PermissionSeeder extends Seeder
 {
-    public function run(): void
+    public function run()
     {
         $permissions = [
             'Role Create', 'Role List', 'User Edit', 'Logindetail List', 'Role Delete', 'User Create', 'User List', 'User Delete',

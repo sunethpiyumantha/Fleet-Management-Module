@@ -37,5 +37,36 @@ class RoleSeeder extends Seeder
 
         // Attach permissions to the Super Admin role
         $superAdminRole->permissions()->sync($permissionIds);
+
+        // Add Fleet Operator role
+        $fleetRole = Role::firstOrCreate(['name' => 'Fleet Operator']);
+        $fleetPermissions = [
+            'Request Create',
+            'Request Edit (own)',
+            'Request Delete (own, before approval)',
+            'Forward Request',
+            'Reject Request',
+        ];
+        $fleetPermissionIds = Permission::whereIn('name', $fleetPermissions)->pluck('id');
+        $fleetRole->permissions()->sync($fleetPermissionIds);
+
+        // Add Request Handler role
+        $handlerRole = Role::firstOrCreate(['name' => 'Request Handler']);
+        $handlerPermissions = [
+            'Forward Request',
+            'Reject Request',
+        ];
+        $handlerPermissionIds = Permission::whereIn('name', $handlerPermissions)->pluck('id');
+        $handlerRole->permissions()->sync($handlerPermissionIds);
+
+        // Add Establishment Head role
+        $headRole = Role::firstOrCreate(['name' => 'Establishment Head']);
+        $headPermissions = [
+            'Forward Request',
+            'Reject Request',
+            'Approve Request',
+        ];
+        $headPermissionIds = Permission::whereIn('name', $headPermissions)->pluck('id');
+        $headRole->permissions()->sync($headPermissionIds);
     }
 }
