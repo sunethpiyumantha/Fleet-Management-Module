@@ -132,7 +132,7 @@ class VehicleRequestApprovalController extends Controller
         $categories = VehicleCategory::all();
         $subCategories = VehicleSubCategory::all();
 
-        return view('vehicle-request-edit', compact('vehicleRequestApproval', 'categories', 'subCategories'));
+        return view('vehicle-request-approvals.edit', compact('vehicleRequestApproval', 'categories', 'subCategories'));
     }
 
     public function update(Request $request, VehicleRequestApproval $vehicleRequestApproval)

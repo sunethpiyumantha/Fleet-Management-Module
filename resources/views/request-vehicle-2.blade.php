@@ -182,6 +182,26 @@
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->created_at->format('Y-m-d H:i') }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">
                             <div style="display: flex; flex-direction: column; gap: 5px;">
+                                <!-- Update and Delete buttons for Fleet Operator when status is pending -->
+                                @if(Auth::user()->role->name === 'Fleet Operator' && $approval->status == 'pending')
+                                    @can('Request Edit (own)')
+                                        <a href="{{ route('vehicle-requests.approvals.edit', $approval->id) }}"
+                                           style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
+                                           onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Update</a>
+                                    @endcan
+                                    
+                                    @can('Request Delete (own, before approval)')
+                                        <form action="{{ route('vehicle-requests.approvals.destroy', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this request?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                    style="background-color: #dc2626; color: white; padding: 5px 10px; border-radius: 3px; border: none; width: 100%; text-align: center; cursor: pointer;"
+                                                    onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">Delete</button>
+                                        </form>
+                                    @endcan
+                                @endif
+
+                                <!-- Forward and Reject buttons for various roles -->
                                 @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || ($userRole === 'Establishment Head' && $approval->status == 'forwarded') || ($userRole === 'Request Handler' && $approval->status == 'forwarded') || ($userRole === 'Establishment Admin' && $approval->status == 'forwarded'))
                                     @can('Forward Request')
                                         <a href="{{ route('forward', ['req_id' => $approval->serial_number]) }}"
