@@ -7,10 +7,6 @@
     body {
         background-color: white !important;
     }
-    /* Optional: table row hover effect */
-    #vehicleTable tbody tr:hover {
-        background-color: #f1f1f1;
-    }
 </style>
 
 <div style="width: 100%; padding: 8px; font-family: Arial, sans-serif; background-color: white;">
@@ -57,26 +53,75 @@
     <form action="{{ route('forward.generic') }}" method="POST" style="margin-bottom: 20px;">
         @csrf
         <input type="hidden" name="req_id" value="{{ $req_id }}">
+        
+        @php
+            $user = Auth::user();
+            $isEstablishmentHead = $user->role && $user->role->name === 'Establishment Head';
+        @endphp
+        
         <div style="display: flex; flex-wrap: wrap; gap: 15px;">
-            <div style="flex: 1; min-width: 220px;">
-                <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Forward To</label>
-                <select name="forward_to" required
-                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
-                    <option value="">Select Forward</option>
-                    @foreach($users as $user)
-                        <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->role->name }}</option>
-                    @endforeach
-                </select>    
-            </div>
+            @if($isEstablishmentHead)
+                <!-- Establishment Selection -->
+                <div style="flex: 1; min-width: 220px;">
+                    <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">
+                        Select Target Establishment
+                    </label>
+                    <select name="forward_to_establishment" id="establishmentSelect" required
+                            style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                        <option value="">Select Establishment</option>
+                        @foreach($establishments as $establishment)
+                            @if($establishment->e_id != Auth::user()->establishment_id)
+                                <option value="{{ $establishment->e_id }}">
+                                    {{ $establishment->e_name }} ({{ $establishment->abb_name }})
+                                </option>
+                            @endif
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- User Selection (Dynamic) -->
+                <div style="flex: 1; min-width: 220px;">
+                    <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">
+                        Select User in Establishment
+                    </label>
+                    <select name="forward_to_user" id="userSelect" required
+                            style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;"
+                            disabled>
+                        <option value="">First select an establishment</option>
+                    </select>
+                    <div id="userLoading" style="display: none; font-size: 12px; color: #0077B6; margin-top: 4px;">
+                        Loading users...
+                    </div>
+                    <div id="noUsersMessage" style="display: none; font-size: 12px; color: #dc2626; margin-top: 4px;">
+                        No users found in this establishment. Please select another establishment.
+                    </div>
+                </div>
+            @else
+                <!-- For other roles - Original single dropdown -->
+                <div style="flex: 1; min-width: 220px;">
+                    <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">
+                        Forward To User
+                    </label>
+                    <select name="forward_to" required
+                            style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                        <option value="">Select User</option>
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->role->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+
             <div style="flex: 3; min-width: 220px;">
-                <label  style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Enter Remark</label>
+                <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Enter Remark</label>
                 <input type="text" name="remark" required
                        style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
             </div>
             
             <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end;">
-                <button type="submit"
-                        style="width: 100%; background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer;">
+                <button type="submit" id="submitButton"
+                        style="width: 100%; background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer;"
+                        @if($isEstablishmentHead) disabled @endif>
                     Forward
                 </button>
             </div>
@@ -85,53 +130,79 @@
 
 </div>
 
+@if($isEstablishmentHead)
 <script>
-    const rowsPerPage = 5;
-    let currentPage = 1;
-    let sortAsc = true;
-    let sortColumn = 1;
-    let tableRows = Array.from(document.querySelectorAll("#vehicleTable tbody tr"));
+    document.addEventListener('DOMContentLoaded', function() {
+        const establishmentSelect = document.getElementById('establishmentSelect');
+        const userSelect = document.getElementById('userSelect');
+        const userLoading = document.getElementById('userLoading');
+        const noUsersMessage = document.getElementById('noUsersMessage');
+        const submitButton = document.getElementById('submitButton');
 
-    function renderTable() {
-
-    }
-
-    function renderPagination(totalRows) {
-        const totalPages = Math.ceil(totalRows / rowsPerPage);
-        const container = document.getElementById("pagination");
-        container.innerHTML = "";
-
-        for (let i = 1; i <= totalPages; i++) {
-            const btn = document.createElement("button");
-            btn.textContent = i;
-            btn.style = "margin: 0 4px; padding: 5px 10px; background: #00B4D8; color: white; border: none; border-radius: 3px; cursor: pointer;";
-            if (i === currentPage) {
-                btn.style.backgroundColor = "#023E8A";
+        establishmentSelect.addEventListener('change', function() {
+            const establishmentId = this.value;
+            
+            // Reset user dropdown
+            userSelect.innerHTML = '<option value="">Loading users...</option>';
+            userSelect.disabled = true;
+            submitButton.disabled = true;
+            noUsersMessage.style.display = 'none';
+            
+            if (!establishmentId) {
+                userSelect.innerHTML = '<option value="">First select an establishment</option>';
+                return;
             }
-            btn.addEventListener("click", () => {
-                currentPage = i;
-                renderTable();
-            });
-            container.appendChild(btn);
-        }
-    }
 
-    document.getElementById("searchInput").addEventListener("input", () => {
-        currentPage = 1;
-        renderTable();
-    });
-
-    function sortTable(colIndex) {
-        sortAsc = colIndex === sortColumn ? !sortAsc : true;
-        sortColumn = colIndex;
-        tableRows.sort((a, b) => {
-            const textA = a.cells[colIndex].innerText.toLowerCase();
-            const textB = b.cells[colIndex].innerText.toLowerCase();
-            return sortAsc ? textA.localeCompare(textB) : textB.localeCompare(textA);
+            // Show loading
+            userLoading.style.display = 'block';
+            
+            // Fetch users from the selected establishment
+            fetch(`/api/establishment-users/${establishmentId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(users => {
+                    userLoading.style.display = 'none';
+                    
+                    if (users.length === 0) {
+                        userSelect.innerHTML = '<option value="">No users found</option>';
+                        noUsersMessage.style.display = 'block';
+                        submitButton.disabled = true;
+                    } else {
+                        userSelect.innerHTML = '<option value="">Select a user</option>';
+                        users.forEach(user => {
+                            const option = document.createElement('option');
+                            option.value = user.id;
+                            option.textContent = `${user.name} - ${user.role_name}`;
+                            userSelect.appendChild(option);
+                        });
+                        userSelect.disabled = false;
+                        submitButton.disabled = false;
+                        noUsersMessage.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    userLoading.style.display = 'none';
+                    userSelect.innerHTML = '<option value="">Error loading users</option>';
+                    console.error('Error fetching users:', error);
+                    submitButton.disabled = true;
+                });
         });
-        renderTable();
-    }
+
+        // Enable submit button when user is selected
+        userSelect.addEventListener('change', function() {
+            if (this.value && establishmentSelect.value) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        });
+    });
 </script>
+@endif
 
 <style>
     .badge {

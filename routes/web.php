@@ -42,12 +42,12 @@ Route::get('/welcome', function () {
 Route::get('/index.html', function () {
     return view('welcome');
 });
+
 // Protected routes (require authentication)
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // Vehicle Request Approvals Routes
-    // Excerpt from web.php - Vehicle Request Approvals Routes (inside the auth middleware group)
     Route::get('/request-vehicle-2', [VehicleRequestApprovalController::class, 'index'])
         ->name('vehicle-requests.approvals.index');
     Route::post('/request-vehicle-2', [VehicleRequestApprovalController::class, 'store'])
@@ -65,7 +65,7 @@ Route::middleware('auth')->group(function () {
         ->middleware('can:Forward Request')
         ->name('vehicle-requests.approvals.forward');
 
-    // ADD THESE TWO REJECT ROUTES HERE:
+    // Reject routes
     Route::get('/request-vehicle-2/{vehicleRequestApproval}/reject-form', [VehicleRequestApprovalController::class, 'rejectForm'])
         ->name('vehicle-requests.approvals.reject-form');
     Route::post('/request-vehicle-2/{vehicleRequestApproval}/reject', [VehicleRequestApprovalController::class, 'reject'])
@@ -191,10 +191,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/vehicles-basic-info', function () { return view('vehicles-basic-info'); })->name('vehicles.basic-info');
 
     // Roles
-    // Roles (add these if missing, or update existing)
     Route::get('/user-roles', [RoleController::class, 'index'])->middleware('can:Role List')->name('roles.index');
     Route::post('/user-roles', [RoleController::class, 'store'])->middleware('can:Role Create')->name('roles.store');
-    Route::put('/user-roles/{id}', [RoleController::class, 'update'])->middleware('can:Role Edit')->name('roles.update');  // Note: Add 'Role Edit' to seeder if needed
+    Route::put('/user-roles/{id}', [RoleController::class, 'update'])->middleware('can:Role Edit')->name('roles.update');
     Route::delete('/user-roles/{id}', [RoleController::class, 'destroy'])->middleware('can:Role Delete')->name('roles.destroy');
     Route::patch('/user-roles/{id}/restore', [RoleController::class, 'restore'])->middleware('can:Role Delete')->name('roles.restore');
     Route::patch('/user-roles/{id}/permissions', [RoleController::class, 'updatePermissions'])->middleware('can:Role Edit')->name('roles.permissions.update');
@@ -207,22 +206,21 @@ Route::middleware('auth')->group(function () {
     Route::post('/user-creation', [UserController::class, 'store'])->name('users.store');
     Route::get('/user-creation/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/user-creation/{id}', [UserController::class, 'update'])->name('users.update');
-    //Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->name('users.destroy');
-    // Add this route in web.php, inside the auth middleware group, after the users.destroy route
     Route::patch('/user-creation/{id}/restore', [UserController::class, 'restore'])->middleware('can:User Delete')->name('users.restore');
     Route::delete('/user-creation/{id}', [UserController::class, 'destroy'])->middleware('can:User Delete')->name('users.destroy');
+    
     // All vehicle info
     Route::get('/vehicle-basic-info/{serial_number}', [VehicleRequestController::class, 'showBasicInfo'])->name('vehicle.basic.info');
     Route::get('/all-vehicle-info', [VehicleRequestController::class, 'allVehicleInfo'])->name('vehicle.all.info');
 
-    // Vehicle management routes (moved inside auth middleware)
+    // Vehicle management routes
     Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');
     Route::get('/vehicles/{serialNumber}/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
     Route::post('/vehicles/store', [VehicleController::class, 'store'])->name('vehicles.store');
     Route::put('/vehicles/{serialNumber}', [VehicleController::class, 'update'])->name('vehicles.update');
     Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
 
-    // Generic Forward route (uses query param for req_id)
+    // Forward routes
     Route::get('/forward', function (Request $request) {
         $req_id = $request->query('req_id');
         if (!$req_id) {
@@ -230,17 +228,46 @@ Route::middleware('auth')->group(function () {
         }
 
         $currentUser = Auth::user();
-        $users = \App\Models\User::with('role')->where('id', '!=', $currentUser->id)
+        
+        // For Establishment Head, load establishments
+        if ($currentUser->role && $currentUser->role->name === 'Establishment Head') {
+            $establishments = \App\Models\Establishment::where('e_id', '!=', $currentUser->establishment_id)->get();
+            return view('forward', compact('establishments', 'req_id'));
+        } else {
+            // For other roles, load users
+            $users = \App\Models\User::with('role')->where('id', '!=', $currentUser->id)
                                  ->orderBy('name')
                                  ->get();
-        return view('forward', compact('users', 'req_id'));
+            return view('forward', compact('users', 'req_id'));
+        }
     })->name('forward');
+
+    // Establishment Head specific forward form
+    Route::get('/forward-establishment/{req_id}', [VehicleRequestApprovalController::class, 'showForwardForm'])
+        ->name('forward.form');
 
     // Generic forward action route
     Route::post('/forward', [VehicleRequestApprovalController::class, 'genericForward'])->middleware('can:Forward Request')->name('forward.generic');
+
+    // API route for loading establishment users (protected)
+    Route::get('/api/establishment-users/{establishmentId}', function($establishmentId) {
+        $users = \App\Models\User::where('establishment_id', $establishmentId)
+            ->with('role')
+            ->get()
+            ->map(function($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'role_name' => $user->role->name ?? 'No Role',
+                    'email' => $user->email
+                ];
+            });
+        
+        return response()->json($users);
+    })->middleware('auth');
 });
 
-// Dropdown data API routes (kept outside auth middleware for AJAX calls)
+// Dropdown data API routes (public for AJAX calls)
 Route::get('/get-vehicle-types', [DropdownController::class, 'getVehicleTypes']);
 Route::get('/get-allocation-types', [DropdownController::class, 'getAllocationTypes']);
 Route::get('/get-makes', [DropdownController::class, 'getMakes']);
@@ -256,8 +283,3 @@ Route::get('/get-statuses', [DropdownController::class, 'getStatuses']);
 Route::get('/get-locations', [DropdownController::class, 'getLocations']);
 Route::get('/get-drivers', [DropdownController::class, 'getDrivers']);
 Route::get('/get-faults', [DropdownController::class, 'getFaults']);
-
-// Remove this route since we're using the controller method instead
-// Route::get('/reject', function () {
-//     return view('reject');
-// })->name('reject');
