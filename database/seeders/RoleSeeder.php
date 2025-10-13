@@ -55,6 +55,7 @@ class RoleSeeder extends Seeder
         $handlerPermissions = [
             'Forward Request',
             'Reject Request',
+            'Approve Request',
         ];
         $handlerPermissionIds = Permission::whereIn('name', $handlerPermissions)->pluck('id');
         $handlerRole->permissions()->sync($handlerPermissionIds);
@@ -68,5 +69,15 @@ class RoleSeeder extends Seeder
         ];
         $headPermissionIds = Permission::whereIn('name', $headPermissions)->pluck('id');
         $headRole->permissions()->sync($headPermissionIds);
+
+        // Add Establishment Admin role
+        $adminRole = Role::firstOrCreate(['name' => 'Establishment Admin']);
+        $adminPermissions = [
+            'Forward Request',
+            'Reject Request',
+            'Approve Request',
+        ];
+        $adminPermissionIds = Permission::whereIn('name', $adminPermissions)->pluck('id');
+        $adminRole->permissions()->sync($adminPermissionIds);
     }
 }

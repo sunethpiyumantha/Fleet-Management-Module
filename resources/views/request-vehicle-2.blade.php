@@ -182,7 +182,7 @@
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->created_at->format('Y-m-d H:i') }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">
                             <div style="display: flex; flex-direction: column; gap: 5px;">
-                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || ($userRole === 'Establishment Head' && $approval->status == 'forwarded') || ($userRole === 'Request Handler' && $approval->status == 'forwarded'))
+                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || ($userRole === 'Establishment Head' && $approval->status == 'forwarded') || ($userRole === 'Request Handler' && $approval->status == 'forwarded') || ($userRole === 'Establishment Admin' && $approval->status == 'forwarded'))
                                     @can('Forward Request')
                                         <a href="{{ route('forward', ['req_id' => $approval->serial_number]) }}"
                                            style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
@@ -190,7 +190,7 @@
                                     @endcan
                                 @endif
 
-                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || ($userRole === 'Establishment Head' && $approval->status == 'forwarded') || ($userRole === 'Request Handler' && $approval->status == 'forwarded'))
+                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || ($userRole === 'Establishment Head' && $approval->status == 'forwarded') || ($userRole === 'Request Handler' && $approval->status == 'forwarded') || ($userRole === 'Establishment Admin' && $approval->status == 'forwarded'))
                                     @can('Reject Request')
                                         <form action="{{ route('vehicle-requests.approvals.update', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to reject this request?')">
                                             @csrf

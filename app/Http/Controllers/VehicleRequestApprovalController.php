@@ -36,6 +36,11 @@ class VehicleRequestApprovalController extends Controller
                   });
         } elseif ($user->role && $user->role->name === 'Request Handler') {
             $query->where('status', 'forwarded')->where('current_user_id', $user->id);
+        } elseif ($user->role && $user->role->name === 'Establishment Admin') {
+            $query->where('status', 'forwarded')->where('current_user_id', $user->id)
+                  ->whereHas('latestForwardProcess.fromUser.role', function($subQuery) {
+                      $subQuery->where('name', 'Request Handler');
+                  });
         }
 
         if ($request->filled('search')) {
