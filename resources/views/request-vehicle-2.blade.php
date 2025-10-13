@@ -169,7 +169,7 @@
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->quantity }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">
                             @if($approval->vehicle_letter)
-                                <a href="{{ asset('storage/' . $approval->vehicle_letter) }}" target="_blank" style="color: #0077B6; text-decoration: none;">Uploaded</a>
+                                <a href="{{ asset('storage/' . $approval->vehicle_letter) }}" target="_blank" style="color: #0077B6; text-decoration: none;">View</a>
                             @else
                                 N/A
                             @endif
