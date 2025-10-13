@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Models\RequestProcess;
+use App\Models\User;
 
 class VehicleRequestApprovalController extends Controller
 {
@@ -203,36 +204,65 @@ class VehicleRequestApprovalController extends Controller
             ->with('success', 'Vehicle request updated successfully!');
     }
 
+    public function rejectForm(VehicleRequestApproval $vehicleRequestApproval)
+    {
+        $this->authorize('Reject Request', $vehicleRequestApproval);
+        
+        // Check if user can reject this request
+        $user = Auth::user();
+        $userRole = $user->role->name ?? '';
+        
+        if (!in_array($userRole, ['Request Handler', 'Establishment Head', 'Establishment Admin']) || 
+            $vehicleRequestApproval->status !== 'forwarded') {
+            abort(403, 'Unauthorized to reject this request.');
+        }
+
+        return view('reject', compact('vehicleRequestApproval'));
+    }
+
     public function reject(Request $request, VehicleRequestApproval $vehicleRequestApproval)
     {
         $this->authorize('Reject Request', $vehicleRequestApproval);
 
         $request->validate([
-            'notes' => 'nullable|string|max:1000',
+            'notes' => 'required|string|max:1000',
         ]);
 
-        // Handle file if provided (optional for rejection)
-        $vehicleLetterPath = $vehicleRequestApproval->vehicle_letter;
-        if ($request->hasFile('vehicle_book')) {
-            if ($vehicleLetterPath) {
-                Storage::disk('public')->delete($vehicleLetterPath);
-            }
-            $file = $request->file('vehicle_book');
-            $filename = time() . '_' . $vehicleRequestApproval->serial_number . '.' . $file->getClientOriginalExtension();
-            $vehicleLetterPath = $file->storeAs('vehicle_letters', $filename, 'public');
+        // Find the original Fleet Operator who created the request
+        $fleetOperator = User::find($vehicleRequestApproval->initiated_by);
+        if (!$fleetOperator) {
+            return back()->withErrors(['error' => 'Original request creator not found.']);
         }
 
-        $vehicleRequestApproval->update([
-            'status' => 'rejected',
-            'notes' => $request->notes ?? 'Rejected via UI',
-            'vehicle_letter' => $vehicleLetterPath,
-            'approved_at' => now(),
-            'approved_by' => Auth::id(),
-        ]);
+        try {
+            // Create rejection process record
+            RequestProcess::create([
+                'req_id' => $vehicleRequestApproval->serial_number,
+                'from_user_id' => Auth::id(),
+                'from_establishment_id' => Auth::user()->establishment_id,
+                'to_user_id' => $fleetOperator->id, // Send back to Fleet Operator
+                'to_establishment_id' => $fleetOperator->establishment_id,
+                'remark' => $request->notes,
+                'status' => 'rejected',
+                'processed_at' => now(),
+            ]);
 
-        // FIXED: Redirect to page 1 (clears search/filter and refreshes list)
-        return redirect()->route('vehicle-requests.approvals.index', ['page' => 1])
-            ->with('success', 'Vehicle request rejected successfully!');
+            // Update the main approval status and return to Fleet Operator
+            $vehicleRequestApproval->update([
+                'status' => 'rejected',
+                'notes' => $request->notes,
+                'approved_at' => now(),
+                'approved_by' => Auth::id(),
+                'current_user_id' => $fleetOperator->id, // Return to Fleet Operator
+                'current_establishment_id' => $fleetOperator->establishment_id,
+            ]);
+
+            // FIXED: Redirect to page 1 (clears search/filter and refreshes list)
+            return redirect()->route('vehicle-requests.approvals.index', ['page' => 1])
+                ->with('success', 'Vehicle request rejected successfully and returned to Fleet Operator!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to reject request: ' . $e->getMessage())->withInput();
+        }
     }
 
     public function destroy(VehicleRequestApproval $vehicleRequestApproval)
@@ -277,7 +307,7 @@ class VehicleRequestApprovalController extends Controller
             'remark' => 'required|string|max:1000',
         ]);
 
-        $forwardToUser = \App\Models\User::findOrFail($request->forward_to);
+        $forwardToUser = User::findOrFail($request->forward_to);
 
         try {
             // Create the request process record
@@ -330,7 +360,7 @@ class VehicleRequestApprovalController extends Controller
         }
 
         $req_id = $request->req_id;
-        $forwardToUser = \App\Models\User::findOrFail($request->forward_to);
+        $forwardToUser = User::findOrFail($request->forward_to);
 
         try {
             // Fetch the VehicleRequestApproval to validate ownership/status

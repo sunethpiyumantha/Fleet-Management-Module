@@ -65,6 +65,12 @@ Route::middleware('auth')->group(function () {
         ->middleware('can:Forward Request')
         ->name('vehicle-requests.approvals.forward');
 
+    // ADD THESE TWO REJECT ROUTES HERE:
+    Route::get('/request-vehicle-2/{vehicleRequestApproval}/reject-form', [VehicleRequestApprovalController::class, 'rejectForm'])
+        ->name('vehicle-requests.approvals.reject-form');
+    Route::post('/request-vehicle-2/{vehicleRequestApproval}/reject', [VehicleRequestApprovalController::class, 'reject'])
+        ->name('vehicle-requests.approvals.reject');
+
     // Vehicle Types
     Route::get('/vehicle-types', [VehicleTypeController::class, 'index'])->name('vehicle-types.index');
     Route::post('/vehicle-types', [VehicleTypeController::class, 'store'])->name('vehicle-types.store');
@@ -251,6 +257,7 @@ Route::get('/get-locations', [DropdownController::class, 'getLocations']);
 Route::get('/get-drivers', [DropdownController::class, 'getDrivers']);
 Route::get('/get-faults', [DropdownController::class, 'getFaults']);
 
-Route::get('/reject', function () {
-    return view('reject'); // reject.blade.php inside resources/views
-})->name('reject');
+// Remove this route since we're using the controller method instead
+// Route::get('/reject', function () {
+//     return view('reject');
+// })->name('reject');

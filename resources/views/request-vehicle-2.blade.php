@@ -212,19 +212,9 @@
 
                                 @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || ($userRole === 'Establishment Head' && $approval->status == 'forwarded') || ($userRole === 'Request Handler' && $approval->status == 'forwarded') || ($userRole === 'Establishment Admin' && $approval->status == 'forwarded'))
                                     @can('Reject Request')
-                                        <form action="{{ route('vehicle-requests.approvals.update', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to reject this request?')">
-                                            @csrf
-                                            @method('PATCH')
-                                            <input type="hidden" name="status" value="rejected">
-                                            <input type="hidden" name="notes" value="Rejected via UI">
-                                            <input type="hidden" name="request_type" value="{{ $approval->request_type }}">
-                                            <input type="hidden" name="cat_id" value="{{ $approval->category_id }}">
-                                            <input type="hidden" name="sub_cat_id" value="{{ $approval->sub_category_id }}">
-                                            <input type="hidden" name="qty" value="{{ $approval->quantity }}">
-                                            <button type="submit"
-                                                    style="background-color: #f12800; color: white; padding: 5px 10px; border-radius: 3px; border: none; width: 100%; text-align: center;"
-                                                    onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#f12800'">Reject</button>
-                                        </form>
+                                        <a href="{{ route('vehicle-requests.approvals.reject-form', $approval->id) }}"
+                                           style="background-color: #f12800; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
+                                           onmouseover="this.style.backgroundColor='#c21000'" onmouseout="this.style.backgroundColor='#f12800'">Reject</a>
                                     @endcan
                                 @endif
                             </div>
