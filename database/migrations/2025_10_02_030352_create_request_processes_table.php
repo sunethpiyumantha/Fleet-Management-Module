@@ -1,6 +1,5 @@
 <?php
 
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('req_id'); // e.g., 'AB021' - foreign key reference to VehicleRequestApproval serial_number (index it if needed)
             $table->foreignId('from_user_id')->constrained('users', 'id')->onDelete('cascade');
-            $table->integer('from_establishment_id'); // Signed int to match e_id
+            $table->unsignedBigInteger('from_establishment_id')->index(); // Unsigned bigint to match e_id
             $table->foreign('from_establishment_id')->references('e_id')->on('establishments')->onDelete('cascade');
             $table->foreignId('to_user_id')->nullable()->constrained('users', 'id');
-            $table->integer('to_establishment_id')->nullable(); // Signed int to match e_id
+            $table->unsignedBigInteger('to_establishment_id')->nullable()->index(); // Unsigned bigint to match e_id
             $table->foreign('to_establishment_id')->references('e_id')->on('establishments')->onDelete('cascade');
             $table->text('remark')->nullable(); // e.g., 'Sir, pls', 'Appd pls', 'Approved', 'Action pls'
             $table->enum('status', ['pending', 'approved', 'rejected', 'forwarded'])->default('pending');

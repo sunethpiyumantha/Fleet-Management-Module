@@ -54,11 +54,12 @@ return new class extends Migration
     {
         Schema::table('vehicle_request_approvals', function (Blueprint $table) {
             // Drop foreign keys first (use dynamic names if needed; adjust based on your DB)
-            $table->dropForeign(['current_user_id']);
-            $table->dropForeign(['initiated_by']);
-            $table->dropForeign(['initiate_establishment_id']);
-            $table->dropForeign(['current_establishment_id']);
-            $table->dropForeign(['forwarded_by']);
+            $possibleFks = ['current_user_id', 'initiated_by', 'initiate_establishment_id', 'current_establishment_id', 'forwarded_by'];
+            foreach ($possibleFks as $fk) {
+                if (Schema::hasColumn('vehicle_request_approvals', $fk)) {
+                    $table->dropForeign([$fk]);
+                }
+            }
 
             // Drop columns only if they exist
             if (Schema::hasColumn('vehicle_request_approvals', 'current_user_id')) {

@@ -20,12 +20,24 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->timestamp('approved_at')->nullable();
             $table->unsignedBigInteger('approved_by')->nullable();
+            $table->unsignedBigInteger('current_user_id')->nullable();
+            $table->unsignedBigInteger('initiated_by')->nullable();
+            $table->unsignedBigInteger('initiate_establishment_id')->nullable();
+            $table->unsignedBigInteger('current_establishment_id')->nullable();
+            $table->text('forward_reason')->nullable();
+            $table->timestamp('forwarded_at')->nullable();
+            $table->unsignedBigInteger('forwarded_by')->nullable();
             $table->timestamps();
 
             // Foreign keys - Updated to match your existing table structure
             $table->foreign('category_id')->references('id')->on('vehicle_categories')->onDelete('restrict');
             $table->foreign('sub_category_id')->references('id')->on('vehicle_sub_categories')->onDelete('restrict');
             $table->foreign('approved_by')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('current_user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('initiated_by')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('initiate_establishment_id')->references('e_id')->on('establishments')->onDelete('set null');
+            $table->foreign('current_establishment_id')->references('e_id')->on('establishments')->onDelete('set null');
+            $table->foreign('forwarded_by')->references('id')->on('users')->onDelete('set null');
         });
     }
 

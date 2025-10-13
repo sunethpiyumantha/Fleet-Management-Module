@@ -4,6 +4,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -13,12 +14,31 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('vehicle_request_approvals', function (Blueprint $table) {
-            // Skip user_id as it already exists
-            $table->foreignId('initiated_establishment_id')->nullable()->constrained('establishments')->onDelete('cascade')->after('user_id');
-            $table->foreignId('current_establishment_id')->nullable()->constrained('establishments')->onDelete('cascade')->after('initiated_establishment_id');
-            $table->text('forward_reason')->nullable()->after('notes');
-            $table->timestamp('forwarded_at')->nullable()->after('forward_reason');
-            $table->foreignId('forwarded_by')->nullable()->constrained('users')->onDelete('set null')->after('forwarded_at');
+            if (!Schema::hasColumn('vehicle_request_approvals', 'user_id')) {
+                $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null')->after('quantity');
+            }
+
+            if (!Schema::hasColumn('vehicle_request_approvals', 'initiate_establishment_id')) { // Standardized to match model
+                $table->unsignedBigInteger('initiate_establishment_id')->nullable()->index()->after('user_id');
+                $table->foreign('initiate_establishment_id')->references('e_id')->on('establishments')->onDelete('cascade');
+            }
+
+            if (!Schema::hasColumn('vehicle_request_approvals', 'current_establishment_id')) {
+                $table->unsignedBigInteger('current_establishment_id')->nullable()->index()->after('initiate_establishment_id');
+                $table->foreign('current_establishment_id')->references('e_id')->on('establishments')->onDelete('cascade');
+            }
+
+            if (!Schema::hasColumn('vehicle_request_approvals', 'forward_reason')) {
+                $table->text('forward_reason')->nullable()->after('notes');
+            }
+
+            if (!Schema::hasColumn('vehicle_request_approvals', 'forwarded_at')) {
+                $table->timestamp('forwarded_at')->nullable()->after('forward_reason');
+            }
+
+            if (!Schema::hasColumn('vehicle_request_approvals', 'forwarded_by')) {
+                $table->foreignId('forwarded_by')->nullable()->constrained('users')->onDelete('set null')->after('forwarded_at');
+            }
         });
     }
 
@@ -28,11 +48,35 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('vehicle_request_approvals', function (Blueprint $table) {
-            // Skip user_id as it already exists (don't drop it)
-            $table->dropForeign(['initiated_establishment_id']);
-            $table->dropForeign(['current_establishment_id']);
-            $table->dropForeign(['forwarded_by']);
-            $table->dropColumn(['initiated_establishment_id', 'current_establishment_id', 'forward_reason', 'forwarded_at', 'forwarded_by']);
+            // Drop columns only if they exist
+            if (Schema::hasColumn('vehicle_request_approvals', 'user_id')) {
+                $table->dropForeign(['user_id']);
+                $table->dropColumn('user_id');
+            }
+            if (Schema::hasColumn('vehicle_request_approvals', 'initiate_establishment_id')) {
+                $table->dropForeign(['initiate_establishment_id']);
+                $table->dropColumn('initiate_establishment_id');
+            }
+            if (Schema::hasColumn('vehicle_request_approvals', 'current_establishment_id')) {
+                $table->dropForeign(['current_establishment_id']);
+                $table->dropColumn('current_establishment_id');
+            }
+            if (Schema::hasColumn('vehicle_request_approvals', 'forward_reason')) {
+                $table->dropColumn('forward_reason');
+            }
+            if (Schema::hasColumn('vehicle_request_approvals', 'forwarded_at')) {
+                $table->dropColumn('forwarded_at');
+            }
+            if (Schema::hasColumn('vehicle_request_approvals', 'forwarded_by')) {
+                $table->dropForeign(['forwarded_by']);
+                $table->dropColumn('forwarded_by');
+            }
         });
+
+        // Safely drop foreign keys using raw SQL if they exist (MySQL supports IF EXISTS)
+        DB::statement('ALTER TABLE vehicle_request_approvals DROP FOREIGN KEY IF EXISTS `vehicle_request_approvals_user_id_foreign`');
+        DB::statement('ALTER TABLE vehicle_request_approvals DROP FOREIGN KEY IF EXISTS `vehicle_request_approvals_initiate_establishment_id_foreign`');
+        DB::statement('ALTER TABLE vehicle_request_approvals DROP FOREIGN KEY IF EXISTS `vehicle_request_approvals_current_establishment_id_foreign`');
+        DB::statement('ALTER TABLE vehicle_request_approvals DROP FOREIGN KEY IF EXISTS `vehicle_request_approvals_forwarded_by_foreign`');
     }
 };
