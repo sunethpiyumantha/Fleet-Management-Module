@@ -161,14 +161,7 @@
                     <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
                 @enderror
             </div>
-            <div style="flex: 2; min-width: 400px;">
-                <label for="notes" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Notes</label>
-                <textarea id="notes" name="notes" rows="3" placeholder="Enter notes..." 
-                          style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">{{ old('notes', $vehicleRequestApproval->notes) }}</textarea>
-                @error('notes')
-                    <span style="color: #dc2626; font-size: 12px;">{{ $message }}</span>
-                @enderror
-            </div>
+            
             <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end; gap: 10px;">
                 <a href="{{ route('vehicle-requests.approvals.index') }}"
                    style="flex: 1; background-color: #6b7280; color: white; font-weight: 600; padding: 10px; border-radius: 5px; text-decoration: none; text-align: center; cursor: pointer;"
