@@ -31,7 +31,6 @@ class VehicleRequestApprovalController extends Controller
         if ($user->role && $user->role->name === 'Fleet Operator') {
             $query->where('current_user_id', $user->id);
         } elseif ($user->role && $user->role->name === 'Establishment Head') {
-            // Establishment Head only sees forwarded requests that are in their establishment
             $query->where('status', 'forwarded')
                   ->where('current_establishment_id', $user->establishment_id);
         } elseif ($user->role && $user->role->name === 'Request Handler') {
@@ -80,12 +79,10 @@ class VehicleRequestApprovalController extends Controller
             'vehicle_book' => 'required|file|mimes:pdf,jpg|max:5120',
         ]);
 
-        // Generate unique serial number
         do {
             $serialNumber = 'VRA-' . date('Y') . '-' . strtoupper(Str::random(6));
         } while (VehicleRequestApproval::where('serial_number', $serialNumber)->exists());
 
-        // Handle file upload
         $vehicleLetterPath = null;
         if ($request->hasFile('vehicle_book')) {
             $file = $request->file('vehicle_book');
@@ -121,7 +118,7 @@ class VehicleRequestApprovalController extends Controller
     public function edit(VehicleRequestApproval $vehicleRequestApproval)
     {
         $this->authorize('Request Edit (own)', $vehicleRequestApproval);
-        if ($vehicleRequestApproval->current_user_id != Auth::id() || $vehicleRequestApproval->status != 'pending') {
+        if ($vehicleRequestApproval->current_user_id != Auth::id() || !in_array($vehicleRequestApproval->status, ['pending', 'rejected'])) {
             abort(403);
         }
 
@@ -136,7 +133,7 @@ class VehicleRequestApprovalController extends Controller
         $user = Auth::id();
         $oldStatus = $vehicleRequestApproval->status;
 
-        if ($oldStatus === 'pending' && $vehicleRequestApproval->current_user_id == $user) {
+        if (in_array($oldStatus, ['pending', 'rejected']) && $vehicleRequestApproval->current_user_id == $user) {
             // This is an edit action by owner
         } else {
             $newStatus = $request->status ?? $oldStatus;
@@ -277,7 +274,7 @@ class VehicleRequestApprovalController extends Controller
                 abort(403, 'Unauthorized to forward this request.');
             }
         } else {
-            if ($vehicleRequestApproval->current_user_id != $user->id || !in_array($vehicleRequestApproval->status, ['pending', 'forwarded'])) {
+            if ($vehicleRequestApproval->current_user_id != $user->id || !in_array($vehicleRequestApproval->status, ['pending', 'forwarded', 'rejected'])) {
                 abort(403, 'Unauthorized to forward this request.');
             }
         }
@@ -297,7 +294,7 @@ class VehicleRequestApprovalController extends Controller
                 'to_user_id' => $forwardToUser->id,
                 'to_establishment_id' => $forwardToUser->establishment_id,
                 'remark' => $request->remark,
-                'status' => 'forwarded',
+                'status' => 'forwarded', // Reverted to 'forwarded'
                 'processed_at' => now(),
             ]);
 
@@ -385,7 +382,7 @@ class VehicleRequestApprovalController extends Controller
                 $forwardToEstablishmentId = $targetEstablishmentId;
 
             } else {
-                if ($vehicleRequestApproval->current_user_id != $user->id || !in_array($vehicleRequestApproval->status, ['pending', 'forwarded'])) {
+                if ($vehicleRequestApproval->current_user_id != $user->id || !in_array($vehicleRequestApproval->status, ['pending', 'forwarded', 'rejected'])) {
                     abort(403, 'Unauthorized to forward this request.');
                 }
 
@@ -400,11 +397,10 @@ class VehicleRequestApprovalController extends Controller
                 'to_user_id' => $forwardToUser->id,
                 'to_establishment_id' => $forwardToEstablishmentId,
                 'remark' => $request->remark,
-                'status' => 'forwarded',
+                'status' => 'forwarded', // Reverted to 'forwarded'
                 'processed_at' => now(),
             ]);
 
-            // CRITICAL: For Establishment Head, set status to 'sent' to remove from their view
             $newStatus = $isHead ? 'sent' : 'forwarded';
 
             $vehicleRequestApproval->update([
@@ -423,7 +419,7 @@ class VehicleRequestApprovalController extends Controller
         }
     }
 
-    public function showForwardView($req_id)  // Or use Request $request and $request->route('req_id')
+    public function showForwardView($req_id)
     {
         if (!$req_id) {
             return redirect()->back()->with('error', 'Request ID is required to forward.');
@@ -435,7 +431,6 @@ class VehicleRequestApprovalController extends Controller
             $establishments = Establishment::where('e_id', '!=', $currentUser->establishment_id)->get();
             return view('forward', compact('establishments', 'req_id'));
         } else {
-            // Filter users to SAME establishment only, exclude current user
             $users = User::with('role')
                         ->where('establishment_id', $currentUser->establishment_id)
                         ->where('id', '!=', $currentUser->id)

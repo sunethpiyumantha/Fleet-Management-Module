@@ -7,19 +7,15 @@
     body {
         background-color: white !important;
     }
-    /* Optional: table row hover effect */
     #vehicleTable tbody tr:hover {
         background-color: #f1f1f1;
     }
-    /* Highlight row for Establishment Head's forwarded requests */
     .highlighted-row {
         background-color: #e3f2fd !important;
     }
 </style>
 
 <div style="width: 100%; padding: 8px; font-family: Arial, sans-serif; background-color: white;">
-
-    <!-- Page Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <nav style="font-size: 14px;">
             <a href="{{ route('home') }}" style="text-decoration: none; color: #0077B6;">Home</a> /
@@ -27,14 +23,12 @@
         </nav>
     </div>
 
-    <!-- Blue Header -->
     <div style="background: #0077B6; color: white; font-weight: bold; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
         <h5 style="font-weight: bold; margin: 0; color: #ffffff;">
             Vehicle Request Management
         </h5>
     </div>
 
-    <!-- Success or Error Messages -->
     @if (session('success'))
         <div style="background-color: #ADE8F4; color: #023E8A; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
             {{ session('success') }}
@@ -52,7 +46,6 @@
     @endif
 
     @can('Request Create')
-    <!-- Add Vehicle Request Form -->
     <form action="{{ route('vehicle-requests.approvals.store') }}" method="POST" enctype="multipart/form-data" style="margin-bottom: 20px;">
         @csrf
         <div style="display: flex; flex-wrap: wrap; gap: 15px;">
@@ -106,7 +99,6 @@
                     <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span>
                 @enderror
             </div>
-            <!-- Removed Initiate and Current Establishment dropdowns -->
             <div style="flex: 1; min-width: 220px;">
                 <label for="vehicle_book" style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">Reference letter</label>
                 <input type="file" id="vehicle_book" name="vehicle_book" accept=".pdf,.jpg" required
@@ -126,7 +118,6 @@
     </form>
     @endcan
 
-    <!-- Search Input -->
     <form method="GET" action="{{ route('vehicle-requests.approvals.index') }}" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
         <input type="text" name="search" id="searchInput" placeholder="Search requests by serial, type, category, sub-category, status, or establishment..."
                value="{{ request('search') }}"
@@ -135,7 +126,6 @@
                 onmouseover="this.style.backgroundColor='#023E8A'" onmouseout="this.style.backgroundColor='#0096C7'">🔍</button>
     </form>
 
-    <!-- Table -->
     <div style="overflow-x: auto;">
         <table id="vehicleTable" style="width: 100%; border-collapse: collapse; border: 1px solid #90E0EF;">
             <thead style="background-color: #0077B6; color: white;">
@@ -182,8 +172,7 @@
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->created_at->format('Y-m-d H:i') }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">
                             <div style="display: flex; flex-direction: column; gap: 5px;">
-                                <!-- Update and Delete buttons for Fleet Operator when status is pending -->
-                                @if(Auth::user()->role->name === 'Fleet Operator' && $approval->status == 'pending')
+                                @if(Auth::user()->role->name === 'Fleet Operator' && in_array($approval->status, ['pending', 'rejected']))
                                     @can('Request Edit (own)')
                                         <a href="{{ route('vehicle-requests.approvals.edit', $approval->id) }}"
                                            style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
@@ -191,18 +180,19 @@
                                     @endcan
                                     
                                     @can('Request Delete (own, before approval)')
-                                        <form action="{{ route('vehicle-requests.approvals.destroy', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this request?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                    style="background-color: #dc2626; color: white; padding: 5px 10px; border-radius: 3px; border: none; width: 100%; text-align: center; cursor: pointer;"
-                                                    onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">Delete</button>
-                                        </form>
+                                        @if($approval->status == 'pending')
+                                            <form action="{{ route('vehicle-requests.approvals.destroy', $approval->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this request?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                        style="background-color: #dc2626; color: white; padding: 5px 10px; border-radius: 3px; border: none; width: 100%; text-align: center; cursor: pointer;"
+                                                        onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">Delete</button>
+                                            </form>
+                                        @endif
                                     @endcan
                                 @endif
 
-                                <!-- Forward button for specific roles and statuses -->
-                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || 
+                                @if(($userRole === 'Fleet Operator' && in_array($approval->status, ['pending', 'rejected'])) || 
                                     ($userRole === 'Establishment Head' && $approval->status == 'forwarded') || 
                                     ($userRole === 'Request Handler' && $approval->status == 'forwarded') || 
                                     ($userRole === 'Establishment Admin' && $approval->status == 'forwarded'))
@@ -215,9 +205,7 @@
                                     @endcan
                                 @endif
 
-                                <!-- Reject button for specific roles and statuses -->
-                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || 
-                                    ($userRole === 'Establishment Head' && $approval->status == 'forwarded') || 
+                                @if(($userRole === 'Establishment Head' && $approval->status == 'forwarded') || 
                                     ($userRole === 'Request Handler' && $approval->status == 'forwarded') || 
                                     ($userRole === 'Establishment Admin' && $approval->status == 'forwarded'))
                                     @can('Reject Request')
@@ -230,28 +218,24 @@
                         </td>
                     </tr>
                 @endforeach
-                {{-- No empty state here; JS handles it --}}
             </tbody>
         </table>
     </div>
 
-    <!-- Pagination -->
     <div id="pagination" style="margin-top: 15px; text-align: center;"></div>
 
 </div>
 
-<!-- Table Sorting + Pagination (Adapted from establishments.blade.php) -->
 <script>
-    const rowsPerPage = 5;  // Matches establishments
+    const rowsPerPage = 5;
     let currentPage = 1;
     let sortAsc = true;
-    let sortColumn = 1;  // Default to Type column
-    let tableRows = Array.from(document.querySelectorAll("#vehicleTable tbody tr"));  // All data rows
+    let sortColumn = 1;
+    let tableRows = Array.from(document.querySelectorAll("#vehicleTable tbody tr"));
 
     function renderTable() {
         const search = document.getElementById("searchInput").value.toLowerCase();
         const filtered = tableRows.filter(row =>
-            // Search across relevant columns (indices 1=Type,2=Cat,3=SubCat,4=Qty,5=Ref,6=InitEst,7=InitUser,8=CurUser,9=CurEst,10=Status,11=Date)
             row.cells[1].innerText.toLowerCase().includes(search) ||
             row.cells[2].innerText.toLowerCase().includes(search) ||
             row.cells[3].innerText.toLowerCase().includes(search) ||
@@ -271,7 +255,6 @@
         const tbody = document.getElementById("tableBody");
         tbody.innerHTML = '';
         if (paginated.length === 0) {
-            // Empty state row (matches colspan=13)
             const emptyRow = document.createElement('tr');
             emptyRow.style.backgroundColor = 'white';
             emptyRow.innerHTML = '<td colspan="13" style="border: 1px solid #90E0EF; padding: 8px; text-align: center; color: #03045E;">No results</td>';
@@ -279,7 +262,7 @@
         } else {
             paginated.forEach((row, index) => {
                 let clone = row.cloneNode(true);
-                clone.cells[0].innerText = start + index + 1;  // Re-number ID
+                clone.cells[0].innerText = start + index + 1;
                 tbody.appendChild(clone);
             });
         }
@@ -292,17 +275,14 @@
         const container = document.getElementById("pagination");
         container.innerHTML = '';
 
-        // Define the number of visible pages (e.g., 5) - matches establishments
         const visiblePages = 5;
         let startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
         let endPage = Math.min(totalPages, startPage + visiblePages - 1);
 
-        // Adjust startPage if endPage is near the total
         if (endPage - startPage + 1 < visiblePages) {
             startPage = Math.max(1, endPage - visiblePages + 1);
         }
 
-        // Previous Button
         if (currentPage > 1) {
             const prevBtn = document.createElement("button");
             prevBtn.textContent = "Previous";
@@ -316,7 +296,6 @@
             container.appendChild(prevBtn);
         }
 
-        // Page Numbers
         for (let i = startPage; i <= endPage; i++) {
             const btn = document.createElement("button");
             btn.textContent = i;
@@ -333,7 +312,6 @@
             container.appendChild(btn);
         }
 
-        // Next Button
         if (currentPage < totalPages) {
             const nextBtn = document.createElement("button");
             nextBtn.textContent = "Next";
@@ -364,7 +342,6 @@
         renderTable();
     }
 
-    // Initial Render
     renderTable();
 </script>
 @endsection
