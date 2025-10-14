@@ -79,7 +79,7 @@ class UserController extends Controller
     public function edit($id)
     {
         $this->authorize('User Edit');
-        $user = User::with(['role.permissions', 'establishment'])->withTrashed()->findOrFail($id); // Eager-load permissions
+        $user = User::with(['role.permissions', 'establishment'])->withTrashed()->findOrFail($id);
         $roles = Role::all();
         $establishments = Establishment::all();
         return view('user-edit', compact('user', 'roles', 'establishments'));
@@ -157,5 +157,27 @@ class UserController extends Controller
             Log::error('User restore failed: ' . $e->getMessage()); // Optional logging
             return redirect()->back()->with('error', 'Failed to restore user: ' . $e->getMessage());
         }
+    }
+
+    public function getUsersByEstablishment($establishmentId)
+    {
+        $currentUser = Auth::user();
+        
+        $users = User::with('role')
+                    ->where('establishment_id', $establishmentId)
+                    ->where('id', '!=', $currentUser->id)  // Exclude self
+                    ->orderBy('name')
+                    ->get(['id', 'name', 'role_id']);  // Only needed fields for API
+
+        // Map to response format expected by JS (id, name, role_name)
+        $response = $users->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'role_name' => $user->role->name ?? 'No Role',
+            ];
+        });
+
+        return response()->json($response);
     }
 }

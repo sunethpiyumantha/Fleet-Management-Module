@@ -423,9 +423,8 @@ class VehicleRequestApprovalController extends Controller
         }
     }
 
-    public function showForwardView(Request $request)
+    public function showForwardView($req_id)  // Or use Request $request and $request->route('req_id')
     {
-        $req_id = $request->query('req_id');
         if (!$req_id) {
             return redirect()->back()->with('error', 'Request ID is required to forward.');
         }
@@ -436,9 +435,12 @@ class VehicleRequestApprovalController extends Controller
             $establishments = Establishment::where('e_id', '!=', $currentUser->establishment_id)->get();
             return view('forward', compact('establishments', 'req_id'));
         } else {
-            $users = User::with('role')->where('id', '!=', $currentUser->id)
-                                 ->orderBy('name')
-                                 ->get();
+            // Filter users to SAME establishment only, exclude current user
+            $users = User::with('role')
+                        ->where('establishment_id', $currentUser->establishment_id)
+                        ->where('id', '!=', $currentUser->id)
+                        ->orderBy('name')
+                        ->get();
             return view('forward', compact('users', 'req_id'));
         }
     }

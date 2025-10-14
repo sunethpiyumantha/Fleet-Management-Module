@@ -201,16 +201,25 @@
                                     @endcan
                                 @endif
 
-                                <!-- Forward and Reject buttons for various roles -->
-                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || ($userRole === 'Establishment Head' && $approval->status == 'forwarded') || ($userRole === 'Request Handler' && $approval->status == 'forwarded') || ($userRole === 'Establishment Admin' && $approval->status == 'forwarded'))
+                                <!-- Forward button for specific roles and statuses -->
+                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || 
+                                    ($userRole === 'Establishment Head' && $approval->status == 'forwarded') || 
+                                    ($userRole === 'Request Handler' && $approval->status == 'forwarded') || 
+                                    ($userRole === 'Establishment Admin' && $approval->status == 'forwarded'))
                                     @can('Forward Request')
                                         <a href="{{ route('forward', ['req_id' => $approval->serial_number]) }}"
-                                           style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
-                                           onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Forward</a>
+                                           style="background-color: #0077B6; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center; margin-right: 5px;"
+                                           onmouseover="this.style.backgroundColor='#005A87'" onmouseout="this.style.backgroundColor='#0077B6'">
+                                            Forward
+                                        </a>
                                     @endcan
                                 @endif
 
-                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || ($userRole === 'Establishment Head' && $approval->status == 'forwarded') || ($userRole === 'Request Handler' && $approval->status == 'forwarded') || ($userRole === 'Establishment Admin' && $approval->status == 'forwarded'))
+                                <!-- Reject button for specific roles and statuses -->
+                                @if(($userRole === 'Fleet Operator' && $approval->status == 'pending') || 
+                                    ($userRole === 'Establishment Head' && $approval->status == 'forwarded') || 
+                                    ($userRole === 'Request Handler' && $approval->status == 'forwarded') || 
+                                    ($userRole === 'Establishment Admin' && $approval->status == 'forwarded'))
                                     @can('Reject Request')
                                         <a href="{{ route('vehicle-requests.approvals.reject-form', $approval->id) }}"
                                            style="background-color: #f12800; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"

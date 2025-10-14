@@ -234,10 +234,12 @@ Route::middleware('auth')->group(function () {
             $establishments = \App\Models\Establishment::where('e_id', '!=', $currentUser->establishment_id)->get();
             return view('forward', compact('establishments', 'req_id'));
         } else {
-            // For other roles, load users
-            $users = \App\Models\User::with('role')->where('id', '!=', $currentUser->id)
-                                 ->orderBy('name')
-                                 ->get();
+            // For other roles, load users in the same establishment only
+            $users = \App\Models\User::with('role')
+                                     ->where('establishment_id', $currentUser->establishment_id)
+                                     ->where('id', '!=', $currentUser->id)
+                                     ->orderBy('name')
+                                     ->get();
             return view('forward', compact('users', 'req_id'));
         }
     })->name('forward');
