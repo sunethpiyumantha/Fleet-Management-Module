@@ -36,8 +36,18 @@ class AuthServiceProvider extends ServiceProvider
         ];
 
         foreach ($permissions as $permission) {
-            Gate::define($permission, function (User $user) use ($permission) {
-                return $user->hasPermission($permission);
+            Gate::define($permission, function (User $user, $model = null) use ($permission) {
+                // Base permission check
+                if (!$user->hasPermission($permission)) {
+                    return false;
+                }
+
+                // For Approve Request and Reject Request, restrict to own establishment's requests
+                if (in_array($permission, ['Approve Request', 'Reject Request']) && $model && $model->initiate_establishment_id != $user->establishment_id) {
+                    return false;
+                }
+
+                return true;
             });
         }
     }

@@ -192,10 +192,10 @@
                                     @endcan
                                 @endif
 
-                                @if(($userRole === 'Fleet Operator' && in_array($approval->status, ['pending', 'rejected'])) || 
-                                    ($userRole === 'Establishment Head' && $approval->status == 'forwarded') || 
-                                    ($userRole === 'Request Handler' && $approval->status == 'forwarded') || 
-                                    ($userRole === 'Establishment Admin' && $approval->status == 'forwarded'))
+                                @if(($userRole === 'Fleet Operator' && in_array($approval->status, ['pending', 'rejected', 'sent'])) || 
+                                    ($userRole === 'Establishment Head' && in_array($approval->status, ['forwarded', 'sent'])) || 
+                                    ($userRole === 'Request Handler' && in_array($approval->status, ['forwarded', 'sent'])) || 
+                                    ($userRole === 'Establishment Admin' && in_array($approval->status, ['forwarded', 'sent'])))
                                     @can('Forward Request')
                                         <a href="{{ route('forward', ['req_id' => $approval->serial_number]) }}"
                                            style="background-color: #0077B6; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center; margin-right: 5px;"
@@ -205,9 +205,9 @@
                                     @endcan
                                 @endif
 
-                                @if(($userRole === 'Establishment Head' && $approval->status == 'forwarded') || 
-                                    ($userRole === 'Request Handler' && $approval->status == 'forwarded') || 
-                                    ($userRole === 'Establishment Admin' && $approval->status == 'forwarded'))
+                                @if(($userRole === 'Establishment Head' && in_array($approval->status, ['forwarded', 'sent'])) || 
+                                    ($userRole === 'Request Handler' && in_array($approval->status, ['forwarded', 'sent'])) || 
+                                    ($userRole === 'Establishment Admin' && in_array($approval->status, ['forwarded', 'sent'])))
                                     @can('Reject Request')
                                         <a href="{{ route('vehicle-requests.approvals.reject-form', $approval->id) }}"
                                            style="background-color: #f12800; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"

@@ -31,12 +31,15 @@ class VehicleRequestApprovalController extends Controller
         if ($user->role && $user->role->name === 'Fleet Operator') {
             $query->where('current_user_id', $user->id);
         } elseif ($user->role && $user->role->name === 'Establishment Head') {
-            $query->where('status', 'forwarded')
+            // CHANGE: Include 'sent' status for inter-establishment forwards received by this head's establishment
+            $query->whereIn('status', ['forwarded', 'sent'])
                   ->where('current_establishment_id', $user->establishment_id);
         } elseif ($user->role && $user->role->name === 'Request Handler') {
-            $query->where('status', 'forwarded')->where('current_user_id', $user->id);
+            // CHANGE: Include 'sent' status for requests forwarded to this user (e.g., from another establishment)
+            $query->whereIn('status', ['forwarded', 'sent'])->where('current_user_id', $user->id);
         } elseif ($user->role && $user->role->name === 'Establishment Admin') {
-            $query->where('status', 'forwarded')->where('current_user_id', $user->id);
+            // CHANGE: Include 'sent' status for requests forwarded to this user (e.g., from another establishment)
+            $query->whereIn('status', ['forwarded', 'sent'])->where('current_user_id', $user->id);
         }
 
         if ($request->filled('search')) {
@@ -270,11 +273,13 @@ class VehicleRequestApprovalController extends Controller
         $isHead = $user->role && $user->role->name === 'Establishment Head';
 
         if ($isHead) {
-            if (!($vehicleRequestApproval->status === 'forwarded' && $vehicleRequestApproval->current_establishment_id == $user->establishment_id)) {
+            // CHANGE: Allow forwarding on 'sent' status (received inter-establishment requests)
+            if (!in_array($vehicleRequestApproval->status, ['forwarded', 'sent']) || $vehicleRequestApproval->current_establishment_id != $user->establishment_id) {
                 abort(403, 'Unauthorized to forward this request.');
             }
         } else {
-            if ($vehicleRequestApproval->current_user_id != $user->id || !in_array($vehicleRequestApproval->status, ['pending', 'forwarded', 'rejected'])) {
+            if ($vehicleRequestApproval->current_user_id != $user->id || !in_array($vehicleRequestApproval->status, ['pending', 'forwarded', 'rejected', 'sent'])) {
+                // CHANGE: Add 'sent' to allowed statuses for non-head users
                 abort(403, 'Unauthorized to forward this request.');
             }
         }
@@ -373,7 +378,8 @@ class VehicleRequestApprovalController extends Controller
             $vehicleRequestApproval = VehicleRequestApproval::where('serial_number', $req_id)->firstOrFail();
             
             if ($isHead) {
-                if (!($vehicleRequestApproval->status === 'forwarded' && $vehicleRequestApproval->current_establishment_id == $user->establishment_id)) {
+                // CHANGE: Allow forwarding on 'sent' status (received inter-establishment requests)
+                if (!in_array($vehicleRequestApproval->status, ['forwarded', 'sent']) || $vehicleRequestApproval->current_establishment_id != $user->establishment_id) {
                     abort(403, 'Unauthorized to forward this request.');
                 }
 
@@ -382,7 +388,8 @@ class VehicleRequestApprovalController extends Controller
                 $forwardToEstablishmentId = $targetEstablishmentId;
 
             } else {
-                if ($vehicleRequestApproval->current_user_id != $user->id || !in_array($vehicleRequestApproval->status, ['pending', 'forwarded', 'rejected'])) {
+                if ($vehicleRequestApproval->current_user_id != $user->id || !in_array($vehicleRequestApproval->status, ['pending', 'forwarded', 'rejected', 'sent'])) {
+                    // CHANGE: Add 'sent' to allowed statuses for non-head users
                     abort(403, 'Unauthorized to forward this request.');
                 }
 
