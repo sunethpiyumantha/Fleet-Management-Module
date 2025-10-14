@@ -16,4 +16,9 @@ class Role extends Model
     {
         return $this->belongsToMany(Permission::class, 'role_permission');
     }
+
+    public function getUsersByEstablishmentCountAttribute()
+    {
+        return $this->users()->groupBy('establishment_id')->count();
+    }
 }

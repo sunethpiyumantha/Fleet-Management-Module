@@ -513,6 +513,27 @@ class EstablishmentSeeder extends Seeder
                 'type_code' => 30,
                 'serial_number' => null,
             ],
+            [
+                'e_id' => 1091,
+                'e_name' => 'Security Force Headquarters (West) - SFHQ (West)',
+                'abb_name' => 'Security Force Headquarters (West) - SFHQ (West)',
+                'type_code' => 30,
+                'serial_number' => null,
+            ],
+            [
+                'e_id' => 1092,
+                'e_name' => 'Headquarters 12 Infantry Division - HQ 12 Inf Div',
+                'abb_name' => 'Headquarters 12 Infantry Division - HQ 12 Inf Div',
+                'type_code' => 30,
+                'serial_number' => null,
+            ],
+            [
+                'e_id' => 1093,
+                'e_name' => '121 Infantry Brigade - HQ 121 Inf Bde',
+                'abb_name' => '121 Infantry Brigade - HQ 121 Inf Bde',
+                'type_code' => 30,
+                'serial_number' => null,
+            ],
             // TODO: Add the full remaining rows (44-1051, 1057-1060, etc.) from your complete SQL dump here.
             // If you paste the full SQL, I can regenerate the complete array.
         ];
