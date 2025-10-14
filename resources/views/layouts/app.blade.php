@@ -67,6 +67,16 @@
                     <h4 style="text-align: center; font-weight: bold;">Fleet Management Module</h4>
                 </div>
             </div>
+
+            @auth
+            <div class="user-info" style="display: inline-block; padding: 10px; position: relative; font-size: 16px; vertical-align: middle;">
+                <span style="white-space: nowrap;">
+                    {{ auth()->user()->name }}<br>
+                    <small style="color: #6c757d; font-size: 12px;">{{ auth()->user()->role->name }}</small>
+                </span>
+            </div>
+            @endauth
+
             <div style="display: inline-block; cursor: pointer; padding: 10px; font-size: 24px; position: relative;" title="Notifications">
                     <i class="fas fa-bell"></i>
             </div> 
