@@ -42,8 +42,9 @@ class AuthServiceProvider extends ServiceProvider
                     return false;
                 }
 
-                // For Approve Request and Reject Request, restrict to own establishment's requests
-                if (in_array($permission, ['Approve Request', 'Reject Request']) && $model && $model->initiate_establishment_id != $user->establishment_id) {
+                // FIXED: For Approve Request and Reject Request, restrict to requests in the user's CURRENT establishment
+                // (allows inter-establishment actions on 'sent'/'forwarded' requests where current_establishment_id matches)
+                if (in_array($permission, ['Approve Request', 'Reject Request']) && $model && $model->current_establishment_id != $user->establishment_id) {
                     return false;
                 }
 

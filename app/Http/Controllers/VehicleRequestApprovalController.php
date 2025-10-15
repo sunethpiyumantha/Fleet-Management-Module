@@ -31,15 +31,31 @@ class VehicleRequestApprovalController extends Controller
         if ($user->role && $user->role->name === 'Fleet Operator') {
             $query->where('current_user_id', $user->id);
         } elseif ($user->role && $user->role->name === 'Establishment Head') {
-            // CHANGE: Include 'sent' status for inter-establishment forwards received by this head's establishment
-            $query->whereIn('status', ['forwarded', 'sent'])
+            // CHANGE: Include 'rejected' status for visibility in default establishment
+            $query->whereIn('status', ['forwarded', 'sent', 'rejected'])
                   ->where('current_establishment_id', $user->establishment_id);
         } elseif ($user->role && $user->role->name === 'Request Handler') {
-            // CHANGE: Include 'sent' status for requests forwarded to this user (e.g., from another establishment)
-            $query->whereIn('status', ['forwarded', 'sent'])->where('current_user_id', $user->id);
+            // CHANGE: Include 'rejected' status for visibility in default establishment (all rejects in est, plus personal forwards/sents)
+            $query->where(function ($q) use ($user) {
+                $q->where(function ($sub) use ($user) {
+                    $sub->whereIn('status', ['forwarded', 'sent'])
+                        ->where('current_user_id', $user->id);
+                })->orWhere(function ($sub) use ($user) {
+                    $sub->where('status', 'rejected')
+                        ->where('current_establishment_id', $user->establishment_id);
+                });
+            });
         } elseif ($user->role && $user->role->name === 'Establishment Admin') {
-            // CHANGE: Include 'sent' status for requests forwarded to this user (e.g., from another establishment)
-            $query->whereIn('status', ['forwarded', 'sent'])->where('current_user_id', $user->id);
+            // CHANGE: Same as Request Handler for consistency
+            $query->where(function ($q) use ($user) {
+                $q->where(function ($sub) use ($user) {
+                    $sub->whereIn('status', ['forwarded', 'sent'])
+                        ->where('current_user_id', $user->id);
+                })->orWhere(function ($sub) use ($user) {
+                    $sub->where('status', 'rejected')
+                        ->where('current_establishment_id', $user->establishment_id);
+                });
+            });
         }
 
         if ($request->filled('search')) {
@@ -199,8 +215,9 @@ class VehicleRequestApprovalController extends Controller
         $user = Auth::user();
         $userRole = $user->role->name ?? '';
         
+        // CHANGE: Allow rejection on 'sent' status for inter-establishment rejects
         if (!in_array($userRole, ['Request Handler', 'Establishment Head', 'Establishment Admin']) || 
-            $vehicleRequestApproval->status !== 'forwarded') {
+            !in_array($vehicleRequestApproval->status, ['forwarded', 'sent'])) {
             abort(403, 'Unauthorized to reject this request.');
         }
 
