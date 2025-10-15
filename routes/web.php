@@ -285,3 +285,15 @@ Route::get('/get-statuses', [DropdownController::class, 'getStatuses']);
 Route::get('/get-locations', [DropdownController::class, 'getLocations']);
 Route::get('/get-drivers', [DropdownController::class, 'getDrivers']);
 Route::get('/get-faults', [DropdownController::class, 'getFaults']);
+
+Route::get('/vehicle-approved', function () {
+    return view('vehicle-approved');
+});
+
+Route::get('/vehicle-rejected', function () {
+    return view('vehicle-rejected');
+});
+
+Route::get('/vehicle-forwarded', function () {
+    return view('vehicle-forwarded');
+});
