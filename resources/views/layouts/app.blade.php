@@ -514,7 +514,34 @@
                                             <a href="/request-vehicle-2">
                                                 <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                     Vehicle Request 2 
-                                                </a>
+                                            </a>
+                                            <ul>
+                                                <li>
+                                                    <a href="/request-vehicle-2">
+                                                        <img src="{{ asset('assets/car.png') }}" style="width: 20px; height: 20px; margin-right: 8px;">
+                                                        Vehicle Request 2 
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="/vehicle-approved">
+                                                        <img src="{{ asset('assets/car.png') }}" style="width: 20px; height: 20px; margin-right: 8px;">
+                                                        Approved
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="/vehicle-rejected">
+                                                        <img src="{{ asset('assets/car.png') }}" style="width: 20px; height: 20px; margin-right: 8px;">
+                                                        Rejected
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="/vehicle-forwarded">
+                                                        <img src="{{ asset('assets/car.png') }}" style="width: 20px; height: 20px; margin-right: 8px;">
+                                                        Forwarded
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                            
                                         </li>
                                         <li>
                                             <a href="{{ route('vehicle.request.all') }}">
