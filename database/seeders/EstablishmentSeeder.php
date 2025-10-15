@@ -534,6 +534,14 @@ class EstablishmentSeeder extends Seeder
                 'type_code' => 30,
                 'serial_number' => null,
             ],
+            [
+                'e_id' => 1094,
+                'e_name' => 'Directorate of supply and transport',
+                'abb_name' => 'Directorate of supply and transport',
+                'type_code' => 30,
+                'serial_number' => null,
+            ],
+            
             // TODO: Add the full remaining rows (44-1051, 1057-1060, etc.) from your complete SQL dump here.
             // If you paste the full SQL, I can regenerate the complete array.
         ];
