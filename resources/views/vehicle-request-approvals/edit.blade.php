@@ -97,7 +97,7 @@
                     <option value="" disabled>Select Category</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}" {{ old('cat_id', $vehicleRequestApproval->category_id) == $category->id ? 'selected' : '' }}>
-                            {{ $category->category }} ({{ $category->serial_number }})
+                            {{ $category->category }}
                         </option>
                     @endforeach
                 </select>
@@ -112,7 +112,7 @@
                     <option value="" disabled>Select Sub-Category</option>
                     @foreach($subCategories as $subCategory)
                         <option value="{{ $subCategory->id }}" {{ old('sub_cat_id', $vehicleRequestApproval->sub_category_id) == $subCategory->id ? 'selected' : '' }}>
-                            {{ $subCategory->sub_category }} ({{ $subCategory->serial_number }})
+                            {{ $subCategory->sub_category }}
                         </option>
                     @endforeach
                 </select>

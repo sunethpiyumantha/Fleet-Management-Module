@@ -37,8 +37,8 @@ class EstablishmentController extends Controller
 
         Establishment::create([
             'e_name' => $request->name,
-            'abb_name' => null,
-            'type_code' => null,
+            'abb_name' => '',  // Changed from null to empty string to satisfy NOT NULL constraint
+            'type_code' => 0,  // Default value (adjust if needed based on business logic)
         ]);
 
         return redirect()->route('establishments.index')->with('success', 'Establishment added successfully.');

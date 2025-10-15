@@ -36,8 +36,19 @@ class AuthServiceProvider extends ServiceProvider
         ];
 
         foreach ($permissions as $permission) {
-            Gate::define($permission, function (User $user) use ($permission) {
-                return $user->hasPermission($permission);
+            Gate::define($permission, function (User $user, $model = null) use ($permission) {
+                // Base permission check
+                if (!$user->hasPermission($permission)) {
+                    return false;
+                }
+
+                // FIXED: For Approve Request and Reject Request, restrict to requests in the user's CURRENT establishment
+                // (allows inter-establishment actions on 'sent'/'forwarded' requests where current_establishment_id matches)
+                if (in_array($permission, ['Approve Request', 'Reject Request']) && $model && $model->current_establishment_id != $user->establishment_id) {
+                    return false;
+                }
+
+                return true;
             });
         }
     }
