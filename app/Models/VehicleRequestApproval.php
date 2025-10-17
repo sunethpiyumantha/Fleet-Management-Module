@@ -29,6 +29,7 @@ class VehicleRequestApproval extends Model
         'forward_reason',
         'forwarded_at',
         'forwarded_by',
+        'vehicle_type',
     ];
 
     protected $casts = [
