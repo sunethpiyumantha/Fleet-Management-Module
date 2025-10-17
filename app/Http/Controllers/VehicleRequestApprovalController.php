@@ -355,7 +355,7 @@ class VehicleRequestApprovalController extends Controller
 
         return view('forward', compact('req_id', 'establishments'));
     }
-
+    
     public function genericForward(Request $request)
     {
         $this->authorize('Forward Request');
@@ -363,21 +363,36 @@ class VehicleRequestApprovalController extends Controller
         $user = Auth::user();
         $isHead = $user->role && $user->role->name === 'Establishment Head';
 
-        if ($isHead) {
-            $validator = Validator::make($request->all(), [
-                'req_id' => 'required|string',
-                'forward_to_establishment' => 'required|exists:establishments,e_id',
-                'forward_to_user' => 'required|exists:users,id',
-                'remark' => 'required|string|max:1000',
-            ]);
+        // Check if this is the DST Establishment Head
+        $isDSTHead = $isHead && $user->establishment_id == 1094;
 
-            if (!$validator->fails()) {
-                $selectedUser = User::find($request->forward_to_user);
-                if (!$selectedUser || $selectedUser->establishment_id != $request->forward_to_establishment) {
-                    return redirect()->back()->with('error', 'Selected user does not belong to the chosen establishment.')->withInput();
+        if ($isHead) {
+            if ($isDSTHead) {
+                // Custom validation for DST Head (approve/reject)
+                $validator = Validator::make($request->all(), [
+                    'req_id' => 'required|string',
+                    'action' => 'required|in:approve,reject',
+                    'vehicle_type' => 'required_if:action,approve|in:army,hired',
+                    'remark' => 'required|string|max:1000',
+                ]);
+            } else {
+                // Validation for other Establishment Heads
+                $validator = Validator::make($request->all(), [
+                    'req_id' => 'required|string',
+                    'forward_to_establishment' => 'required|exists:establishments,e_id',
+                    'forward_to_user' => 'required|exists:users,id',
+                    'remark' => 'required|string|max:1000',
+                ]);
+
+                if (!$validator->fails()) {
+                    $selectedUser = User::find($request->forward_to_user);
+                    if (!$selectedUser || $selectedUser->establishment_id != $request->forward_to_establishment) {
+                        return redirect()->back()->with('error', 'Selected user does not belong to the chosen establishment.')->withInput();
+                    }
                 }
             }
         } else {
+            // Validation for non-head users
             $validator = Validator::make($request->all(), [
                 'req_id' => 'required|string',
                 'forward_to' => 'required|exists:users,id',
@@ -395,18 +410,71 @@ class VehicleRequestApprovalController extends Controller
             $vehicleRequestApproval = VehicleRequestApproval::where('serial_number', $req_id)->firstOrFail();
             
             if ($isHead) {
-                // CHANGE: Allow forwarding on 'sent' status (received inter-establishment requests)
-                if (!in_array($vehicleRequestApproval->status, ['forwarded', 'sent']) || $vehicleRequestApproval->current_establishment_id != $user->establishment_id) {
-                    abort(403, 'Unauthorized to forward this request.');
+                if ($isDSTHead) {
+                    // Handle approve/reject for DST Head
+                    $action = $request->action;
+                    $remark = $request->remark;
+                    $newStatus = ($action === 'approve') ? 'approved' : 'rejected';
+
+                    // Default (initiating) establishment
+                    $forwardToEstablishmentId = $vehicleRequestApproval->initiate_establishment_id;
+
+                    // Find the Fleet Operator in the initiating establishment
+                    $fleetOperator = User::where('establishment_id', $forwardToEstablishmentId)
+                        ->whereHas('role', function ($query) {
+                            $query->where('name', 'Fleet Operator');
+                        })
+                        ->first();
+
+                    if (!$fleetOperator) {
+                        return back()->with('error', 'No Fleet Operator found in the initiating establishment.')->withInput();
+                    }
+
+                    $forwardToUser = $fleetOperator;
+
+                    // Create RequestProcess entry
+                    RequestProcess::create([
+                        'req_id' => $req_id,
+                        'from_user_id' => Auth::id(),
+                        'from_establishment_id' => Auth::user()->establishment_id,
+                        'to_user_id' => $forwardToUser->id,
+                        'to_establishment_id' => $forwardToEstablishmentId,
+                        'remark' => $remark,
+                        'status' => $newStatus, // Now valid due to schema update
+                        'processed_at' => now(),
+                    ]);
+
+                    // Update VehicleRequestApproval
+                    $updateData = [
+                        'status' => $newStatus,
+                        'forward_reason' => $remark,
+                        'forwarded_at' => now(),
+                        'forwarded_by' => Auth::id(),
+                        'current_user_id' => $forwardToUser->id,
+                        'current_establishment_id' => $forwardToEstablishmentId,
+                    ];
+
+                    if ($action === 'approve') {
+                        $updateData['vehicle_type'] = $request->vehicle_type;
+                    }
+
+                    $vehicleRequestApproval->update($updateData);
+
+                    return redirect()->route('vehicle-requests.approvals.index', ['page' => 1])
+                        ->with('success', "Request {$newStatus} and forwarded to the initiating establishment's Fleet Operator!");
+                } else {
+                    // Logic for other Establishment Heads
+                    if (!in_array($vehicleRequestApproval->status, ['forwarded', 'sent']) || $vehicleRequestApproval->current_establishment_id != $user->establishment_id) {
+                        abort(403, 'Unauthorized to forward this request.');
+                    }
+
+                    $targetEstablishmentId = $request->forward_to_establishment;
+                    $forwardToUser = User::findOrFail($request->forward_to_user);
+                    $forwardToEstablishmentId = $targetEstablishmentId;
                 }
-
-                $targetEstablishmentId = $request->forward_to_establishment;
-                $forwardToUser = User::findOrFail($request->forward_to_user);
-                $forwardToEstablishmentId = $targetEstablishmentId;
-
             } else {
+                // Logic for non-head users
                 if ($vehicleRequestApproval->current_user_id != $user->id || !in_array($vehicleRequestApproval->status, ['pending', 'forwarded', 'rejected', 'sent'])) {
-                    // CHANGE: Add 'sent' to allowed statuses for non-head users
                     abort(403, 'Unauthorized to forward this request.');
                 }
 
@@ -414,6 +482,7 @@ class VehicleRequestApprovalController extends Controller
                 $forwardToEstablishmentId = $forwardToUser->establishment_id;
             }
 
+            // RequestProcess creation for non-DST cases
             RequestProcess::create([
                 'req_id' => $req_id,
                 'from_user_id' => Auth::id(),
@@ -421,7 +490,7 @@ class VehicleRequestApprovalController extends Controller
                 'to_user_id' => $forwardToUser->id,
                 'to_establishment_id' => $forwardToEstablishmentId,
                 'remark' => $request->remark,
-                'status' => 'forwarded', // Reverted to 'forwarded'
+                'status' => 'forwarded',
                 'processed_at' => now(),
             ]);
 

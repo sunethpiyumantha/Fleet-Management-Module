@@ -41,8 +41,10 @@ class RequestProcess extends Model
      * @var array
      */
     const STATUSES = [
-        'forwarded' => 'Forwarded',
+        'pending' => 'Pending',
+        'approved' => 'Approved',
         'rejected' => 'Rejected',
+        'forwarded' => 'Forwarded',
         'reforwarded' => 'Reforwarded', // Added to track reforwarding after rejection
     ];
 

@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@section('title', 'Forward')
-
 @section('content')
 <style>
     body {
@@ -57,45 +55,72 @@
         @php
             $user = Auth::user();
             $isEstablishmentHead = $user->role && $user->role->name === 'Establishment Head';
+            $isDSTHead = $isEstablishmentHead && $user->establishment_id == 1094;
         @endphp
         
         <div style="display: flex; flex-wrap: wrap; gap: 15px;">
             @if($isEstablishmentHead)
-                <!-- Establishment Selection -->
-                <div style="flex: 1; min-width: 220px;">
-                    <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">
-                        Select Target Establishment
-                    </label>
-                    <select name="forward_to_establishment" id="establishmentSelect" required
-                            style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
-                        <option value="">Select Establishment</option>
-                        @foreach($establishments as $establishment)
-                            @if($establishment->e_id != Auth::user()->establishment_id)
-                                <option value="{{ $establishment->e_id }}">
-                                    {{ $establishment->e_name }} ({{ $establishment->abb_name }})
-                                </option>
-                            @endif
-                        @endforeach
-                    </select>
-                </div>
+                @if($isDSTHead)
+                    <!-- Custom fields for DST Head -->
+                    <div style="flex: 1; min-width: 220px;">
+                        <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">
+                            Select Action
+                        </label>
+                        <select name="action" id="actionSelect" required
+                                style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                            <option value="">Select Action</option>
+                            <option value="approve">Approve</option>
+                            <option value="reject">Reject</option>
+                        </select>
+                    </div>
 
-                <!-- User Selection (Dynamic) -->
-                <div style="flex: 1; min-width: 220px;">
-                    <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">
-                        Select User in Establishment
-                    </label>
-                    <select name="forward_to_user" id="userSelect" required
-                            style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;"
-                            disabled>
-                        <option value="">First select an establishment</option>
-                    </select>
-                    <div id="userLoading" style="display: none; font-size: 12px; color: #0077B6; margin-top: 4px;">
-                        Loading users...
+                    <div id="vehicleTypeSection" style="flex: 1; min-width: 220px; display: none;">
+                        <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">
+                            Select Vehicle Type
+                        </label>
+                        <select name="vehicle_type"
+                                style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                            <option value="army">Army Vehicle</option>
+                            <option value="hired">Authority to Hire Vehicle</option>
+                        </select>
                     </div>
-                    <div id="noUsersMessage" style="display: none; font-size: 12px; color: #dc2626; margin-top: 4px;">
-                        No users found in this establishment. Please select another establishment.
+                @else
+                    <!-- Existing fields for other Establishment Heads -->
+                    <div style="flex: 1; min-width: 220px;">
+                        <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">
+                            Select Target Establishment
+                        </label>
+                        <select name="forward_to_establishment" id="establishmentSelect" required
+                                style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                            <option value="">Select Establishment</option>
+                            @foreach($establishments as $establishment)
+                                @if($establishment->e_id != Auth::user()->establishment_id)
+                                    <option value="{{ $establishment->e_id }}">
+                                        {{ $establishment->e_name }} ({{ $establishment->abb_name }})
+                                    </option>
+                                @endif
+                            @endforeach
+                        </select>
                     </div>
-                </div>
+
+                    <!-- User Selection (Dynamic) -->
+                    <div style="flex: 1; min-width: 220px;">
+                        <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">
+                            Select User in Establishment
+                        </label>
+                        <select name="forward_to_user" id="userSelect" required
+                                style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;"
+                                disabled>
+                            <option value="">First select an establishment</option>
+                        </select>
+                        <div id="userLoading" style="display: none; font-size: 12px; color: #0077B6; margin-top: 4px;">
+                            Loading users...
+                        </div>
+                        <div id="noUsersMessage" style="display: none; font-size: 12px; color: #dc2626; margin-top: 4px;">
+                            No users found in this establishment. Please select another establishment.
+                        </div>
+                    </div>
+                @endif
             @else
                 <!-- For other roles - Original single dropdown -->
                 <div style="flex: 1; min-width: 220px;">
@@ -121,7 +146,7 @@
             <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end;">
                 <button type="submit" id="submitButton"
                         style="width: 100%; background-color: #00B4D8; color: white; font-weight: 600; padding: 10px; border-radius: 5px; border: none; cursor: pointer;"
-                        @if($isEstablishmentHead) disabled @endif>
+                        @if($isEstablishmentHead && !$isDSTHead) disabled @endif>
                     Forward
                 </button>
             </div>
@@ -139,67 +164,78 @@
         const noUsersMessage = document.getElementById('noUsersMessage');
         const submitButton = document.getElementById('submitButton');
 
-        establishmentSelect.addEventListener('change', function() {
-            const establishmentId = this.value;
-            
-            // Reset user dropdown
-            userSelect.innerHTML = '<option value="">Loading users...</option>';
-            userSelect.disabled = true;
-            submitButton.disabled = true;
-            noUsersMessage.style.display = 'none';
-            
-            if (!establishmentId) {
-                userSelect.innerHTML = '<option value="">First select an establishment</option>';
-                return;
-            }
-
-            // Show loading
-            userLoading.style.display = 'block';
-            
-            // Fetch users from the selected establishment
-            fetch(`/api/establishment-users/${establishmentId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(users => {
-                    userLoading.style.display = 'none';
-                    
-                    if (users.length === 0) {
-                        userSelect.innerHTML = '<option value="">No users found</option>';
-                        noUsersMessage.style.display = 'block';
-                        submitButton.disabled = true;
-                    } else {
-                        userSelect.innerHTML = '<option value="">Select a user</option>';
-                        users.forEach(user => {
-                            const option = document.createElement('option');
-                            option.value = user.id;
-                            option.textContent = `${user.name} - ${user.role_name}`;
-                            userSelect.appendChild(option);
-                        });
-                        userSelect.disabled = false;
-                        submitButton.disabled = false;
-                        noUsersMessage.style.display = 'none';
-                    }
-                })
-                .catch(error => {
-                    userLoading.style.display = 'none';
-                    userSelect.innerHTML = '<option value="">Error loading users</option>';
-                    console.error('Error fetching users:', error);
-                    submitButton.disabled = true;
-                });
-        });
-
-        // Enable submit button when user is selected
-        userSelect.addEventListener('change', function() {
-            if (this.value && establishmentSelect.value) {
-                submitButton.disabled = false;
-            } else {
+        if (establishmentSelect) {  // Only run if elements exist (non-DST)
+            establishmentSelect.addEventListener('change', function() {
+                const establishmentId = this.value;
+                
+                // Reset user dropdown
+                userSelect.innerHTML = '<option value="">Loading users...</option>';
+                userSelect.disabled = true;
                 submitButton.disabled = true;
-            }
-        });
+                noUsersMessage.style.display = 'none';
+                
+                if (!establishmentId) {
+                    userSelect.innerHTML = '<option value="">First select an establishment</option>';
+                    return;
+                }
+
+                // Show loading
+                userLoading.style.display = 'block';
+                
+                // Fetch users from the selected establishment
+                fetch(`/api/establishment-users/${establishmentId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(users => {
+                        userLoading.style.display = 'none';
+                        
+                        if (users.length === 0) {
+                            userSelect.innerHTML = '<option value="">No users found</option>';
+                            noUsersMessage.style.display = 'block';
+                            submitButton.disabled = true;
+                        } else {
+                            userSelect.innerHTML = '<option value="">Select a user</option>';
+                            users.forEach(user => {
+                                const option = document.createElement('option');
+                                option.value = user.id;
+                                option.textContent = `${user.name} - ${user.role_name}`;
+                                userSelect.appendChild(option);
+                            });
+                            userSelect.disabled = false;
+                            submitButton.disabled = false;
+                            noUsersMessage.style.display = 'none';
+                        }
+                    })
+                    .catch(error => {
+                        userLoading.style.display = 'none';
+                        userSelect.innerHTML = '<option value="">Error loading users</option>';
+                        console.error('Error fetching users:', error);
+                        submitButton.disabled = true;
+                    });
+            });
+
+            // Enable submit button when user is selected
+            userSelect.addEventListener('change', function() {
+                if (this.value && establishmentSelect.value) {
+                    submitButton.disabled = false;
+                } else {
+                    submitButton.disabled = true;
+                }
+            });
+        }
+
+        // Script for toggling vehicle type section (only for DST Head)
+        const actionSelect = document.getElementById('actionSelect');
+        const vehicleTypeSection = document.getElementById('vehicleTypeSection');
+        if (actionSelect && vehicleTypeSection) {
+            actionSelect.addEventListener('change', function() {
+                vehicleTypeSection.style.display = (this.value === 'approve') ? 'block' : 'none';
+            });
+        }
     });
 </script>
 @endif
