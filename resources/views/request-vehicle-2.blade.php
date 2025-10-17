@@ -171,11 +171,11 @@
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{!! $approval->status_badge !!}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">{{ $approval->created_at->format('Y-m-d H:i') }}</td>
                         <td style="border: 1px solid #90E0EF; padding: 8px;">
-                            <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <div style="display: flex; flex-direction: column; gap: 3px;">
                                 @if(Auth::user()->role->name === 'Fleet Operator' && in_array($approval->status, ['pending', 'rejected']))
                                     @can('Request Edit (own)')
                                         <a href="{{ route('vehicle-requests.approvals.edit', $approval->id) }}"
-                                           style="background-color: #48CAE4; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
+                                           style="background-color: #48CAE4; color: white; padding: 3px 6px; border-radius: 3px; text-decoration: none; text-align: center; font-size: 0.75rem;"
                                            onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#48CAE4'">Update</a>
                                     @endcan
                                     
@@ -185,7 +185,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"
-                                                        style="background-color: #dc2626; color: white; padding: 5px 10px; border-radius: 3px; border: none; width: 100%; text-align: center; cursor: pointer;"
+                                                        style="background-color: #dc2626; color: white; padding: 3px 6px; border-radius: 3px; border: none; width: 100%; text-align: center; cursor: pointer; font-size: 0.75rem;"
                                                         onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">Delete</button>
                                             </form>
                                         @endif
@@ -198,7 +198,7 @@
                                     ($userRole === 'Establishment Admin' && in_array($approval->status, ['forwarded', 'sent'])))
                                     @can('Forward Request')
                                         <a href="{{ route('forward', ['req_id' => $approval->serial_number]) }}"
-                                           style="background-color: #0077B6; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center; margin-right: 5px;"
+                                           style="background-color: #0077B6; color: white; padding: 3px 6px; border-radius: 3px; text-decoration: none; text-align: center; font-size: 0.75rem;"
                                            onmouseover="this.style.backgroundColor='#005A87'" onmouseout="this.style.backgroundColor='#0077B6'">
                                             Forward
                                         </a>
@@ -210,7 +210,7 @@
                                     ($userRole === 'Establishment Admin' && in_array($approval->status, ['forwarded', 'sent'])))
                                     @can('Reject Request')
                                         <a href="{{ route('vehicle-requests.approvals.reject-form', $approval->id) }}"
-                                           style="background-color: #f12800; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; text-align: center;"
+                                           style="background-color: #f12800; color: white; padding: 3px 6px; border-radius: 3px; text-decoration: none; text-align: center; font-size: 0.75rem;"
                                            onmouseover="this.style.backgroundColor='#c21000'" onmouseout="this.style.backgroundColor='#f12800'">Reject</a>
                                     @endcan
                                 @endif
