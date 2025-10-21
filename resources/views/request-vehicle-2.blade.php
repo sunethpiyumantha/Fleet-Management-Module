@@ -214,6 +214,12 @@
                                            onmouseover="this.style.backgroundColor='#c21000'" onmouseout="this.style.backgroundColor='#f12800'">Reject</a>
                                     @endcan
                                 @endif
+
+                                <a href="{{ route('forward', ['req_id' => $approval->serial_number]) }}"
+                                           style="background-color: #0077B6; color: white; padding: 3px 6px; border-radius: 3px; text-decoration: none; text-align: center; font-size: 0.75rem;"
+                                           onmouseover="this.style.backgroundColor='#005A87'" onmouseout="this.style.backgroundColor='#0077B6'">
+                                            View
+                                        </a>
                             </div>
                         </td>
                     </tr>
