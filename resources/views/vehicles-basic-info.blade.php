@@ -322,7 +322,7 @@
             </div>
         </div>
 
-        <div style="width: 100%; display: flex; justify-content: center; margin-top: 15px;">
+        <div style="width: 100%; display: flex; justify-content: center; margin-top: 15px; margin-bottom: 15px;">
             <button type="submit" style="background-color: #00B4D8; color: white; font-weight: 600; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer;" onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">
                 <i class="fa-solid fa-plus-circle" style="margin-right: 0.25rem;"></i> Submit
             </button>
