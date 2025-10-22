@@ -194,24 +194,8 @@ class VehicleRequestApprovalController extends Controller
         $user = Auth::user();
         $query = VehicleRequestApproval::with(['category', 'subCategory', 'currentUser', 'initiator', 'initiateEstablishment', 'currentEstablishment'])
             ->whereIn('status', ['forwarded', 'sent'])
+            ->where('forwarded_by', $user->id)  // Key change: Filter by outgoing forwards from this user
             ->orderBy('created_at', 'desc');
-
-        // Filter based on role for forwarded requests
-        if ($user->role && $user->role->name === 'Fleet Operator') {
-            $query->where('current_user_id', $user->id);
-        } elseif ($user->role && $user->role->name === 'Establishment Head') {
-            $query->where('current_establishment_id', $user->establishment_id);
-        } elseif ($user->role && $user->role->name === 'Request Handler') {
-            $query->where(function ($q) use ($user) {
-                $q->where('current_user_id', $user->id)
-                ->orWhere('current_establishment_id', $user->establishment_id);
-            });
-        } elseif ($user->role && $user->role->name === 'Establishment Admin') {
-            $query->where(function ($q) use ($user) {
-                $q->where('current_user_id', $user->id)
-                ->orWhere('current_establishment_id', $user->establishment_id);
-            });
-        }
 
         if ($request->filled('search')) {
             $search = $request->search;
