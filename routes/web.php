@@ -79,6 +79,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/vehicle-rejected', [VehicleRequestApprovalController::class, 'rejectedIndex'])
     ->name('vehicle-rejected.index');
 
+    // Forwarded vehicles route
+    Route::get('/vehicle-forwarded', [VehicleRequestApprovalController::class, 'forwardedIndex'])
+    ->name('vehicle-forwarded.index');
+
     // Vehicle Types
     Route::get('/vehicle-types', [VehicleTypeController::class, 'index'])->name('vehicle-types.index');
     Route::post('/vehicle-types', [VehicleTypeController::class, 'store'])->name('vehicle-types.store');
@@ -294,7 +298,3 @@ Route::get('/get-locations', [DropdownController::class, 'getLocations']);
 Route::get('/get-drivers', [DropdownController::class, 'getDrivers']);
 Route::get('/get-faults', [DropdownController::class, 'getFaults']);
 
-
-Route::get('/vehicle-forwarded', function () {
-    return view('vehicle-forwarded');
-});
