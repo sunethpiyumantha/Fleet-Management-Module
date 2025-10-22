@@ -512,8 +512,6 @@ class VehicleRequestApprovalController extends Controller
     
     public function genericForward(Request $request)
     {
-        $this->authorize('Forward Request');
-
         $user = Auth::user();
         $isHead = $user->role && $user->role->name === 'Establishment Head';
 
@@ -614,7 +612,7 @@ class VehicleRequestApprovalController extends Controller
 
                     $vehicleRequestApproval->update($updateData);
 
-                    return redirect()->route('vehicle-requests.approvals.index', ['page' => 1])
+                    return redirect()->route('vehicle-forwarded.index')
                         ->with('success', "Request {$newStatus} and forwarded to the initiating establishment's Fleet Operator!");
                 } else {
                     // Logic for other Establishment Heads
@@ -659,7 +657,7 @@ class VehicleRequestApprovalController extends Controller
                 'current_establishment_id' => $forwardToEstablishmentId,
             ]);
 
-            return redirect()->route('vehicle-requests.approvals.index', ['page' => 1])
+            return redirect()->route('vehicle-forwarded.index')
                 ->with('success', 'Request forwarded successfully to ' . $forwardToUser->name . ' at target establishment!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to forward request: ' . $e->getMessage())->withInput();
