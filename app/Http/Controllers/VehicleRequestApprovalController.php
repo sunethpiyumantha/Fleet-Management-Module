@@ -139,6 +139,56 @@ class VehicleRequestApprovalController extends Controller
         return view('vehicle-approved', compact('approvals'));
     }
 
+    public function rejectedIndex(Request $request)
+    {
+        $user = Auth::user();
+        $query = VehicleRequestApproval::with(['category', 'subCategory', 'currentUser', 'initiator', 'initiateEstablishment', 'currentEstablishment'])
+            ->where('status', 'rejected')
+            ->orderBy('created_at', 'desc');
+
+        // Filter based on role for rejected requests
+        if ($user->role && $user->role->name === 'Fleet Operator') {
+            $query->where('current_user_id', $user->id);
+        } elseif ($user->role && $user->role->name === 'Establishment Head') {
+            $query->where('current_establishment_id', $user->establishment_id);
+        } elseif ($user->role && $user->role->name === 'Request Handler') {
+            $query->where(function ($q) use ($user) {
+                $q->where('current_user_id', $user->id)
+                ->orWhere('current_establishment_id', $user->establishment_id);
+            });
+        } elseif ($user->role && $user->role->name === 'Establishment Admin') {
+            $query->where(function ($q) use ($user) {
+                $q->where('current_user_id', $user->id)
+                ->orWhere('current_establishment_id', $user->establishment_id);
+            });
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('serial_number', 'like', "%{$search}%")
+                ->orWhere('request_type', 'like', "%{$search}%")
+                ->orWhereHas('category', function ($sub) use ($search) {
+                    $sub->where('category', 'like', "%{$search}%");
+                })
+                ->orWhereHas('subCategory', function ($sub) use ($search) {
+                    $sub->where('sub_category', 'like', "%{$search}%");
+                })
+                ->orWhere('status', 'like', "%{$search}%")
+                ->orWhereHas('initiateEstablishment', function ($sub) use ($search) {
+                    $sub->where('e_name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('currentEstablishment', function ($sub) use ($search) {
+                    $sub->where('e_name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $approvals = $query->get();
+
+        return view('vehicle-rejected', compact('approvals'));
+    }
+
     public function store(Request $request)
     {
         $this->authorize('Request Create');
