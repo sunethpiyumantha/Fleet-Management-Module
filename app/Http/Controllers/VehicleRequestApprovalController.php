@@ -134,6 +134,23 @@ class VehicleRequestApprovalController extends Controller
             ->with('success', 'Vehicle request submitted successfully! Serial: ' . $serialNumber);
     }
 
+    public function show(VehicleRequestApproval $vehicleRequestApproval)
+    {
+        // Load necessary relations
+        $vehicleRequestApproval->load([
+            'category', 
+            'subCategory', 
+            'currentUser', 
+            'initiator', 
+            'initiateEstablishment', 
+            'currentEstablishment'
+        ]);
+
+        $userRole = Auth::user()->role->name ?? '';
+
+        return view('vehicle-request-approvals.show', compact('vehicleRequestApproval', 'userRole'));
+    }
+
     public function edit(VehicleRequestApproval $vehicleRequestApproval)
     {
         $this->authorize('Request Edit (own)', $vehicleRequestApproval);
