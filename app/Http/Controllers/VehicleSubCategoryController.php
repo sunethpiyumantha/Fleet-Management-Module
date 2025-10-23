@@ -112,29 +112,32 @@ class VehicleSubCategoryController extends Controller
     }
 
     public function destroy($id)
-    {
-        try {
-            $subCategory = VehicleSubCategory::findOrFail($id);
+{
+    try {
+        $subCategory = VehicleSubCategory::findOrFail($id);
 
-            // Check if there are related vehicle requests
-            if ($subCategory->vehicleRequests()->exists()) {
-                $error = ['error' => 'Cannot delete subcategory because it has associated vehicle requests.'];
-                return request()->expectsJson()
-                    ? response()->json($error, 422)
-                    : redirect()->route('vehicle-sub-category.index')->withErrors($error);
-            }
-
-            $subCategory->delete(); // Soft delete
-            $message = ['success' => 'Vehicle subcategory deleted successfully!'];
-
+        // Check if there are related vehicle requests
+        if ($subCategory->vehicleRequests()->exists()) {
+            $error = ['error' => 'Cannot delete subcategory because it has associated vehicle requests.'];
             return request()->expectsJson()
-                ? response()->json($message)
-                : redirect()->route('vehicle-sub-category.index')->with($message);
-        } catch (QueryException $e) {
-            $error = ['error' => "Failed to delete subcategory: {$e->getMessage()}"];
-            return request()->expectsJson()
-                ? response()->json($error, 500)
+                ? response()->json($error, 422)
                 : redirect()->route('vehicle-sub-category.index')->withErrors($error);
         }
+
+        $subCategory->delete(); // Soft delete
+
+        // Use 'error' key so message appears red for deletions
+        $message = ['error' => 'Vehicle subcategory deleted successfully!'];
+
+        return request()->expectsJson()
+            ? response()->json($message)
+            : redirect()->route('vehicle-sub-category.index')->with($message);
+    } catch (\Illuminate\Database\QueryException $e) {
+        $error = ['error' => "Failed to delete subcategory: {$e->getMessage()}"];
+        return request()->expectsJson()
+            ? response()->json($error, 500)
+            : redirect()->route('vehicle-sub-category.index')->withErrors($error);
     }
+}
+
 }
