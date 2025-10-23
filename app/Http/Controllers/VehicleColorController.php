@@ -64,11 +64,20 @@ class VehicleColorController extends Controller
     }
 
     public function destroy($id)
-    {
-        \Log::info("Attempting to soft delete vehicle color ID: {$id}");
-        $color = VehicleColor::findOrFail($id);
-        $success = $color->delete();
-        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
-        return redirect()->back()->with('success', 'Vehicle color deleted successfully!');
+{
+    \Log::info("Attempting to soft delete vehicle color ID: {$id}");
+
+    $color = VehicleColor::findOrFail($id);
+    $success = $color->delete();
+
+    \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+
+    if ($success) {
+        // Use 'error' key so the delete message shows in red
+        return redirect()->back()->with('error', 'Vehicle color deleted successfully!');
+    } else {
+        return redirect()->back()->with('error', 'Failed to delete vehicle color.');
     }
+}
+
 }
