@@ -61,12 +61,20 @@ class FuelTypeController extends Controller
 
 
     public function destroy($id)
-    {
-        \Log::info("Attempting to soft delete fuel_type ID: {$id}");
-        $fuelType = FuelType::findOrFail($id);
-        $success = $fuelType->delete();
-        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
-        return redirect()->back()->with('success', 'Fuel Type deleted successfully!');
+{
+    \Log::info("Attempting to soft delete fuel_type ID: {$id}");
+
+    $fuelType = FuelType::findOrFail($id);
+    $success = $fuelType->delete();
+
+    \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+
+    if ($success) {
+        // Use 'error' key for red delete message
+        return redirect()->back()->with('error', 'Fuel Type deleted successfully!');
+    } else {
+        return redirect()->back()->with('error', 'Failed to delete Fuel Type.');
     }
+}
 
 }
