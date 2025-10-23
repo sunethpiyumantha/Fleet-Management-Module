@@ -58,11 +58,20 @@ class VehicleEngineCapacityController extends Controller
     }
 
     public function destroy($id)
-    {
-        \Log::info("Attempting to soft delete Vehicle Engine Capacity ID: {$id}");
-        $capacity = VehicleEngineCapacity::findOrFail($id);
-        $success = $capacity->delete();
-        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
-        return redirect()->back()->with('success', 'Vehicle engine capacity deleted successfully!');
+{
+    \Log::info("Attempting to soft delete Vehicle Engine Capacity ID: {$id}");
+
+    $capacity = VehicleEngineCapacity::findOrFail($id);
+    $success = $capacity->delete();
+
+    \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+
+    if ($success) {
+        // Use 'error' key so delete messages show red
+        return redirect()->back()->with('error', 'Vehicle engine capacity deleted successfully!');
+    } else {
+        return redirect()->back()->with('error', 'Failed to delete Vehicle engine capacity.');
     }
+}
+
 }
