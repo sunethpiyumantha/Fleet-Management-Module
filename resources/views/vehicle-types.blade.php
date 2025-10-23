@@ -30,22 +30,31 @@
         </h5>
     </div>
 
-    <!-- Success or Error Messages -->
+    <!-- Success Message -->
     @if (session('success'))
-        <div style="background-color: #ADE8F4; color: #023E8A; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+        <div style="background-color: #adf4c9; color: #006519; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
             {{ session('success') }}
         </div>
     @endif
 
+    <!-- Error / Delete Messages -->
+    @if (session('error'))
+        <div style="background-color: #f8d7da; color: #842029; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <!-- Validation Errors -->
     @if ($errors->any())
-        <div style="background-color: #caf0f8; color: #03045E; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+        <div style="background-color: #f8d7da; color: #842029; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
             <ul style="margin: 0; padding-left: 1rem;">
                 @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
+                <   li>{{ $error }}</li>
                 @endforeach
             </ul>
         </div>
     @endif
+
 
     <!-- Add Vehicle Type Form -->
     <form action="{{ route('vehicle-types.store') }}" method="POST" style="margin-bottom: 20px;">
