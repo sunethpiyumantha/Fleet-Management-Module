@@ -49,11 +49,20 @@ class VehicleAllocationTypeController extends Controller
     }
 
     public function destroy($id)
-    {
-        \Log::info("Attempting to soft delete Vehicle Allocation ID: {$id}");
-        $type = VehicleAllocationType::findOrFail($id);
-        $success = $type->delete();
-        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
-        return redirect()->back()->with('success', 'Vehicle Allocation Type deleted successfully!');
+{
+    \Log::info("Attempting to soft delete Vehicle Allocation ID: {$id}");
+
+    $type = VehicleAllocationType::findOrFail($id);
+    $success = $type->delete();
+
+    \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+
+    if ($success) {
+        // Use 'error' key so the message shows in red
+        return redirect()->back()->with('error', 'Vehicle Allocation Type deleted successfully!');
+    } else {
+        return redirect()->back()->with('error', 'Failed to delete Vehicle Allocation Type.');
     }
+}
+
 }
