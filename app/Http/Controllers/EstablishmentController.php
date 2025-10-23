@@ -60,14 +60,22 @@ class EstablishmentController extends Controller
     }
 
     public function destroy($e_id)
-    {
-        Log::info("Attempting to delete establishment with e_id: {$e_id}");
-        $establishment = Establishment::findOrFail($e_id);
+{
+    Log::info("Attempting to delete establishment with e_id: {$e_id}");
 
-        // Since soft deletes aren't supported (no deleted_at column), use hard delete
-        $success = $establishment->forceDelete(); // Use forceDelete() or remove if not needed
-        Log::info("Delete result for e_id {$e_id}: " . ($success ? 'Success' : 'Failed'));
+    $establishment = Establishment::findOrFail($e_id);
 
-        return redirect()->back()->with('success', 'Establishment deleted successfully!');
+    // Hard delete since soft deletes aren't supported
+    $success = $establishment->forceDelete();
+
+    Log::info("Delete result for e_id {$e_id}: " . ($success ? 'Success' : 'Failed'));
+
+    if ($success) {
+        // Use 'error' key so message appears red for delete
+        return redirect()->back()->with('error', 'Establishment deleted successfully!');
+    } else {
+        return redirect()->back()->with('error', 'Failed to delete establishment.');
     }
+}
+
 }
