@@ -8,6 +8,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+// Add this import for the requestProcesses relationship
+use App\Models\RequestProcess;
+
+// Existing imports (keep these)
+use App\Models\VehicleCategory;
+use App\Models\VehicleSubCategory;
+use App\Models\Establishment;
+use App\Models\User;
+use App\Models\Vehicle;
+
 class VehicleRequestApproval extends Model
 {
     use HasFactory;
@@ -30,6 +40,7 @@ class VehicleRequestApproval extends Model
         'forwarded_at',
         'forwarded_by',
         'vehicle_type',
+        'assigned_vehicle_id',
     ];
 
     protected $casts = [
@@ -161,5 +172,10 @@ class VehicleRequestApproval extends Model
     public function getCurrentUserNameAttribute(): string
     {
         return $this->currentUser ? $this->currentUser->name : 'N/A';
+    }
+
+    public function assignedVehicle(): BelongsTo
+    {
+        return $this->belongsTo(Vehicle::class, 'assigned_vehicle_id');
     }
 }

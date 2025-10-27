@@ -78,11 +78,28 @@
                         <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">
                             Select Vehicle Type
                         </label>
-                        <select name="vehicle_type"
+                        <select name="vehicle_type" id="vehicleTypeSelect"
                                 style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
                             <option value="army">Army Vehicle</option>
                             <option value="hired">Authority to Hire Vehicle</option>
                         </select>
+                    </div>
+
+                    <!-- UPDATED: Army Vehicle Army No Dropdown (hidden initially) -->
+                    <div id="armyVehicleSection" style="flex: 1; min-width: 220px; display: none;">
+                        <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">
+                            Select Vehicle Army No
+                        </label>
+                        <select name="army_vehicle_id" id="armyVehicleSelect" required
+                                style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                            <option value="">First select Army Vehicle type</option>
+                        </select>
+                        <div id="armyVehicleLoading" style="display: none; font-size: 12px; color: #0077B6; margin-top: 4px;">
+                            Loading army numbers...
+                        </div>
+                        <div id="noArmyVehiclesMessage" style="display: none; font-size: 12px; color: #dc2626; margin-top: 4px;">
+                            No army numbers found. Please check the database.
+                        </div>
                     </div>
                 @else
                     <!-- Existing fields for other Establishment Heads -->
@@ -231,10 +248,102 @@
         // Script for toggling vehicle type section (only for DST Head)
         const actionSelect = document.getElementById('actionSelect');
         const vehicleTypeSection = document.getElementById('vehicleTypeSection');
+        const vehicleTypeSelect = document.getElementById('vehicleTypeSelect');
+        const armyVehicleSection = document.getElementById('armyVehicleSection');
+        const armyVehicleSelect = document.getElementById('armyVehicleSelect');
+        const armyVehicleLoading = document.getElementById('armyVehicleLoading');
+        const noArmyVehiclesMessage = document.getElementById('noArmyVehiclesMessage');
+
         if (actionSelect && vehicleTypeSection) {
             actionSelect.addEventListener('change', function() {
-                vehicleTypeSection.style.display = (this.value === 'approve') ? 'block' : 'none';
+                const action = this.value;
+                vehicleTypeSection.style.display = (action === 'approve') ? 'block' : 'none';
+                if (action !== 'approve') {
+                    armyVehicleSection.style.display = 'none';  // Hide army section if not approve
+                }
             });
+        }
+
+        // UPDATED: Script for toggling army vehicle dropdown (now fetches army nos)
+        if (vehicleTypeSelect && armyVehicleSection) {
+            vehicleTypeSelect.addEventListener('change', function() {
+                const vehicleType = this.value;
+                if (vehicleType === 'army') {
+                    // Show army vehicle section and load data
+                    armyVehicleSection.style.display = 'block';
+                    armyVehicleSelect.innerHTML = '<option value="">Loading army numbers...</option>';
+                    armyVehicleSelect.disabled = true;
+                    armyVehicleLoading.style.display = 'block';
+                    noArmyVehiclesMessage.style.display = 'none';
+
+                    // Fetch army nos (endpoint /api/vehicle-army-nos)
+                    fetch('/api/vehicle-army-nos')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            armyVehicleLoading.style.display = 'none';
+                            
+                            if (data.error) {
+                                armyVehicleSelect.innerHTML = '<option value="">Error loading army numbers</option>';
+                                noArmyVehiclesMessage.textContent = data.error;
+                                noArmyVehiclesMessage.style.display = 'block';
+                                armyVehicleSelect.disabled = true;
+                            } else if (data.length === 0) {
+                                armyVehicleSelect.innerHTML = '<option value="">No army numbers found</option>';
+                                noArmyVehiclesMessage.style.display = 'block';
+                                armyVehicleSelect.disabled = true;
+                            } else {
+                                armyVehicleSelect.innerHTML = '<option value="">Select an Army Number</option>';
+                                data.forEach(item => {
+                                    const option = document.createElement('option');
+                                    option.value = item.id;  // Use vehicle ID as value
+                                    option.textContent = item.text;  // vehicle_army_no as display
+                                    armyVehicleSelect.appendChild(option);
+                                });
+                                armyVehicleSelect.disabled = false;
+                            }
+                        })
+                        .catch(error => {
+                            armyVehicleLoading.style.display = 'none';
+                            armyVehicleSelect.innerHTML = '<option value="">Error loading army numbers</option>';
+                            console.error('Error fetching army numbers:', error);
+                            armyVehicleSelect.disabled = true;
+                        });
+                } else {
+                    // Hide army section for 'hired'
+                    armyVehicleSection.style.display = 'none';
+                    armyVehicleSelect.value = '';  // Reset selection
+                }
+            });
+        }
+
+        // UPDATED: Update submit button enablement to require army vehicle if applicable
+        const updateSubmitButton = () => {
+            const action = actionSelect ? actionSelect.value : '';
+            const vehicleType = vehicleTypeSelect ? vehicleTypeSelect.value : '';
+            const armyVehicle = armyVehicleSelect ? armyVehicleSelect.value : '';
+            
+            if (action === 'approve' && vehicleType === 'army' && !armyVehicle) {
+                submitButton.disabled = true;
+            } else if (action && (vehicleType || action === 'reject')) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        };
+
+        if (armyVehicleSelect) {
+            armyVehicleSelect.addEventListener('change', updateSubmitButton);
+        }
+        if (vehicleTypeSelect) {
+            vehicleTypeSelect.addEventListener('change', updateSubmitButton);
+        }
+        if (actionSelect) {
+            actionSelect.addEventListener('change', updateSubmitButton);
         }
     });
 </script>

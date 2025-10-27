@@ -225,6 +225,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/vehicle-basic-info/{serial_number}', [VehicleRequestController::class, 'showBasicInfo'])->name('vehicle.basic.info');
     Route::get('/all-vehicle-info', [VehicleRequestController::class, 'allVehicleInfo'])->name('vehicle.all.info');
 
+    Route::get('/api/vehicle-army-nos', [VehicleRequestApprovalController::class, 'getVehicleArmyNos'])->name('api.vehicle-army-nos'); 
+    
+    
     // Vehicle management routes
     Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');
     Route::get('/vehicles/{serialNumber}/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');

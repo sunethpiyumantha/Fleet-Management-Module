@@ -6,9 +6,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+// Import related models for relationships
+use App\Models\User;
+use App\Models\Establishment;
+use App\Models\VehicleRequestApproval;
+
 class RequestProcess extends Model
 {
     use HasFactory;
+
+    /**
+     * The table associated with the model (adjust if your migration uses a different name).
+     *
+     * @var string
+     */
+    protected $table = 'request_processes';
 
     /**
      * The attributes that are mass assignable.
