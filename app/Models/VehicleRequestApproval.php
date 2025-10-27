@@ -30,6 +30,7 @@ class VehicleRequestApproval extends Model
         'forwarded_at',
         'forwarded_by',
         'vehicle_type',
+        'assigned_vehicle_id',
     ];
 
     protected $casts = [
@@ -161,5 +162,10 @@ class VehicleRequestApproval extends Model
     public function getCurrentUserNameAttribute(): string
     {
         return $this->currentUser ? $this->currentUser->name : 'N/A';
+    }
+
+    public function assignedVehicle(): BelongsTo
+    {
+        return $this->belongsTo(Vehicle::class, 'assigned_vehicle_id');
     }
 }
