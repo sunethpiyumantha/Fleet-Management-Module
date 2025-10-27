@@ -345,44 +345,60 @@ class VehicleRequestApprovalController extends Controller
 
     public function rejectForm(VehicleRequestApproval $vehicleRequestApproval)
     {
-        $this->authorize('Reject Request', $vehicleRequestApproval);  // Already fixed from prior
+        $this->authorize('Reject Request', $vehicleRequestApproval);
+        
+        $user = Auth::user();
+        $userRole = $user->role->name ?? '';
+        
+        // CHANGE: Allow rejection on 'sent' status for inter-establishment rejects
+        if (!in_array($userRole, ['Request Handler', 'Establishment Head', 'Establishment Admin']) || 
+            !in_array($vehicleRequestApproval->status, ['forwarded', 'sent'])) {
+            abort(403, 'Unauthorized to reject this request.');
+        }
 
-        return view('reject', compact('vehicleRequestApproval'));  // FIXED: Use existing 'reject' view
+        return view('reject', compact('vehicleRequestApproval'));
     }
+
     public function reject(Request $request, VehicleRequestApproval $vehicleRequestApproval)
     {
         $this->authorize('Reject Request', $vehicleRequestApproval);
 
         $request->validate([
-            'notes' => 'required|string|max:1000',  // FIXED: Match view's 'notes' field
+            'notes' => 'required|string|max:1000',
         ]);
+
+        $fleetOperator = User::find($vehicleRequestApproval->initiated_by);
+        if (!$fleetOperator) {
+            return back()->withErrors(['error' => 'Original request creator not found.']);
+        }
 
         try {
             RequestProcess::create([
                 'req_id' => $vehicleRequestApproval->serial_number,
                 'from_user_id' => Auth::id(),
                 'from_establishment_id' => Auth::user()->establishment_id,
-                'to_user_id' => $vehicleRequestApproval->current_user_id,
-                'to_establishment_id' => $vehicleRequestApproval->current_establishment_id,
-                'remark' => $request->notes,  // FIXED: Use 'notes' from request
+                'to_user_id' => $fleetOperator->id,
+                'to_establishment_id' => $fleetOperator->establishment_id,
+                'remark' => $request->notes,
                 'status' => 'rejected',
                 'processed_at' => now(),
             ]);
 
             $vehicleRequestApproval->update([
                 'status' => 'rejected',
-                'forward_reason' => $request->notes,  // FIXED: Use 'notes' for reason
-                'forwarded_at' => now(),
-                'forwarded_by' => Auth::id(),
+                'notes' => $request->notes,
+                'approved_at' => now(),
+                'approved_by' => Auth::id(),
+                'current_user_id' => $fleetOperator->id,
+                'current_establishment_id' => $fleetOperator->establishment_id,
             ]);
 
             return redirect()->route('vehicle-requests.approvals.index', ['page' => 1])
-                ->with('success', 'Request rejected successfully!');
+                ->with('success', 'Vehicle request rejected successfully and returned to Fleet Operator!');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to reject request: ' . $e->getMessage())->withInput();
         }
     }
-
     public function destroy(VehicleRequestApproval $vehicleRequestApproval)
     {
         $this->authorize('Request Delete (own, before approval)', $vehicleRequestApproval);
