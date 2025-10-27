@@ -194,33 +194,41 @@ class VehicleRequestApprovalController extends Controller
     public function forwardedIndex(Request $request)
     {
         $user = Auth::user();
-        $query = VehicleRequestApproval::with(['category', 'subCategory', 'currentUser', 'initiator', 'initiateEstablishment', 'currentEstablishment'])
-            ->whereIn('status', ['forwarded', 'sent'])
-            ->where('forwarded_by', $user->id)  // Key change: Filter by outgoing forwards from this user
-            ->orderBy('created_at', 'desc');
+        $query = RequestProcess::with([
+            'vehicleRequestApproval' => function ($q) {
+                $q->with(['category', 'subCategory', 'currentUser', 'initiator', 'initiateEstablishment', 'currentEstablishment']);
+            },
+            'fromUser', 'toUser', 'fromEstablishment', 'toEstablishment'
+        ])
+        ->where('from_user_id', $user->id)  // Outgoing from this user
+        ->where('status', 'forwarded')      // Only forwarding actions (exclude approves/rejects)
+        ->orderBy('processed_at', 'desc');  // Order by forward timestamp
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('serial_number', 'like', "%{$search}%")
-                ->orWhere('request_type', 'like', "%{$search}%")
-                ->orWhereHas('category', function ($sub) use ($search) {
-                    $sub->where('category', 'like', "%{$search}%");
-                })
-                ->orWhereHas('subCategory', function ($sub) use ($search) {
-                    $sub->where('sub_category', 'like', "%{$search}%");
-                })
-                ->orWhere('status', 'like', "%{$search}%")
-                ->orWhereHas('initiateEstablishment', function ($sub) use ($search) {
-                    $sub->where('e_name', 'like', "%{$search}%");
-                })
-                ->orWhereHas('currentEstablishment', function ($sub) use ($search) {
-                    $sub->where('e_name', 'like', "%{$search}%");
+            $query->whereHas('vehicleRequestApproval', function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('serial_number', 'like', "%{$search}%")
+                        ->orWhere('request_type', 'like', "%{$search}%")
+                        ->orWhereHas('category', function ($subQ) use ($search) {
+                            $subQ->where('category', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('subCategory', function ($subQ) use ($search) {
+                            $subQ->where('sub_category', 'like', "%{$search}%");
+                        })
+                        ->orWhere('status', 'like', "%{$search}%")
+                        ->orWhereHas('initiateEstablishment', function ($subQ) use ($search) {
+                            $subQ->where('e_name', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('currentEstablishment', function ($subQ) use ($search) {
+                            $subQ->where('e_name', 'like', "%{$search}%");
+                        });
                 });
             });
         }
 
-        $approvals = $query->get();
+        $processes = $query->get();
+        $approvals = $processes->pluck('vehicleRequestApproval')->filter()->values();  // Filter out nulls and re-index
 
         return view('vehicle-forwarded', compact('approvals'));
     }
