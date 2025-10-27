@@ -275,6 +275,7 @@ class VehicleRequestApprovalController extends Controller
 
     public function show(VehicleRequestApproval $vehicleRequestApproval)
     {
+        // Load necessary relations
         $vehicleRequestApproval->load([
             'category', 
             'subCategory', 
@@ -399,6 +400,7 @@ class VehicleRequestApprovalController extends Controller
             return back()->with('error', 'Failed to reject request: ' . $e->getMessage())->withInput();
         }
     }
+
     public function destroy(VehicleRequestApproval $vehicleRequestApproval)
     {
         $this->authorize('Request Delete (own, before approval)', $vehicleRequestApproval);
@@ -487,7 +489,7 @@ class VehicleRequestApprovalController extends Controller
 
         return view('forward', compact('req_id', 'establishments'));
     }
-
+    
     public function genericForward(Request $request)
     {
         $user = Auth::user();
