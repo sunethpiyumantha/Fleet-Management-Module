@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Vehicle Request Summary')
+@section('title', 'Vehicle Request Details')
 
 @section('content')
 <style>
@@ -20,6 +20,7 @@
     .status-approved { background-color: #d4edda; color: #155724; }
     .status-rejected { background-color: #f8d7da; color: #721c24; }
     .status-forwarded { background-color: #d1ecf1; color: #0c5460; }
+    .status-sent { background-color: #d1ecf1; color: #0c5460; }
     .status-reforwarded { background-color: #d1ecf1; color: #0c5460; }
 </style>
 
@@ -28,7 +29,7 @@
         <nav style="font-size: 14px;">
             <a href="{{ route('home') }}" style="text-decoration: none; color: #0077B6;">Home</a> /
             <a href="{{ route('vehicle-requests.approvals.index') }}" style="text-decoration: none; color: #0077B6;">Vehicle Requests</a> /
-            <span style="font-weight: bold; color:#023E8A;">Request Summary</span>
+            <span style="font-weight: bold; color:#023E8A;">Request Details</span>
         </nav>
         <a href="{{ route('vehicle-requests.approvals.index') }}" style="background-color: #00B4D8; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none;"
            onmouseover="this.style.backgroundColor='#0096C7'" onmouseout="this.style.backgroundColor='#00B4D8'">← Back to Requests</a>
@@ -36,7 +37,7 @@
 
     <div style="background: #0077B6; color: white; font-weight: bold; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
         <h5 style="font-weight: bold; margin: 0; color: #ffffff;">
-            Vehicle Request Summary - {{ $vehicleRequestApproval->serial_number }}
+            Vehicle Request Details - {{ $vehicleRequestApproval->serial_number }}
         </h5>
     </div>
 
@@ -56,46 +57,58 @@
         </div>
     @endif
 
-    <!-- Request Summary Section -->
-    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-        <h6 style="color: #023E8A; margin-bottom: 15px;">Request Details</h6>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; font-size: 14px;">
+    <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 1.5rem; margin-bottom: 2rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
             <div>
-                <strong>Serial Number:</strong> {{ $vehicleRequestApproval->serial_number }}
+                <label style="font-weight: bold; color: #023E8A;">Request Type:</label>
+                <p>{{ $vehicleRequestApproval->request_type_display ?? $vehicleRequestApproval->request_type }}</p>
             </div>
             <div>
-                <strong>Request Type:</strong> {{ $vehicleRequestApproval->request_type_display ?? ucfirst(str_replace('_', ' ', $vehicleRequestApproval->request_type)) }}
+                <label style="font-weight: bold; color: #023E8A;">Category:</label>
+                <p>{{ $vehicleRequestApproval->category->category ?? 'N/A' }}</p>
             </div>
             <div>
-                <strong>Category:</strong> {{ $vehicleRequestApproval->category->category ?? 'N/A' }}
+                <label style="font-weight: bold; color: #023E8A;">Sub-Category:</label>
+                <p>{{ $vehicleRequestApproval->subCategory->sub_category ?? 'N/A' }}</p>
             </div>
             <div>
-                <strong>Sub-Category:</strong> {{ $vehicleRequestApproval->subCategory->sub_category ?? 'N/A' }}
+                <label style="font-weight: bold; color: #023E8A;">Quantity:</label>
+                <p>{{ $vehicleRequestApproval->quantity }}</p>
             </div>
             <div>
-                <strong>Quantity:</strong> {{ $vehicleRequestApproval->quantity }}
+                <label style="font-weight: bold; color: #023E8A;">Status:</label>
+                <p>{!! $vehicleRequestApproval->status_badge !!}</p>
             </div>
             <div>
-                <strong>Status:</strong> {!! $vehicleRequestApproval->status_badge !!}
+                <label style="font-weight: bold; color: #023E8A;">Created At:</label>
+                <p>{{ $vehicleRequestApproval->created_at->format('Y-m-d H:i') }}</p>
             </div>
             <div>
-                <strong>Initiated By:</strong> {{ $vehicleRequestApproval->initiator->name ?? 'N/A' }} ({{ $vehicleRequestApproval->initiateEstablishment->e_name ?? 'N/A' }})
+                <label style="font-weight: bold; color: #023E8A;">Initiated By:</label>
+                <p>{{ $vehicleRequestApproval->initiator->name ?? 'N/A' }} ({{ $vehicleRequestApproval->initiateEstablishment->e_name ?? 'N/A' }})</p>
             </div>
             <div>
-                <strong>Current Assignee:</strong> {{ $vehicleRequestApproval->currentUser->name ?? 'N/A' }} ({{ $vehicleRequestApproval->currentEstablishment->e_name ?? 'N/A' }})
+                <label style="font-weight: bold; color: #023E8A;">Current User:</label>
+                <p>{{ $vehicleRequestApproval->currentUser->name ?? 'N/A' }} ({{ $vehicleRequestApproval->currentEstablishment->e_name ?? 'N/A' }})</p>
             </div>
-            <div>
-                <strong>Created At:</strong> {{ $vehicleRequestApproval->created_at->format('Y-m-d H:i') }}
+            @if($vehicleRequestApproval->notes)
+            <div style="grid-column: 1 / -1;">
+                <label style="font-weight: bold; color: #023E8A;">Notes:</label>
+                <p style="white-space: pre-wrap;">{{ $vehicleRequestApproval->notes }}</p>
             </div>
+            @endif
             @if($vehicleRequestApproval->vehicle_letter)
-            <div>
-                <strong>Reference Letter:</strong> 
-                <a href="{{ asset('storage/' . $vehicleRequestApproval->vehicle_letter) }}" target="_blank" style="color: #0077B6;">View PDF/JPG</a>
+            <div style="grid-column: 1 / -1;">
+                <label style="font-weight: bold; color: #023E8A;">Reference Letter:</label>
+                <p>
+                    <a href="{{ asset('storage/' . $vehicleRequestApproval->vehicle_letter) }}" target="_blank" style="color: #0077B6; text-decoration: none;">View Document</a>
+                </p>
             </div>
             @endif
             @if($vehicleRequestApproval->forward_reason)
-            <div>
-                <strong>Last Action Remark:</strong> {{ $vehicleRequestApproval->forward_reason }}
+            <div style="grid-column: 1 / -1;">
+                <label style="font-weight: bold; color: #023E8A;">Forward Reason:</label>
+                <p>{{ $vehicleRequestApproval->forward_reason }}</p>
             </div>
             @endif
         </div>
@@ -146,6 +159,33 @@
                 </table>
             </div>
         @endif
+    </div>
+
+    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        @php
+            $userRole = $userRole ?? Auth::user()->role->name ?? '';
+            $canForward = in_array($userRole, ['Fleet Operator', 'Establishment Head', 'Request Handler', 'Establishment Admin']) && 
+                          (($userRole === 'Fleet Operator' && in_array($vehicleRequestApproval->status, ['pending', 'rejected', 'sent'])) || 
+                           in_array($userRole, ['Establishment Head', 'Request Handler', 'Establishment Admin']) && in_array($vehicleRequestApproval->status, ['forwarded', 'sent']));
+            $canReject = in_array($userRole, ['Establishment Head', 'Request Handler', 'Establishment Admin']) && in_array($vehicleRequestApproval->status, ['forwarded', 'sent']);
+        @endphp
+
+        @if($canForward)
+            <a href="{{ route('forward', ['req_id' => $vehicleRequestApproval->serial_number]) }}"
+               style="background-color: #0077B6; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: 600;"
+               onmouseover="this.style.backgroundColor='#005A87'" onmouseout="this.style.backgroundColor='#0077B6'">
+                Forward Request
+            </a>
+        @endif
+
+        @if($canReject)
+            <a href="{{ route('vehicle-requests.approvals.reject-form', $vehicleRequestApproval->id) }}"
+               style="background-color: #f12800; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: 600;"
+               onmouseover="this.style.backgroundColor='#c21000'" onmouseout="this.style.backgroundColor='#f12800'">
+                Reject Request
+            </a>
+        @endif
+
     </div>
 </div>
 @endsection
