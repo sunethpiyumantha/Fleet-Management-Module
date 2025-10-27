@@ -169,20 +169,20 @@ class VehicleRequestApprovalController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('serial_number', 'like', "%{$search}%")
-                  ->orWhere('request_type', 'like', "%{$search}%")
-                  ->orWhereHas('category', function ($sub) use ($search) {
-                      $sub->where('category', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('subCategory', function ($sub) use ($search) {
-                      $sub->where('sub_category', 'like', "%{$search}%");
-                  })
-                  ->orWhere('status', 'like', "%{$search}%")
-                  ->orWhereHas('initiateEstablishment', function ($sub) use ($search) {
-                      $sub->where('e_name', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('currentEstablishment', function ($sub) use ($search) {
-                      $sub->where('e_name', 'like', "%{$search}%");
-                  });
+                ->orWhere('request_type', 'like', "%{$search}%")
+                ->orWhereHas('category', function ($sub) use ($search) {
+                    $sub->where('category', 'like', "%{$search}%");
+                })
+                ->orWhereHas('subCategory', function ($sub) use ($search) {
+                    $sub->where('sub_category', 'like', "%{$search}%");
+                })
+                ->orWhere('status', 'like', "%{$search}%")
+                ->orWhereHas('initiateEstablishment', function ($sub) use ($search) {
+                    $sub->where('e_name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('currentEstablishment', function ($sub) use ($search) {
+                    $sub->where('e_name', 'like', "%{$search}%");
+                });
             });
         }
 
@@ -196,27 +196,27 @@ class VehicleRequestApprovalController extends Controller
         $user = Auth::user();
         $query = VehicleRequestApproval::with(['category', 'subCategory', 'currentUser', 'initiator', 'initiateEstablishment', 'currentEstablishment'])
             ->whereIn('status', ['forwarded', 'sent'])
-            ->where('forwarded_by', $user->id)
+            ->where('forwarded_by', $user->id)  // Key change: Filter by outgoing forwards from this user
             ->orderBy('created_at', 'desc');
 
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('serial_number', 'like', "%{$search}%")
-                  ->orWhere('request_type', 'like', "%{$search}%")
-                  ->orWhereHas('category', function ($sub) use ($search) {
-                      $sub->where('category', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('subCategory', function ($sub) use ($search) {
-                      $sub->where('sub_category', 'like', "%{$search}%");
-                  })
-                  ->orWhere('status', 'like', "%{$search}%")
-                  ->orWhereHas('initiateEstablishment', function ($sub) use ($search) {
-                      $sub->where('e_name', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('currentEstablishment', function ($sub) use ($search) {
-                      $sub->where('e_name', 'like', "%{$search}%");
-                  });
+                ->orWhere('request_type', 'like', "%{$search}%")
+                ->orWhereHas('category', function ($sub) use ($search) {
+                    $sub->where('category', 'like', "%{$search}%");
+                })
+                ->orWhereHas('subCategory', function ($sub) use ($search) {
+                    $sub->where('sub_category', 'like', "%{$search}%");
+                })
+                ->orWhere('status', 'like', "%{$search}%")
+                ->orWhereHas('initiateEstablishment', function ($sub) use ($search) {
+                    $sub->where('e_name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('currentEstablishment', function ($sub) use ($search) {
+                    $sub->where('e_name', 'like', "%{$search}%");
+                });
             });
         }
 
