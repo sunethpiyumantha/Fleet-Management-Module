@@ -52,20 +52,11 @@ class VehicleCategoryController extends Controller
     }
 
     public function destroy($id)
-{
-    \Log::info("Attempting to soft delete vehicle category ID: {$id}");
-
-    $category = VehicleCategory::findOrFail($id);
-    $success = $category->delete();
-
-    \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
-
-    if ($success) {
-        // Use 'error' key for red delete message
-        return redirect()->back()->with('error', 'Vehicle Category deleted successfully!');
-    } else {
-        return redirect()->back()->with('error', 'Failed to delete Vehicle Category.');
+    {
+        \Log::info("Attempting to soft delete vehicle category ID: {$id}");
+        $category = VehicleCategory::findOrFail($id);
+        $success = $category->delete();
+        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+        return redirect()->back()->with('success', 'Vehicle Category deleted successfully!');
     }
-}
-
 }

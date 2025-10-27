@@ -161,54 +161,51 @@ class VehicleRequestController extends Controller
     }
 
     public function destroy($id)
-{
-    DB::beginTransaction();
-    try {
-        $vehicle = VehicleRequest::findOrFail($id);
-        Log::info("Soft deleting VehicleRequest ID: {$id}, serial_number: {$vehicle->serial_number}");
+    {
+        DB::beginTransaction();
+        try {
+            $vehicle = VehicleRequest::findOrFail($id);
+            Log::info("Soft deleting VehicleRequest ID: {$id}, serial_number: {$vehicle->serial_number}");
 
-        // Delete associated files
-        foreach (['vehicle_book_path', 'image_01_path', 'image_02_path', 'image_03_path', 'image_04_path'] as $field) {
-            if ($vehicle->$field) {
-                Storage::disk('public')->delete($vehicle->$field);
-                Log::info("Deleted file: {$vehicle->$field}");
+            // Delete associated files
+            foreach (['vehicle_book_path', 'image_01_path', 'image_02_path', 'image_03_path', 'image_04_path'] as $field) {
+                if ($vehicle->$field) {
+                    Storage::disk('public')->delete($vehicle->$field);
+                    Log::info("Deleted file: {$vehicle->$field}");
+                }
             }
-        }
 
-        // Soft delete related vehicle declarations and their drivers
-        foreach ($vehicle->declarations as $declaration) {
-            Log::info("Soft deleting VehicleDeclaration ID: {$declaration->id} and its drivers");
-            $declaration->drivers()->delete();
-            $declaration->delete();
-        }
-
-        // Soft delete related vehicle certificates
-        $certificates = VehicleCertificate::where('vehicle_request_id', $id)->get();
-        foreach ($certificates as $certificate) {
-            if ($certificate->vehicle_picture) {
-                Storage::disk('public')->delete($certificate->vehicle_picture);
-                Log::info("Deleted certificate image: {$certificate->vehicle_picture}");
+            // Soft delete related vehicle declarations and their drivers
+            foreach ($vehicle->declarations as $declaration) {
+                Log::info("Soft deleting VehicleDeclaration ID: {$declaration->id} and its drivers");
+                $declaration->drivers()->delete();
+                $declaration->delete();
             }
-            $certificate->delete();
-            Log::info("Soft deleted VehicleCertificate ID: {$certificate->id}, serial_number: {$certificate->serial_number}");
+
+            // Soft delete related vehicle certificates
+            $certificates = VehicleCertificate::where('vehicle_request_id', $id)->get();
+            foreach ($certificates as $certificate) {
+                if ($certificate->vehicle_picture) {
+                    Storage::disk('public')->delete($certificate->vehicle_picture);
+                    Log::info("Deleted certificate image: {$certificate->vehicle_picture}");
+                }
+                $certificate->delete();
+                Log::info("Soft deleted VehicleCertificate ID: {$certificate->id}, serial_number: {$certificate->serial_number}");
+            }
+
+            $vehicle->delete();
+            Log::info("Successfully soft deleted VehicleRequest ID: {$id}, serial_number: {$vehicle->serial_number}");
+
+            DB::commit();
+            return redirect()->route('vehicle.request.all')
+                ->with('success', 'Vehicle request, declarations, certificates, and drivers soft deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Failed to soft delete VehicleRequest ID: {$id}. Error: {$e->getMessage()}");
+            return redirect()->back()
+                ->with('error', 'Failed to delete vehicle request: ' . $e->getMessage());
         }
-
-        $vehicle->delete();
-        Log::info("Successfully soft deleted VehicleRequest ID: {$id}, serial_number: {$vehicle->serial_number}");
-
-        DB::commit();
-
-        // Use 'error' key so delete message appears red
-        return redirect()->route('vehicle.request.all')
-            ->with('error', 'Vehicle request, declarations, certificates, and drivers soft deleted successfully.');
-    } catch (\Exception $e) {
-        DB::rollBack();
-        Log::error("Failed to soft delete VehicleRequest ID: {$id}. Error: {$e->getMessage()}");
-        return redirect()->back()
-            ->with('error', 'Failed to delete vehicle request: ' . $e->getMessage());
     }
-}
-
 
     public function getSubCategories($catId)
     {

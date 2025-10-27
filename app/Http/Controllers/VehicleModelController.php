@@ -66,21 +66,12 @@ class VehicleModelController extends Controller
     }
 
     public function destroy($id)
-{
-    \Log::info("Attempting to soft delete vehicle model ID: {$id}");
-
-    $vehicleModel = VehicleModel::findOrFail($id);
-    $success = $vehicleModel->delete();
-
-    \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
-
-    if ($success) {
-        // Use 'error' key for red delete messages
-        return redirect()->back()->with('error', 'Vehicle model deleted successfully!');
-    } else {
-        return redirect()->back()->with('error', 'Failed to delete vehicle model.');
+    {
+        \Log::info("Attempting to soft delete vehicle model ID: {$id}");
+        $vehicleModel = VehicleModel::findOrFail($id);
+        $success = $vehicleModel->delete();
+        \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
+        return redirect()->back()->with('success', 'Vehicle model deleted successfully!');
     }
-}
-
 
 }
