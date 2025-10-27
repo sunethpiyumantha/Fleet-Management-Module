@@ -8,6 +8,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+// Add this import for the requestProcesses relationship
+use App\Models\RequestProcess;
+
+// Existing imports (keep these)
+use App\Models\VehicleCategory;
+use App\Models\VehicleSubCategory;
+use App\Models\Establishment;
+use App\Models\User;
+use App\Models\Vehicle;
+
 class VehicleRequestApproval extends Model
 {
     use HasFactory;

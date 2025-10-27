@@ -281,12 +281,17 @@ class VehicleRequestApprovalController extends Controller
             'currentUser', 
             'initiator', 
             'initiateEstablishment', 
-            'currentEstablishment'
+            'currentEstablishment',
+            'requestProcesses' => function ($query) {
+                $query->with(['fromUser', 'toUser', 'fromEstablishment', 'toEstablishment'])
+                    ->orderBy('processed_at', 'asc');
+            }
         ]);
 
         $userRole = Auth::user()->role->name ?? '';
+        $processStatuses = RequestProcess::STATUSES;  // Pass static constant to view
 
-        return view('vehicle-request-approvals.show', compact('vehicleRequestApproval', 'userRole'));
+        return view('vehicle-request-approvals.show', compact('vehicleRequestApproval', 'userRole', 'processStatuses'));
     }
 
     public function edit(VehicleRequestApproval $vehicleRequestApproval)
@@ -340,17 +345,16 @@ class VehicleRequestApprovalController extends Controller
 
     public function rejectForm(VehicleRequestApproval $vehicleRequestApproval)
     {
-        $this->authorize('Request Reject', $vehicleRequestApproval);
+        $this->authorize('Reject Request', $vehicleRequestApproval);  // Already fixed from prior
 
-        return view('vehicle-request-approvals.reject-form', compact('vehicleRequestApproval'));
+        return view('reject', compact('vehicleRequestApproval'));  // FIXED: Use existing 'reject' view
     }
-
     public function reject(Request $request, VehicleRequestApproval $vehicleRequestApproval)
     {
-        $this->authorize('Request Reject', $vehicleRequestApproval);
+        $this->authorize('Reject Request', $vehicleRequestApproval);
 
         $request->validate([
-            'remark' => 'required|string|max:1000',
+            'notes' => 'required|string|max:1000',  // FIXED: Match view's 'notes' field
         ]);
 
         try {
@@ -360,14 +364,14 @@ class VehicleRequestApprovalController extends Controller
                 'from_establishment_id' => Auth::user()->establishment_id,
                 'to_user_id' => $vehicleRequestApproval->current_user_id,
                 'to_establishment_id' => $vehicleRequestApproval->current_establishment_id,
-                'remark' => $request->remark,
+                'remark' => $request->notes,  // FIXED: Use 'notes' from request
                 'status' => 'rejected',
                 'processed_at' => now(),
             ]);
 
             $vehicleRequestApproval->update([
                 'status' => 'rejected',
-                'forward_reason' => $request->remark,
+                'forward_reason' => $request->notes,  // FIXED: Use 'notes' for reason
                 'forwarded_at' => now(),
                 'forwarded_by' => Auth::id(),
             ]);
