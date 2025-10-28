@@ -60,11 +60,25 @@ class VehicleMakeController extends Controller
     }
 
     public function destroy($id)
-    {
-        \Log::info("Attempting to soft delete vehicle make ID: {$id}");
+{
+    \Log::info("Attempting to soft delete Vehicle Make ID: {$id}");
+
+    try {
         $make = VehicleMake::findOrFail($id);
         $success = $make->delete();
+
         \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
-        return redirect()->back()->with('success', 'Vehicle make deleted successfully!');
+
+        if ($success) {
+            // Use 'error' key so message appears in red
+            return redirect()->back()->with('error', 'Vehicle Make deleted successfully!');
+        } else {
+            return redirect()->back()->with('error', 'Failed to delete Vehicle Make.');
+        }
+    } catch (\Exception $e) {
+        \Log::error("Failed to delete Vehicle Make ID {$id}: " . $e->getMessage());
+        return redirect()->back()->with('error', 'An error occurred while deleting the Vehicle Make.');
     }
+}
+
 }

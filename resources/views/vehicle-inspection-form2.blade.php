@@ -1,4 +1,3 @@
-```blade
 @extends('layouts.app')
 
 @section('title', 'Vehicle Inspection Form 2')
@@ -167,4 +166,3 @@
     renderTable();
 </script>
 @endsection
-```

@@ -130,18 +130,21 @@ class UserController extends Controller
     }
 
     public function destroy($id)
-    {
-        $this->authorize('User Delete');
-        try {
-            $user = User::findOrFail($id);
-            $user->delete();
+{
+    $this->authorize('User Delete');
 
-            return redirect()->back()->with('success', 'User soft deleted successfully!');
-        } catch (\Exception $e) {
-            Log::error('User deletion failed: ' . $e->getMessage()); // Optional logging
-            return redirect()->back()->with('error', 'Failed to delete user: ' . $e->getMessage());
-        }
+    try {
+        $user = User::findOrFail($id);
+        $user->delete(); // Soft delete
+
+        // Use 'error' key so message appears in red
+        return redirect()->back()->with('error', 'User soft deleted successfully!');
+    } catch (\Exception $e) {
+        Log::error('User deletion failed: ' . $e->getMessage()); // Optional logging
+        return redirect()->back()->with('error', 'Failed to delete user: ' . $e->getMessage());
     }
+}
+
 
     public function restore($id)
     {

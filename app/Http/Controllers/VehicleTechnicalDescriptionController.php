@@ -77,35 +77,36 @@ class VehicleTechnicalDescriptionController extends Controller
     }
 
     public function destroy($serial_number)
-    {
-        try {
-            // Start a transaction to ensure data consistency
-            \DB::beginTransaction();
+{
+    try {
+        // Start a transaction to ensure data consistency
+        \DB::beginTransaction();
 
-            // Fetch the vehicle declaration (including soft-deleted ones)
-            $vehicleDeclaration = VehicleDeclaration::withTrashed()
-                ->where('serial_number', $serial_number)
-                ->firstOrFail();
+        // Fetch the vehicle declaration (including soft-deleted ones)
+        $vehicleDeclaration = VehicleDeclaration::withTrashed()
+            ->where('serial_number', $serial_number)
+            ->firstOrFail();
 
-            // Soft delete related technical description if it exists
-            $technicalDescription = VehicleTechnicalDescription::where('serial_number', $serial_number)->first();
-            if ($technicalDescription) {
-                $technicalDescription->delete();
-                Log::info("Soft deleted VehicleTechnicalDescription for serial_number: {$serial_number}");
-            }
-
-            // Soft delete the vehicle declaration
-            $vehicleDeclaration->delete();
-
-            \DB::commit();
-            return redirect()->route('vehicle.inspection.index')
-                ->with('success', 'Declaration and related technical description soft deleted successfully.');
-        } catch (\Exception $e) {
-            \DB::rollBack();
-            Log::error("Error in VehicleTechnicalDescriptionController@destroy: {$e->getMessage()}", [
-                'serial_number' => $serial_number
-            ]);
-            return redirect()->back()->with('error', 'Failed to delete declaration: ' . $e->getMessage());
+        // Soft delete related technical description if it exists
+        $technicalDescription = VehicleTechnicalDescription::where('serial_number', $serial_number)->first();
+        if ($technicalDescription) {
+            $technicalDescription->delete();
+            Log::info("Soft deleted VehicleTechnicalDescription for serial_number: {$serial_number}");
         }
+
+        // Soft delete the vehicle declaration
+        $vehicleDeclaration->delete();
+
+        \DB::commit();
+        // Use 'error' key so message appears in red
+        return redirect()->route('vehicle.inspection.index')
+            ->with('error', 'Declaration and related technical description soft deleted successfully.');
+    } catch (\Exception $e) {
+        \DB::rollBack();
+        Log::error("Error in VehicleTechnicalDescriptionController@destroy: {$e->getMessage()}", [
+            'serial_number' => $serial_number
+        ]);
+        return redirect()->back()->with('error', 'Failed to delete declaration: ' . $e->getMessage());
     }
+}
 }

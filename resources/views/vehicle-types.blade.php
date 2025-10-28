@@ -54,6 +54,17 @@
         </div>
     @endif
 
+    <!-- Validation Errors -->
+    @if ($errors->any())
+            <div style="background-color: #f8d7da; color: #842029; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                <ul style="margin: 0; padding-left: 1rem;">
+                @foreach ($errors->all() as $error)
+                {{ $error }}
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
 
 
     <!-- Add Vehicle Type Form -->

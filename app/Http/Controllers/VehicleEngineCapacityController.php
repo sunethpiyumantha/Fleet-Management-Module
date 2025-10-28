@@ -30,7 +30,7 @@ class VehicleEngineCapacityController extends Controller
             'engine_capacity' => $request->engine_capacity
         ]);
 
-        return redirect()->back()->with('success', 'Added successfully!');
+        return redirect()->back()->with('success', 'Engine capacity Added successfully!');
     }
 
 
@@ -58,11 +58,25 @@ class VehicleEngineCapacityController extends Controller
     }
 
     public function destroy($id)
-    {
-        \Log::info("Attempting to soft delete Vehicle Engine Capacity ID: {$id}");
+{
+    \Log::info("Attempting to soft delete Vehicle Engine Capacity ID: {$id}");
+
+    try {
         $capacity = VehicleEngineCapacity::findOrFail($id);
         $success = $capacity->delete();
+
         \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
-        return redirect()->back()->with('success', 'Vehicle engine capacity deleted successfully!');
+
+        if ($success) {
+            // Use 'error' key so the alert appears in red
+            return redirect()->back()->with('error', 'Vehicle Engine Capacity deleted successfully!');
+        } else {
+            return redirect()->back()->with('error', 'Failed to delete Vehicle Engine Capacity.');
+        }
+    } catch (\Exception $e) {
+        \Log::error("Failed to delete Vehicle Engine Capacity ID {$id}: " . $e->getMessage());
+        return redirect()->back()->with('error', 'An error occurred while deleting the Vehicle Engine Capacity.');
     }
+}
+
 }

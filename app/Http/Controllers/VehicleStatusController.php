@@ -52,11 +52,25 @@ class VehicleStatusController extends Controller
     }
 
     public function destroy($id)
-    {
-        \Log::info("Attempting to soft delete vehicle status ID: {$id}");
+{
+    \Log::info("Attempting to soft delete Vehicle Status ID: {$id}");
+
+    try {
         $status = VehicleStatus::findOrFail($id);
         $success = $status->delete();
+
         \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
-        return redirect()->route('vehicle-status.index')->with('success', 'Vehicle status deleted successfully.');
+
+        if ($success) {
+            // Use 'error' key so message appears in red
+            return redirect()->route('vehicle-status.index')->with('error', 'Vehicle Status deleted successfully!');
+        } else {
+            return redirect()->route('vehicle-status.index')->with('error', 'Failed to delete Vehicle Status.');
+        }
+    } catch (\Exception $e) {
+        \Log::error("Failed to delete Vehicle Status ID {$id}: " . $e->getMessage());
+        return redirect()->route('vehicle-status.index')->with('error', 'An error occurred while deleting the Vehicle Status.');
     }
+}
+
 }

@@ -62,11 +62,25 @@ class VehicleTireSizeController extends Controller
 
 
     public function destroy($id)
-    {
-        \Log::info("Attempting to soft delete vehicle tire size ID: {$id}");
+{
+    \Log::info("Attempting to soft delete Vehicle Tire Size ID: {$id}");
+
+    try {
         $tireSize = VehicleTireSize::findOrFail($id);
         $success = $tireSize->delete();
+
         \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
-        return redirect()->back()->with('success', 'Tire size deleted successfully!');
+
+        if ($success) {
+            // Use 'error' key so the message appears in red
+            return redirect()->back()->with('error', 'Vehicle Tire Size deleted successfully!');
+        } else {
+            return redirect()->back()->with('error', 'Failed to delete Vehicle Tire Size.');
+        }
+    } catch (\Exception $e) {
+        \Log::error("Failed to delete Vehicle Tire Size ID {$id}: " . $e->getMessage());
+        return redirect()->back()->with('error', 'An error occurred while deleting the Vehicle Tire Size.');
     }
+}
+
 }

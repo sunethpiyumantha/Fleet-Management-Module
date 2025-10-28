@@ -60,12 +60,19 @@ class RoleController extends Controller
     }
 
     public function destroy($id)
-    {
+{
+    try {
         $role = Role::findOrFail($id);
-        $role->delete();
+        $role->delete(); // Soft delete
 
-        return redirect()->back()->with('success', 'Role soft deleted successfully!');
+        // Use 'error' key so the message appears in red
+        return redirect()->back()->with('error', 'Role soft deleted successfully!');
+    } catch (\Exception $e) {
+        Log::error('Role deletion failed: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Failed to delete role: ' . $e->getMessage());
     }
+}
+
 
     public function restore($id)
     {

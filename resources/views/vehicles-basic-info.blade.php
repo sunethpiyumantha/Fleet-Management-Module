@@ -13,20 +13,29 @@
     <div style="background: #0077B6; color: white; font-weight: bold; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">Manage Vehicles</div>
     @endif
 
-    @if(session('success'))
-    <div style="background-color: #ADE8F4; color: #023E8A; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
-        {{ session('success') }}
-    </div>
+    <!-- Success Message -->
+    @if (session('success'))
+            <div style="background-color: #adf4c9; color: #006519; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                {{ session('success') }}
+        </div>
     @endif
 
-    @if($errors->any())
-    <div style="background-color: #CAF0F8; color: #03045E; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
-        <ul style="margin: 0; padding-left: 1rem;">
-            @foreach($errors->all() as $error)
-            <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
+    <!-- Error / Delete Messages -->
+    @if (session('error'))
+        <div style="background-color: #f8d7da; color: #842029; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <!-- Validation Errors -->
+    @if ($errors->any())
+            <div style="background-color: #f8d7da; color: #842029; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                <ul style="margin: 0; padding-left: 1rem;">
+                @foreach ($errors->all() as $error)
+                {{ $error }}
+                @endforeach
+            </ul>
+        </div>
     @endif
 
     @if(isset($vehicle))
