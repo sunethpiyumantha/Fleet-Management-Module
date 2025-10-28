@@ -57,11 +57,25 @@ class WorkshopController extends Controller
     }
 
     public function destroy($id)
-    {
-        \Log::info("Attempting to soft delete workshop ID: {$id}");
+{
+    \Log::info("Attempting to soft delete Workshop ID: {$id}");
+
+    try {
         $workshop = Workshop::findOrFail($id);
         $success = $workshop->delete();
+
         \Log::info("Soft delete result for ID {$id}: " . ($success ? 'Success' : 'Failed'));
-        return redirect()->back()->with('success', 'Workshop deleted successfully!');
+
+        if ($success) {
+            // Use 'error' key so message appears in red
+            return redirect()->back()->with('error', 'Workshop deleted successfully!');
+        } else {
+            return redirect()->back()->with('error', 'Failed to delete Workshop.');
+        }
+    } catch (\Exception $e) {
+        \Log::error("Failed to delete Workshop ID {$id}: " . $e->getMessage());
+        return redirect()->back()->with('error', 'An error occurred while deleting the Workshop.');
     }
+}
+
 }
