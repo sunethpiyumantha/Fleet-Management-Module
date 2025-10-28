@@ -77,9 +77,18 @@
             </div>
             @endauth
 
-            <div style="display: inline-block; cursor: pointer; padding: 10px; font-size: 24px; position: relative;" title="Notifications">
-                    <i class="fas fa-bell"></i>
-            </div> 
+            <div class="notification-container" style="display: inline-block; cursor: pointer; padding: 10px; font-size: 24px; position: relative;" title="Notifications">
+                <i class="fas fa-bell" id="notification-bell"></i>
+                <span id="notification-count" class="badge badge-danger" style="position: absolute; top: -5px; right: -5px; display: none;"></span>
+            </div>
+
+            <div id="notification-dropdown" class="dropdown-menu dropdown-menu-right" style="display: none; position: absolute; top: 100%; right: 0; z-index: 1000; width: 300px; max-height: 400px; overflow-y: auto; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <div class="dropdown-header" style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Notifications</div>
+                <div id="notification-list" style="padding: 10px;"></div>
+                <div class="dropdown-divider" style="margin: 0;"></div>
+                <a class="dropdown-item text-center" href="#" onclick="markAllRead()" style="padding: 10px; cursor: pointer;">Mark all as read</a>
+            </div>
+
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: inline; padding: 10px; position: relative; font-size: 20px;">
                 @csrf
                 <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -630,8 +639,153 @@
         </div>
     </div>
   <script src="{{ asset('Dashboard/main.js') }}"></script>
+    <script>
 
+            document.addEventListener('DOMContentLoaded', function() {
+            // Load initial unread count
+            fetch('/api/notifications/unread-count')
+                .then(response => response.json())
+                .then(data => updateBadge(data.count));
 
-</script>
+            // Poll for new notifications every 30 seconds
+            setInterval(() => {
+                fetch('/api/notifications/unread-count')
+                    .then(response => response.json())
+                    .then(data => {
+                        updateBadge(data.count);
+                        if (data.count > 0) {
+                            // Optionally reload notifications if dropdown is open
+                            if (document.getElementById('notification-dropdown').style.display === 'block') {
+                                loadNotifications();
+                            }
+                        }
+                    });
+            }, 30000);
+        });
+
+        document.getElementById('notification-bell').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('notification-dropdown');
+            if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+                document.getElementById('notification-list').innerHTML = '<div class="dropdown-item text-center text-muted">Loading...</div>';
+                loadNotifications();
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            const container = document.querySelector('.notification-container');
+            const dropdown = document.getElementById('notification-dropdown');
+            if (container && !container.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        function loadNotifications() {
+            console.log('Loading notifications...');
+            fetch('/api/notifications', {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error('Fetch failed: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Data received:', data);
+                displayNotifications(data.notifications);
+                updateBadge(data.unread_count);
+            })
+            .catch(error => {
+                console.error('Error loading notifications:', error);
+                document.getElementById('notification-list').innerHTML = '<div class="dropdown-item text-center text-danger">Error: ' + error.message + '</div>';
+            });
+        }
+        function displayNotifications(notifications) {
+            const list = document.getElementById('notification-list');
+            list.innerHTML = '';
+            if (notifications.length === 0) {
+                list.innerHTML = '<div class="dropdown-item text-center text-muted">No notifications</div>';
+                return;
+            }
+            notifications.forEach(notification => {
+                const item = document.createElement('a');
+                item.className = 'dropdown-item';
+                item.style.padding = '8px 12px';
+                item.style.borderBottom = '1px solid #eee';
+                item.style.cursor = 'pointer';
+                item.href = notification.link || '#';
+                item.innerHTML = `
+                    <div>
+                        <strong style="color: #333;">${notification.title}</strong>
+                        ${!notification.is_read ? '<span class="badge badge-primary float-right" style="font-size: 0.75em;">New</span>' : ''}
+                        <br>
+                        <small class="text-muted" style="font-size: 0.875em;">${notification.message}</small>
+                        <br>
+                        <small class="text-muted" style="font-size: 0.75em;">${new Date(notification.created_at).toLocaleString()}</small>
+                    </div>
+                `;
+                item.onclick = (e) => {
+                    e.preventDefault();
+                    markAsRead(notification.id);
+                    if (notification.link) {
+                        window.location.href = notification.link;
+                    }
+                };
+                list.appendChild(item);
+            });
+        }
+
+        function markAsRead(id) {
+            fetch(`/api/notifications/${id}/read`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadNotifications(); // Reload to update UI
+                }
+            })
+            .catch(error => console.error('Error marking as read:', error));
+        }
+
+        function markAllRead() {
+            fetch('/api/notifications/read-all', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadNotifications();
+                }
+            })
+            .catch(error => console.error('Error marking all as read:', error));
+        }
+
+        function updateBadge(count) {
+            const badge = document.getElementById('notification-count');
+            if (count > 0) {
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.style.display = 'inline';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>

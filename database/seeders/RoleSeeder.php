@@ -29,6 +29,7 @@ class RoleSeeder extends Seeder
             'Request Delete (own, before approval)',
             'Forward Request',
             'Reject Request',
+            'Request List (all / own)',
         ];
         $fleetPermissionIds = Permission::whereIn('name', $fleetPermissions)->pluck('id');
         $fleetRole->permissions()->sync($fleetPermissionIds);
@@ -39,6 +40,7 @@ class RoleSeeder extends Seeder
             'Forward Request',
             'Reject Request',
             'Approve Request',
+            'Request List (all / own)',
         ];
         $handlerPermissionIds = Permission::whereIn('name', $handlerPermissions)->pluck('id');
         $handlerRole->permissions()->sync($handlerPermissionIds);
@@ -49,6 +51,7 @@ class RoleSeeder extends Seeder
             'Forward Request',
             'Reject Request',
             'Approve Request',
+            'Request List (all / own)',
         ];
         $headPermissionIds = Permission::whereIn('name', $headPermissions)->pluck('id');
         $headRole->permissions()->sync($headPermissionIds);
@@ -59,6 +62,7 @@ class RoleSeeder extends Seeder
             'Forward Request',
             'Reject Request',
             'Approve Request',
+            'Request List (all / own)',
         ];
         $adminPermissionIds = Permission::whereIn('name', $adminPermissions)->pluck('id');
         $adminRole->permissions()->sync($adminPermissionIds);

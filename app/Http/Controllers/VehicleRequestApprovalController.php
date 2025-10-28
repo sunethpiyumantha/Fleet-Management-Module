@@ -9,6 +9,7 @@ use App\Models\Establishment;
 use App\Models\Vehicle;
 use App\Models\RequestProcess;
 use App\Models\User;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -326,19 +327,26 @@ class VehicleRequestApprovalController extends Controller
         if (in_array($oldStatus, ['pending', 'rejected']) && $vehicleRequestApproval->current_user_id == $user) {
             $request->validate([
                 'request_type' => 'required|in:replacement,new_approval',
-                'category_id' => 'required|exists:vehicle_categories,id',
-                'sub_category_id' => 'required|exists:vehicle_sub_categories,id',
-                'quantity' => 'required|integer|min:1',
-                'vehicle_letter' => 'nullable|file|mimes:pdf,jpg|max:5120',
+                'cat_id' => 'required|exists:vehicle_categories,id',  // Changed to match form
+                'sub_cat_id' => 'required|exists:vehicle_sub_categories,id',  // Changed to match form
+                'qty' => 'required|integer|min:1',  // Changed to match form
+                'vehicle_book' => 'nullable|file|mimes:pdf,jpg|max:5120',  // Note: Form uses 'vehicle_book', but validation was 'vehicle_letter'—fixed below
             ]);
 
-            $updateData = $request->only(['request_type', 'category_id', 'sub_category_id', 'quantity']);
+            // Map form names to DB column names (consistent with store())
+            $updateData = [
+                'request_type' => $request->request_type,
+                'category_id' => $request->cat_id,
+                'sub_category_id' => $request->sub_cat_id,
+                'quantity' => $request->qty,
+            ];
 
-            if ($request->hasFile('vehicle_letter')) {
+            // Handle file upload (note: form uses 'vehicle_book', but DB uses 'vehicle_letter'—update request key here)
+            if ($request->hasFile('vehicle_book')) {
                 if ($vehicleRequestApproval->vehicle_letter) {
                     Storage::disk('public')->delete($vehicleRequestApproval->vehicle_letter);
                 }
-                $file = $request->file('vehicle_letter');
+                $file = $request->file('vehicle_book');
                 $filename = time() . '_' . $vehicleRequestApproval->serial_number . '.' . $file->getClientOriginalExtension();
                 $updateData['vehicle_letter'] = $file->storeAs('vehicle_letters', $filename, 'public');
             }
@@ -401,6 +409,31 @@ class VehicleRequestApprovalController extends Controller
                 'current_user_id' => $fleetOperator->id,
                 'current_establishment_id' => $fleetOperator->establishment_id,
             ]);
+
+            // Notify initiator
+            $initiator = $vehicleRequestApproval->initiator;
+            if ($initiator && $initiator->id !== Auth::id()) {
+                Notification::create([
+                    'user_id' => $initiator->id,
+                    'title' => 'Request Rejected',
+                    'message' => "Your vehicle request {$vehicleRequestApproval->serial_number} has been rejected. Reason: {$request->notes}.",
+                    'type' => 'rejected',
+                    'request_id' => $vehicleRequestApproval->id,
+                    'is_read' => false,
+                ]);
+            }
+
+            // Optionally notify current user if rejecting own or has permission
+            if (Auth::id() !== $initiator->id && Auth::user()->hasPermission('Request List (all / own)')) {
+                Notification::create([
+                    'user_id' => Auth::id(),
+                    'title' => 'Request You Forwarded Rejected',
+                    'message' => "Vehicle request {$vehicleRequestApproval->serial_number} has been rejected.",
+                    'type' => 'rejected',
+                    'request_id' => $vehicleRequestApproval->id,
+                    'is_read' => false,
+                ]);
+            }
 
             return redirect()->route('vehicle-requests.approvals.index', ['page' => 1])
                 ->with('success', 'Vehicle request rejected successfully and returned to Fleet Operator!');
@@ -472,6 +505,31 @@ class VehicleRequestApprovalController extends Controller
                 'current_user_id' => $forwardToUser->id,
                 'current_establishment_id' => $forwardToUser->establishment_id,
             ]);
+
+            // Notify forwarded-to user (only if they have relevant permissions like 'Approve Request' or 'Request List (all / own)')
+            if ($forwardToUser->hasAnyPermission(['Approve Request', 'Request List (all / own)'])) {
+                Notification::create([
+                    'user_id' => $forwardToUser->id,
+                    'title' => 'New Request Forwarded to You',
+                    'message' => "Vehicle request {$vehicleRequestApproval->serial_number} has been forwarded to you by " . Auth::user()->name . ". Remark: {$request->remark}.",
+                    'type' => 'forwarded',
+                    'request_id' => $vehicleRequestApproval->id,
+                    'is_read' => false,
+                ]);
+            }
+
+            // Optionally notify initiator if forwarded back or across
+            $initiator = $vehicleRequestApproval->initiator;
+            if ($initiator && ($isHead || true)) { // Adjust condition based on logic (e.g., if forwarding back)
+                Notification::create([
+                    'user_id' => $initiator->id,
+                    'title' => 'Request Forwarded',
+                    'message' => "Your vehicle request {$vehicleRequestApproval->serial_number} has been forwarded to {$forwardToUser->name}.",
+                    'type' => 'forwarded',
+                    'request_id' => $vehicleRequestApproval->id,
+                    'is_read' => false,
+                ]);
+            }
 
             return redirect()->route('vehicle-requests.approvals.index', ['page' => 1])
                 ->with('success', 'Request forwarded successfully!');
@@ -598,6 +656,59 @@ class VehicleRequestApprovalController extends Controller
 
                     $vehicleRequestApproval->update($updateData);
 
+                    // Notify initiator for approve
+                    if ($action === 'approve') {
+                        $initiator = $vehicleRequestApproval->initiator;
+                        if ($initiator && $initiator->id !== Auth::id()) {
+                            Notification::create([
+                                'user_id' => $initiator->id,
+                                'title' => 'Request Approved',
+                                'message' => "Your vehicle request {$vehicleRequestApproval->serial_number} has been approved.",
+                                'type' => 'approved',
+                                'request_id' => $vehicleRequestApproval->id,
+                                'is_read' => false,
+                            ]);
+                        }
+
+                        // Optionally notify current user if different and has permission
+                        $currentUser = $vehicleRequestApproval->currentUser;
+                        if ($currentUser && $currentUser->id !== $initiator->id && $currentUser->hasPermission('Request List (all / own)')) {
+                            Notification::create([
+                                'user_id' => $currentUser->id,
+                                'title' => 'Request You Handled Approved',
+                                'message' => "Vehicle request {$vehicleRequestApproval->serial_number} (initiated by {$initiator->name}) has been approved.",
+                                'type' => 'approved',
+                                'request_id' => $vehicleRequestApproval->id,
+                                'is_read' => false,
+                            ]);
+                        }
+                    } elseif ($action === 'reject') {
+                        // Notify initiator for reject
+                        $initiator = $vehicleRequestApproval->initiator;
+                        if ($initiator && $initiator->id !== Auth::id()) {
+                            Notification::create([
+                                'user_id' => $initiator->id,
+                                'title' => 'Request Rejected',
+                                'message' => "Your vehicle request {$vehicleRequestApproval->serial_number} has been rejected. Reason: {$remark}.",
+                                'type' => 'rejected',
+                                'request_id' => $vehicleRequestApproval->id,
+                                'is_read' => false,
+                            ]);
+                        }
+
+                        // Optionally notify current user if has permission
+                        if (Auth::id() !== $initiator->id && Auth::user()->hasPermission('Request List (all / own)')) {
+                            Notification::create([
+                                'user_id' => Auth::id(),
+                                'title' => 'Request You Forwarded Rejected',
+                                'message' => "Vehicle request {$vehicleRequestApproval->serial_number} has been rejected.",
+                                'type' => 'rejected',
+                                'request_id' => $vehicleRequestApproval->id,
+                                'is_read' => false,
+                            ]);
+                        }
+                    }
+
                     return redirect()->route('vehicle-forwarded.index')
                         ->with('success', "Request {$newStatus} and forwarded to the initiating establishment's Fleet Operator!");
                 } else {
@@ -639,6 +750,31 @@ class VehicleRequestApprovalController extends Controller
                 'current_user_id' => $forwardToUser->id,
                 'current_establishment_id' => $forwardToEstablishmentId,
             ]);
+
+            // Notify forwarded-to user (only if they have relevant permissions like 'Approve Request' or 'Request List (all / own)')
+            if ($forwardToUser->hasAnyPermission(['Approve Request', 'Request List (all / own)'])) {
+                Notification::create([
+                    'user_id' => $forwardToUser->id,
+                    'title' => 'New Request Forwarded to You',
+                    'message' => "Vehicle request {$vehicleRequestApproval->serial_number} has been forwarded to you by " . Auth::user()->name . ". Remark: {$request->remark}.",
+                    'type' => 'forwarded',
+                    'request_id' => $vehicleRequestApproval->id,
+                    'is_read' => false,
+                ]);
+            }
+
+            // Optionally notify initiator if forwarded back or across
+            $initiator = $vehicleRequestApproval->initiator;
+            if ($initiator && ($isHead || true)) { // Adjust condition based on your forward logic (e.g., if back-to-initiate)
+                Notification::create([
+                    'user_id' => $initiator->id,
+                    'title' => 'Request Forwarded',
+                    'message' => "Your vehicle request {$vehicleRequestApproval->serial_number} has been forwarded to {$forwardToUser->name}.",
+                    'type' => 'forwarded',
+                    'request_id' => $vehicleRequestApproval->id,
+                    'is_read' => false,
+                ]);
+            }
 
             return redirect()->route('vehicle-forwarded.index')
                 ->with('success', 'Request forwarded successfully to ' . $forwardToUser->name . ' at target establishment!');
