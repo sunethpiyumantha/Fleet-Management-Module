@@ -620,6 +620,12 @@
                                     <li>
                                         <a href="/all-vehicle-info">
                                             <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
+                                                Vehicle Registration
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/army-vehicle-reg">
+                                            <img src="{{ asset('assets/car.png') }}" style="width: 24px; height: 24px; margin-right: 10px;">
                                                 Army Vehicle Registration
                                         </a>
                                     </li>
