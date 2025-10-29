@@ -24,6 +24,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\VehicleRequestApprovalController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\DropdownController;
+use App\Http\Controllers\NotificationController;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -65,6 +66,11 @@ Route::middleware('auth')->group(function () {
         ->middleware('can:Forward Request')
         ->name('vehicle-requests.approvals.forward');
 
+
+    Route::get('/api/notifications', [NotificationController::class, 'index'])->name('api.notifications.index');
+    Route::get('/api/notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('api.notifications.unread-count');
+    Route::post('/api/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('api.notifications.read');
+    Route::post('/api/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('api.notifications.read-all');
     // Reject routes
     Route::get('/request-vehicle-2/{vehicleRequestApproval}/reject-form', [VehicleRequestApprovalController::class, 'rejectForm'])
         ->name('vehicle-requests.approvals.reject-form');

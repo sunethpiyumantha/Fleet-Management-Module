@@ -41,4 +41,9 @@ class User extends Authenticatable
     {
         return $this->role && $this->role->permissions()->whereIn('name', $permissions)->exists();
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
 }

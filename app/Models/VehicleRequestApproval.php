@@ -41,11 +41,15 @@ class VehicleRequestApproval extends Model
         'forwarded_by',
         'vehicle_type',
         'assigned_vehicle_id',
+        'start_date',
+        'end_date',
     ];
 
     protected $casts = [
         'approved_at' => 'datetime',
         'forwarded_at' => 'datetime',
+        'start_date' => 'date',
+        'end_date' => 'date',
     ];
 
     public function category(): BelongsTo
