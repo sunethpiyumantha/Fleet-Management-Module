@@ -307,3 +307,8 @@ Route::get('/get-locations', [DropdownController::class, 'getLocations']);
 Route::get('/get-drivers', [DropdownController::class, 'getDrivers']);
 Route::get('/get-faults', [DropdownController::class, 'getFaults']);
 
+Route::get('/army-vehicle-reg', function () {
+    return view('army-vehicle-reg');
+});
+
+
