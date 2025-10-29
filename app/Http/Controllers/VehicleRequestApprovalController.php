@@ -569,6 +569,8 @@ class VehicleRequestApprovalController extends Controller
                     'action' => 'required|in:approve,reject',
                     'vehicle_type' => 'required_if:action,approve|in:army,hired',
                     'army_vehicle_id' => 'required_if:vehicle_type,army|exists:vehicles,id',
+                    'start_date' => 'required_if:vehicle_type,army|date|after_or_equal:today',
+                    'end_date' => 'required_if:vehicle_type,army|date|after_or_equal:start_date',
                     'remark' => 'required|string|max:1000',
                 ]);
             } else {
@@ -651,6 +653,15 @@ class VehicleRequestApprovalController extends Controller
                                 return back()->withErrors(['army_vehicle_id' => 'Army vehicle selection is required.']);
                             }
                             $updateData['assigned_vehicle_id'] = $request->army_vehicle_id;
+                            
+                            // NEW: Add date range to update data
+                            $updateData['start_date'] = $request->start_date;
+                            $updateData['end_date'] = $request->end_date;
+                            
+                            // NEW: Server-side validation for dates
+                            if (new \DateTime($request->end_date) < new \DateTime($request->start_date)) {
+                                return back()->withErrors(['end_date' => 'End date must be after or equal to start date.'])->withInput();
+                            }
                         }
                     }
 
@@ -782,7 +793,6 @@ class VehicleRequestApprovalController extends Controller
             return redirect()->back()->with('error', 'Failed to forward request: ' . $e->getMessage())->withInput();
         }
     }
-
     public function showForwardView($req_id)
     {
         if (!$req_id) {

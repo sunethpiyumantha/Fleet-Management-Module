@@ -45,8 +45,8 @@
                 @foreach ($errors->all() as $error)
                 {{ $error }}
                 @endforeach
-            </ul>
-        </div>
+                </ul>
+            </div>
     @endif
 
     @if (session('error'))
@@ -107,6 +107,24 @@
                         </div>
                         <div id="noArmyVehiclesMessage" style="display: none; font-size: 12px; color: #dc2626; margin-top: 4px;">
                             No army numbers found. Please check the database.
+                        </div>
+                    </div>
+
+                    <!-- NEW: Date Range Section (hidden initially) -->
+                    <div id="dateRangeSection" style="flex: 1; min-width: 220px; display: none;">
+                        <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">
+                            Start Date
+                        </label>
+                        <input type="date" name="start_date" id="startDateInput"
+                               style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                        
+                        <label style="display: block; font-size: 14px; margin-top: 10px; margin-bottom: 4px; color:#023E8A;">
+                            End Date
+                        </label>
+                        <input type="date" name="end_date" id="endDateInput"
+                               style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
+                        <div id="dateError" style="display: none; font-size: 12px; color: #dc2626; margin-top: 4px;">
+                            End date must be after or equal to start date.
                         </div>
                     </div>
                 @else
@@ -261,6 +279,11 @@
         const armyVehicleSelect = document.getElementById('armyVehicleSelect');
         const armyVehicleLoading = document.getElementById('armyVehicleLoading');
         const noArmyVehiclesMessage = document.getElementById('noArmyVehiclesMessage');
+        // NEW: Date range elements
+        const dateRangeSection = document.getElementById('dateRangeSection');
+        const startDateInput = document.getElementById('startDateInput');
+        const endDateInput = document.getElementById('endDateInput');
+        const dateError = document.getElementById('dateError');
 
         if (actionSelect && vehicleTypeSection) {
             actionSelect.addEventListener('change', function() {
@@ -268,11 +291,12 @@
                 vehicleTypeSection.style.display = (action === 'approve') ? 'block' : 'none';
                 if (action !== 'approve') {
                     armyVehicleSection.style.display = 'none';  // Hide army section if not approve
+                    dateRangeSection.style.display = 'none';   // NEW: Hide dates if not approve
                 }
             });
         }
 
-        // UPDATED: Script for toggling army vehicle dropdown (now fetches army nos)
+        // UPDATED: Script for toggling army vehicle dropdown (now fetches army nos) + date range
         if (vehicleTypeSelect && armyVehicleSection) {
             vehicleTypeSelect.addEventListener('change', function() {
                 const vehicleType = this.value;
@@ -283,6 +307,7 @@
                     armyVehicleSelect.disabled = true;
                     armyVehicleLoading.style.display = 'block';
                     noArmyVehiclesMessage.style.display = 'none';
+                    dateRangeSection.style.display = 'none';  // NEW: Hide dates until vehicle selected
 
                     // Fetch army nos (endpoint /api/vehicle-army-nos)
                     fetch('/api/vehicle-army-nos')
@@ -325,18 +350,59 @@
                     // Hide army section for 'hired'
                     armyVehicleSection.style.display = 'none';
                     armyVehicleSelect.value = '';  // Reset selection
+                    dateRangeSection.style.display = 'none';  // NEW: Hide dates for hired
                 }
             });
         }
 
-        // UPDATED: Update submit button enablement to require army vehicle if applicable
+        // NEW: Show date range after army vehicle selection
+        if (armyVehicleSelect && dateRangeSection) {
+            armyVehicleSelect.addEventListener('change', function() {
+                const armyVehicle = this.value;
+                if (armyVehicle) {
+                    dateRangeSection.style.display = 'block';
+                    // Reset dates and clear error
+                    startDateInput.value = '';
+                    endDateInput.value = '';
+                    dateError.style.display = 'none';
+                } else {
+                    dateRangeSection.style.display = 'none';
+                }
+                updateSubmitButton();  // Re-check submit enablement
+            });
+        }
+
+        // NEW: Date validation on change
+        if (startDateInput && endDateInput) {
+            const validateDates = () => {
+                const start = startDateInput.value;
+                const end = endDateInput.value;
+                if (start && end && new Date(end) < new Date(start)) {
+                    dateError.style.display = 'block';
+                } else {
+                    dateError.style.display = 'none';
+                }
+                updateSubmitButton();
+            };
+            startDateInput.addEventListener('change', validateDates);
+            endDateInput.addEventListener('change', validateDates);
+        }
+
+        // UPDATED: Update submit button enablement to require dates if applicable
         const updateSubmitButton = () => {
             const action = actionSelect ? actionSelect.value : '';
             const vehicleType = vehicleTypeSelect ? vehicleTypeSelect.value : '';
             const armyVehicle = armyVehicleSelect ? armyVehicleSelect.value : '';
+            const startDate = startDateInput ? startDateInput.value : '';
+            const endDate = endDateInput ? endDateInput.value : '';
+            const datesValid = !dateError || dateError.style.display === 'none';
             
-            if (action === 'approve' && vehicleType === 'army' && !armyVehicle) {
-                submitButton.disabled = true;
+            if (action === 'approve' && vehicleType === 'army') {
+                if (armyVehicle && startDate && endDate && datesValid) {
+                    submitButton.disabled = false;
+                } else {
+                    submitButton.disabled = true;
+                }
             } else if (action && (vehicleType || action === 'reject')) {
                 submitButton.disabled = false;
             } else {
