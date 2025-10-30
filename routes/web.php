@@ -25,6 +25,7 @@ use App\Http\Controllers\VehicleRequestApprovalController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\DropdownController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ArmyVehicleController;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -190,7 +191,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/store', [VehicleRequestController::class, 'storeInspection'])->name('store');
     });
 
-    // AJAX for Subcategories
+    // Army Vehicle management routes
+    Route::get('/army-vehicles/create', [ArmyVehicleController::class, 'create'])->name('army-vehicles.create');
+    Route::get('/army-vehicles/{serialNumber}/edit', [ArmyVehicleController::class, 'edit'])->name('army-vehicles.edit');
+    Route::post('/army-vehicles/store', [ArmyVehicleController::class, 'store'])->name('army-vehicles.store');
+    Route::put('/army-vehicles/{serialNumber}', [ArmyVehicleController::class, 'update'])->name('army-vehicles.update');
+    Route::get('/army-vehicles', [ArmyVehicleController::class, 'index'])->name('army-vehicles.index');
+        // AJAX for Subcategories
     Route::get('/get-sub-categories/{catId}', [VehicleRequestController::class, 'getSubCategories'])->name('vehicle.request.subcategories');
 
     // Vehicle Technical Description
@@ -308,7 +315,7 @@ Route::get('/get-drivers', [DropdownController::class, 'getDrivers']);
 Route::get('/get-faults', [DropdownController::class, 'getFaults']);
 
 Route::get('/army-vehicle-reg', function () {
-    return view('army-vehicle-reg');
+    return redirect()->route('army-vehicles.create');
 });
 
 
