@@ -290,12 +290,12 @@
                 </div>
                 <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 900px;">
                     <div style="flex: 1; min-width: 220px;">
-                        <label style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A; font-weight: 600;">Service Date</label>
-                        <input type="date" name="service_date" value="{{ $vehicle->service_date ?? '' }}" style="width: 100%; padding: 10px; border: 1px solid #90E0EF; border-radius: 6px; color: #03045E; background: white; font-size: 14px;">
+                        <label for="service_date" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Service Date</label>
+                        <input type="text" id="service_date" name="service_date" value="{{ $vehicle->service_date ?? '' }}" readonly style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; background-color: #f3f4f6;">
                     </div>
                     <div style="flex: 1; min-width: 220px;">
-                        <label style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A; font-weight: 600;">Next Service Date</label>
-                        <input type="date" name="next_service_date" value="{{ $vehicle->next_service_date ?? '' }}" style="width: 100%; padding: 10px; border: 1px solid #90E0EF; border-radius: 6px; color: #03045E; background: white; font-size: 14px;">
+                        <label for="next_service_date" style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A;">Next Service Date</label>
+                        <input type="text" id="next_service_date" name="next_service_date" value="{{ $vehicle->next_service_date ?? '' }}" readonly style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color: #03045E; background-color: #f3f4f6;">
                     </div>
                     <div style="flex: 1; min-width: 220px;">
                         <label style="display: block; font-size: 14px; margin-bottom: 4px; color: #023E8A; font-weight: 600;">Driver</label>
