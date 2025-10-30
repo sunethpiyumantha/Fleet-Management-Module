@@ -113,18 +113,18 @@
                     <!-- NEW: Date Range Section (hidden initially) -->
                     <div id="dateRangeSection" style="flex: 1; min-width: 220px; display: none;">
                         <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">
-                            Start Date
+                            From Date
                         </label>
                         <input type="date" name="start_date" id="startDateInput"
                                style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
                         
                         <label style="display: block; font-size: 14px; margin-top: 10px; margin-bottom: 4px; color:#023E8A;">
-                            End Date
+                            To Date
                         </label>
                         <input type="date" name="end_date" id="endDateInput"
                                style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">
                         <div id="dateError" style="display: none; font-size: 12px; color: #dc2626; margin-top: 4px;">
-                            End date must be after or equal to start date.
+                            To date must be after or equal to From date.
                         </div>
                     </div>
                 @else
