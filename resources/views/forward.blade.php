@@ -96,7 +96,7 @@
                     <!-- UPDATED: Army Vehicle Army No Dropdown (hidden initially) -->
                     <div id="armyVehicleSection" style="flex: 1; min-width: 220px; display: none;">
                         <label style="display: block; font-size: 14px; margin-bottom: 4px; color:#023E8A;">
-                            Select Vehicle Army No
+                             Army No/Civil No
                         </label>
                         <select name="army_vehicle_id" id="armyVehicleSelect" required
                                 style="width: 100%; padding: 8px; border: 1px solid #90E0EF; border-radius: 5px; color:#03045E;">

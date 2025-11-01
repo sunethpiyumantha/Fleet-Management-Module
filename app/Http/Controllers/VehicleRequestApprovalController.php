@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Models\ArmyVehicle;
 
 class VehicleRequestApprovalController extends Controller
 {
@@ -568,7 +569,7 @@ class VehicleRequestApprovalController extends Controller
                     'req_id' => 'required|string',
                     'action' => 'required|in:approve,reject',
                     'vehicle_type' => 'required_if:action,approve|in:army,hired',
-                    'army_vehicle_id' => 'required_if:vehicle_type,army|exists:vehicles,id',
+                    'army_vehicle_id' => 'required_if:vehicle_type,army|exists:army_vehicles,id',
                     'start_date' => 'required_if:vehicle_type,army|date|after_or_equal:today',
                     'end_date' => 'required_if:vehicle_type,army|date|after_or_equal:start_date',
                     'remark' => 'required|string|max:1000',
@@ -820,15 +821,19 @@ class VehicleRequestApprovalController extends Controller
     public function getVehicleArmyNos()
     {
         try {
-            $vehicles = Vehicle::whereNotNull('vehicle_army_no')
+            $vehicles = ArmyVehicle::whereNotNull('vehicle_army_no')
                 ->orderBy('vehicle_army_no')
                 ->get()
                 ->unique('vehicle_army_no')
                 ->values()
                 ->map(function ($vehicle) {
+                    $displayText = $vehicle->vehicle_army_no;
+                    if ($vehicle->civil_no) {
+                        $displayText .= ' (' . $vehicle->civil_no . ')';
+                    }
                     return [
                         'id' => $vehicle->id,
-                        'text' => $vehicle->vehicle_army_no
+                        'text' => $displayText
                     ];
                 });
 
