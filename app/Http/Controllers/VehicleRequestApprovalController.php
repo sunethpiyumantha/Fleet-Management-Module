@@ -827,9 +827,13 @@ class VehicleRequestApprovalController extends Controller
                 ->unique('vehicle_army_no')
                 ->values()
                 ->map(function ($vehicle) {
+                    $displayText = $vehicle->vehicle_army_no;
+                    if ($vehicle->civil_no) {
+                        $displayText .= ' (' . $vehicle->civil_no . ')';
+                    }
                     return [
                         'id' => $vehicle->id,
-                        'text' => $vehicle->vehicle_army_no
+                        'text' => $displayText
                     ];
                 });
 
