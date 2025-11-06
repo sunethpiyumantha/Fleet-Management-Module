@@ -167,7 +167,7 @@
 
 <!-- Table Sorting + Pagination -->
 <script>
-    const rowsPerPage = 10;
+    const rowsPerPage = 5;
     let currentPage = 1;
     let sortAsc = true;
     let sortColumn = 1;
