@@ -368,7 +368,7 @@
                 <thead style="background: #023E8A; color: white;">
                     <tr>
                         <th style="border: 1px solid #90E0EF; padding: 12px; text-align: left; cursor: pointer;" onclick="sortTable(0)">Vehicle Army No</th>
-                        <th style="border: 1px solid #90E0EF; padding: 12px; text-align: left; cursor: pointer;" onclick="sortTable(1)">Vehicle Type</th>
+                        
                         <th style="border: 1px solid #90E0EF; padding: 12px; text-align: center;">Actions</th>
                     </tr>
                 </thead>
@@ -613,11 +613,10 @@
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td style="border: 1px solid #90E0EF; padding: 12px;">${vehicle.vehicle_army_no}</td>
-                <td style="border: 1px solid #90E0EF; padding: 12px;">${vehicle.vehicle_type}</td>
+                
                 <td style="border: 1px solid #90E0EF; padding: 12px; text-align: center;">
                     <a href="/army-vehicles/${vehicle.serial_number}/edit" style="color: #00B4D8; text-decoration: none; font-weight: 600;">Edit</a>
-                    <!-- Add images if available, but since index doesn't return, placeholder -->
-                    <button onclick="openImageModal('${vehicle.vehicle_army_no}', [])" style="margin-left: 10px; background: none; border: none; color: #00B4D8; cursor: pointer;">View Images</button>
+                    
                 </td>
             `;
             tbody.appendChild(row);
